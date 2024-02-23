@@ -126,6 +126,7 @@ def json_validator():
 @app.route('/qr-generator', methods=['GET', 'POST'])
 def qr_generator():
     qr_img = None
+    data = ''  # Initialize data variable to hold the form data
     if request.method == 'POST':
         # Generate QR Code
         data = request.form.get('data', '')
@@ -133,7 +134,8 @@ def qr_generator():
         img_path = 'static/qr_code.png'
         img.save(img_path)
         qr_img = url_for('static', filename='qr_code.png')
-    return render_template('qr_generator.html', qr_img=qr_img)
+    # Pass the data variable to the template
+    return render_template('qr_generator.html', qr_img=qr_img, data=data)
 
 @app.route('/regex-checker', methods=['GET', 'POST'])
 def regex_checker():

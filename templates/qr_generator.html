@@ -18,12 +18,17 @@
     <div class="container">
         <h2>QR Code Generator</h2>
         <form method="POST">
-            <input type="text" name="data" placeholder="Enter data for QR code" required>
+            <input type="text" name="data" placeholder="Enter data for QR code" value="{{ data }}" required>
             <button type="submit">Generate QR Code</button>
         </form>
         {% if qr_img %}
             <div class="result">
                 <img src="{{ qr_img }}" alt="QR Code">
+            </div>
+        {% endif %}
+        {% if data %}
+            <div>
+                <strong>Input Data:</strong> <span class="highlight">{{ data }}</span>
             </div>
         {% endif %}
     </div>
