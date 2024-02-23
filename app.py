@@ -102,23 +102,14 @@ def json_validator():
     original_json = None  # This will hold the input with line numbers
     formatted_json_with_lines = None
     json_input = ""  # Initialize json_input to ensure it's always defined
-    schema_input = None  # Initialize schema_input
     if request.method == 'POST':
         json_input = request.form.get('json_input', '')
-        schema_input = request.form.get('schema_input', None)  # Get schema input, if provided
         # Add line numbers to the original input
         original_json = "\n".join(f"{i+1:3}: {line}" for i, line in enumerate(json_input.splitlines()))
         try:
             parsed_json = json.loads(json_input)
-            # If schema_input is provided, parse and validate against the schema
-            if schema_input:
-                parsed_schema = json.loads(schema_input)
-                validate(instance=parsed_json, schema=parsed_schema)
-                validation_result = "JSON is valid and conforms to the schema."
-            else:
-                validation_result = "JSON is valid."
-            # Format the valid JSON
             formatted_json = json.dumps(parsed_json, indent=2)
+            validation_result = "JSON is valid."
             # Add line numbers to the formatted output
             formatted_json_with_lines = "\n".join(f"{i+1:3}: {line}" for i, line in enumerate(formatted_json.splitlines()))
         except json.JSONDecodeError as e:
@@ -128,9 +119,8 @@ def json_validator():
             validation_result = f"Invalid JSON: Schema validation error - {e.message}."
         except Exception as e:
             validation_result = "An unexpected error occurred. Please check the JSON format and schema."
-            error_details = str(e)
-    # Pass the raw json_input and optionally schema_input back to the template, along with other variables
-    return render_template('json_validator.html', validation_result=validation_result, original_json=original_json, formatted_json_with_lines=formatted_json_with_lines, json_input=json_input, schema_input=schema_input, error_details=error_details)
+    # Pass the raw json_input back to the template, along with other variables
+    return render_template('json_validator.html', validation_result=validation_result, original_json=original_json, formatted_json_with_lines=formatted_json_with_lines, json_input=json_input, error_details=error_details)
 
 # QR Code Generator Page
 @app.route('/qr-generator', methods=['GET', 'POST'])
