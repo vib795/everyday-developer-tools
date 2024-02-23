@@ -1,0 +1,119 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+    padding-top: 60px; /* Adjust for fixed navbar */
+}
+
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: #333;
+    z-index: 1000;
+    overflow: hidden;
+}
+
+.navbar a {
+    float: left;
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 14px 20px;
+    text-decoration: none;
+}
+
+.navbar a:hover {
+    background-color: #ddd;
+    color: black;
+}
+
+.container {
+    padding: 20px;
+    margin: auto;
+    max-width: 1200px; /* Optimal reading width */
+}
+
+h1, h2 {
+    color: #333;
+}
+
+input[type="text"], textarea {
+    width: calc(100% - 30px); /* Ensure consistent horizontal padding */
+    padding: 10px;
+    margin-bottom: 15px; /* Increase bottom margin for spacing between elements */
+    border: 1px solid #ccc;
+    border-radius: 5px; /* Rounded corners for a modern look */
+    box-sizing: border-box;
+    resize: vertical; /* Allow users to resize textarea vertically */
+    font-size: 16px; /* Increase font size for better readability */
+    line-height: 1.5; /* Improve line spacing */
+}
+
+input[type="text"][readonly], textarea[readonly] {
+    background-color: #f3f3f3;
+    cursor: not-allowed;
+}
+
+input[type="text"]:focus, textarea:focus {
+    border-color: #4A90E2;
+    outline: none;
+    box-shadow: 0 0 5px rgba(74, 144, 226, 0.5);
+}
+
+button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    display: inline-block; /* Align button properly with form fields */
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+.result, .input-display {
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    padding: 15px;
+    margin-top: 20px;
+    border-radius: 5px;
+    overflow-x: auto; /* Enable horizontal scrolling for overflow content */
+    word-wrap: break-word; /* Break long words to prevent horizontal overflow */
+}
+
+.result * {
+    max-width: 100%; /* Ensure children of .result do not exceed its width */
+    box-sizing: border-box; /* Include padding and border in child elements' size */
+}
+
+.input-display {
+    font-family: monospace;
+    color: #333;
+}
+
+.input-display div {
+    margin-bottom: 10px;
+}
+
+.highlight {
+    color: #0056b3;
+    font-weight: bold;
+}
+
+.error-details {
+    color: red;
+    margin-top: 20px;
+}
+
+/* Specific enhancements for larger textareas in JSON Validator and Diff Viewer */
+textarea.large-textarea {
+    min-height: 250px; /* Increase minimum height for larger content visibility */
+    background-color: #fff;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.1); /* Subtle inner shadow for depth */
+}

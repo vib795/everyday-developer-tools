@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Developer Tools</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="navbar">
+        <a href="{{ url_for('diff_viewer') }}">Diff Viewer</a>
+        <a href="{{ url_for('json_validator') }}">JSON Validator</a>
+        <a href="{{ url_for('qr_generator') }}">QR Code Generator</a>
+        <a href="{{ url_for('regex_checker') }}">Regex Checker</a>
+        <a href="{{ url_for('regex_generator') }}">Regex Generator</a>
+    </div>
+    <div class="container">
+        <h2>Diff Viewer</h2>
+        <form method="POST">
+            <!-- Use Jinja2 templating to fill the textarea with text1 and text2 values -->
+            <textarea name="text1" class="large-textarea" placeholder="Enter first text here...">{{ text1 }}</textarea>
+            <textarea name="text2" class="large-textarea" placeholder="Enter second text here...">{{ text2 }}</textarea>            
+            <button type="submit">Compare</button>
+        </form>
+        {% if diff_result %}
+            <div class="result">{{ diff_result|safe }}</div>
+        {% endif %}
+    </div>
+</body>
+</html>

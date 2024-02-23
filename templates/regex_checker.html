@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Regex Checker</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="navbar">
+        <a href="{{ url_for('diff_viewer') }}">Diff Viewer</a>
+        <a href="{{ url_for('json_validator') }}">JSON Validator</a>
+        <a href="{{ url_for('qr_generator') }}">QR Code Generator</a>
+        <a href="{{ url_for('regex_checker') }}">Regex Checker</a>
+        <a href="{{ url_for('regex_generator') }}">Regex Generator</a>
+    </div>
+    <div class="container">
+        <h2>Regex Checker</h2>
+        <form method="POST">
+            <input type="text" name="regex" placeholder="Enter regex pattern" value="{{ regex_pattern }}" required>
+            <input type="text" name="string" placeholder="Enter string to match" value="{{ test_string }}" required>
+            <button type="submit">Check</button>
+        </form>
+        <div class="input-display">
+            <div><strong>Provided Regex:</strong> <span class="highlight">{{ regex_pattern }}</span></div>
+            <div><strong>Test String:</strong> <span class="highlight">{{ test_string }}</span></div>
+        </div>
+        {% if match_result %}
+            <div class="result">{{ match_result }}</div>
+        {% endif %}
+    </div>
+</body>
+</html>

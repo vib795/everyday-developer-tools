@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Developer Tools</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="navbar">
+        <a href="{{ url_for('diff_viewer') }}">Diff Viewer</a>
+        <a href="{{ url_for('json_validator') }}">JSON Validator</a>
+        <a href="{{ url_for('qr_generator') }}">QR Code Generator</a>
+        <a href="{{ url_for('regex_checker') }}">Regex Checker</a>
+        <a href="{{ url_for('regex_generator') }}">Regex Generator</a>
+    </div>
+    <div class="container">
+        <h2>JSON Validator</h2>
+        <form method="POST">
+            <!-- Use Jinja2 templating to fill the textarea with json_input value -->
+            <textarea name="json_input" class="large-textarea" placeholder="Enter JSON here..." required>{{ json_input }}</textarea>
+            <button type="submit">Validate</button>
+        </form>
+        {% if validation_result %}
+            <div class="result">{{ validation_result }}</div>
+        {% endif %}
+        {% if error_details %}
+            <div class="error-details">{{ error_details }}</div>
+        {% endif %}
+        {% if formatted_json_with_lines %}
+            <div class="formatted-json">
+                <pre>{{ formatted_json_with_lines }}</pre>
+            </div>
+        {% elif original_json %}
+            <!-- Display original JSON with line numbers if there's no formatted output -->
+            <div class="original-json">
+                <pre>{{ original_json }}</pre>
+            </div>
+        {% endif %}
+    </div>
+</body>
+</html>
