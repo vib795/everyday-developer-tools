@@ -48,6 +48,16 @@
             margin-bottom: 20px; 
         }
     </style>
+    <script>
+        function copyToClipboard() {
+            var schemaText = document.getElementById("hiddenSchema");
+            schemaText.style.display = "block"; // Temporarily show for copying
+            schemaText.select();
+            document.execCommand("copy");
+            schemaText.style.display = "none"; // Hide again
+            alert("Schema copied to clipboard!");
+        }
+    </script>
 </head>
 <body>
     <div class="navbar">
@@ -59,26 +69,18 @@
         <a href="{{ url_for('regex_generator') }}">Regex Generator</a>
     </div>
     <div class="container">
-        <h2>JSON Validator</h2>
+        <h2>JSON Schema Generator</h2>
         <form method="POST">
             <textarea name="json_input" class="large-textarea" placeholder="Enter JSON here..." required>{{ json_input }}</textarea>
-            <!-- Additional textarea for JSON Schema input -->
-            <textarea name="schema_input" class="large-textarea" placeholder="Enter JSON Schema here (optional)">{{ schema_input }}</textarea>
-            <button type="submit">Validate</button>
+            <button type="submit">Generate Schema</button>
         </form>
-        {% if validation_result %}
-            <div class="result">{{ validation_result }}</div>
-        {% endif %}
-        {% if error_details %}
-            <div class="error-details">{{ error_details }}</div>
-        {% endif %}
-        {% if formatted_json_with_lines %}
-            <div class="formatted-json">
-                <pre>{{ formatted_json_with_lines }}</pre>
-            </div>
-        {% elif original_json %}
-            <div class="original-json">
-                <pre>{{ original_json }}</pre>
+        {% if schema_result %}
+            <div class="schema-result">
+                <h3>Generated JSON Schema</h3>
+                <button onclick="copyToClipboard()">Copy Schema</button>
+                <pre>{{ schema_result }}</pre>
+                <!-- Hidden textarea for copying without line numbers -->
+                <textarea id="hiddenSchema" style="display: none;">{{ schema_for_copying }}</textarea>
             </div>
         {% endif %}
     </div>

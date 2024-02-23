@@ -3,13 +3,57 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Developer Tools</title>
+    <title>Developer Tools - Diff Viewer</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        /* Custom styles for diff output */
+        .diff-container { 
+            background-color: #f8f9fa; 
+            overflow-x: auto; 
+        }
+        table.diff { 
+            width: 100%; 
+            border-collapse: collapse; 
+            margin-bottom: 20px; 
+        }
+        .diff th, .diff td { 
+            text-align: left; 
+            border: 1px solid #ddd; 
+            padding: 8px; 
+        }
+        .diff th { 
+            background-color: #f0f0f0; 
+        }
+        .diff td { 
+            white-space: pre-wrap; 
+            font-family: monospace; 
+        }
+        .diff_add { 
+            background-color: #e6ffed; 
+        }
+        .diff_chg { 
+            background-color: #fff3cd; 
+        }
+        .diff_sub { 
+            background-color: #ffe8e6; 
+        }
+        /* Full width for diff table */
+        .container { 
+            width: 95%; 
+            max-width: 100%; 
+            margin: auto; 
+        }
+        textarea { 
+            width: 100%; 
+            margin-bottom: 20px; 
+        }
+    </style>
 </head>
 <body>
     <div class="navbar">
         <a href="{{ url_for('diff_viewer') }}">Diff Viewer</a>
         <a href="{{ url_for('json_validator') }}">JSON Validator</a>
+        <a href="{{ url_for('json_schema_generator') }}">JSON Schema Generator</a>
         <a href="{{ url_for('qr_generator') }}">QR Code Generator</a>
         <a href="{{ url_for('regex_checker') }}">Regex Checker</a>
         <a href="{{ url_for('regex_generator') }}">Regex Generator</a>
@@ -17,13 +61,16 @@
     <div class="container">
         <h2>Diff Viewer</h2>
         <form method="POST">
-            <!-- Use Jinja2 templating to fill the textarea with text1 and text2 values -->
-            <textarea name="text1" class="large-textarea" placeholder="Enter first text here...">{{ text1 }}</textarea>
-            <textarea name="text2" class="large-textarea" placeholder="Enter second text here...">{{ text2 }}</textarea>            
-            <button type="submit">Compare</button>
+            <textarea name="text1" class="large-textarea" placeholder="Enter first text here..." required>{{ text1 }}</textarea>
+            <textarea name="text2" class="large-textarea" placeholder="Enter second text here..." required>{{ text2 }}</textarea>
+            <div style="margin-bottom: 2%;">
+                <button type="submit">Compare</button>
+            </div>
         </form>
         {% if diff_result %}
-            <div class="result">{{ diff_result|safe }}</div>
+            <div class="diff-container">
+                {{ diff_result|safe }}
+            </div>
         {% endif %}
     </div>
 </body>
