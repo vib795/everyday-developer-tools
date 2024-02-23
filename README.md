@@ -6,6 +6,7 @@ This is a Flask web application that provides various developer tools including 
 
 - **Diff Viewer:** Compare two blocks of text and visualize the differences.
 - **JSON Validator:** Validate JSON format and optionally validate against a JSON schema.
+- **JSON Schema generator:** Generates a JSON schema based on JSON input.
 - **QR Code Generator:** Generate QR codes from text input.
 - **Regex Checker:** Validate strings against regular expressions.
 - **Regex Generator:** Generate regular expressions for common patterns.
