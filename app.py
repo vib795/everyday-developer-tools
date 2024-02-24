@@ -1,5 +1,4 @@
 from flask import Flask, render_template, request, redirect, url_for, jsonify
-# import qrcode  # For QR Code generation
 import difflib  # For Diff viewer
 import re  # For Regex checking
 from jsonschema import validate
