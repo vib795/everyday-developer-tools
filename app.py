@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, jsonify
 import qrcode  # For QR Code generation
 import difflib  # For Diff viewer
 import re  # For Regex checking
@@ -6,6 +6,10 @@ from jsonschema import validate
 from jsonschema.exceptions import ValidationError  # For JSON validation
 import json
 from genson import SchemaBuilder
+import logging 
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
 
@@ -28,42 +32,6 @@ def diff_viewer():
         diff_result = difflib.HtmlDiff().make_file(text1.splitlines(), text2.splitlines(), fromdesc="Text 1", todesc="Text 2")
     # Pass the inputs back to the template, along with the diff result
     return render_template('diff_viewer.html', diff_result=diff_result, text1=text1, text2=text2)
-
-# @app.route('/diff-viewer', methods=['GET', 'POST'])
-# def diff_viewer():
-#     diff_result = None
-#     text1 = ""
-#     text2 = ""
-#     if request.method == 'POST':
-#         text1 = request.form.get('text1', '')
-#         text2 = request.form.get('text2', '')
-#         # Use difflib to generate an HTML diff view
-#         diff_result = difflib.HtmlDiff().make_file(text1.splitlines(), text2.splitlines(), fromdesc="Text 1", todesc="Text 2", context=True, numlines=3)
-#     return render_template('diff_viewer.html', diff_result=diff_result, text1=text1, text2=text2)
-
-# @app.route('/diff-viewer', methods=['GET', 'POST'])
-# def diff_viewer():
-#     diff_result = None
-#     text1 = ""
-#     text2 = ""
-#     if request.method == 'POST':
-#         text1 = request.form.get('text1', '')
-#         text2 = request.form.get('text2', '')
-        
-#         # Initialize HtmlDiff object
-#         hd = difflib.HtmlDiff()
-
-#         # Generate HTML diff - set context to True to show full file content
-#         # If you want to limit the number of context lines, you can adjust numlines parameter
-#         diff_result = hd.make_file(text1.splitlines(keepends=True), 
-#                                    text2.splitlines(keepends=True), 
-#                                    fromdesc="Text 1", 
-#                                    todesc="Text 2",
-#                                    context=True) # Show full content with diffs highlighted
-
-#     return render_template('diff_viewer.html', diff_result=diff_result, text1=text1, text2=text2)
-
-
 
 # JSON schema generator
 def generate_json_schema(json_input):
@@ -217,6 +185,54 @@ def regex_generator():
             regex_pattern = generate_basic_pattern(text_input)
 
     return render_template('regex_generator.html', regex_pattern=regex_pattern, text_input=text_input)
+
+@app.route('/json-converter', methods=['GET', 'POST'])
+def json_converter():
+    input_data = ""
+    output_data = ""
+    conversion_type = ""  # Determines conversion direction: 'to_json' or 'to_string'
+    error = None
+
+    if request.method == 'POST':
+        input_data = request.form.get('input_data', '')
+        conversion_type = request.form.get('conversion_type', '')
+
+        try:
+            if conversion_type == 'to_json':
+                # Process for converting string to JSON
+                # Decode the string as a raw string literal
+                processed_input = input_data.encode().decode('unicode_escape')
+                
+                # Strip leading and trailing double quotes if they are extra
+                if processed_input.startswith('"') and processed_input.endswith('"'):
+                    processed_input = processed_input[1:-1]
+                
+                # Replace escaped double quotes with actual double quotes
+                processed_input = processed_input.replace('\\"', '"')
+
+                # Convert string to JSON
+                json_object = json.loads(processed_input)
+
+                # Format JSON for display
+                output_data = json.dumps(json_object, indent=4, sort_keys=True)
+            elif conversion_type == 'to_string':
+                # Process for converting JSON to string
+                # Convert the input string to a JSON object to ensure it's valid JSON
+                json_object = json.loads(input_data)
+
+                # Convert the JSON object back to a string with special escaping
+                json_string = json.dumps(json_object)
+                escaped_json_string = json_string.replace('"', '\\"')
+
+                # Wrap the escaped string in additional quotes
+                output_data = f'"{escaped_json_string}"'
+            else:
+                error = "Invalid conversion type specified."
+        except Exception as e:
+            logger.error(f"Error during conversion: {str(e)}")
+            error = "Error during conversion: " + str(e)
+
+    return render_template('json_converter.html', input_data=input_data, output_data=output_data, error=error, conversion_type=conversion_type)
 
 if __name__ == '__main__':
     app.run(debug=True)

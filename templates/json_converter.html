@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Developer Tools - JSON Converter</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    {% include 'navbar.html' %}
+    <div class="container">
+        <h2>JSON Converter</h2>
+        <form method="POST">
+            <label for="conversion_type">Conversion Type:</label>
+            <select name="conversion_type" id="conversion_type">
+                <option value="to_json">String to JSON</option>
+                <option value="to_string">JSON to String</option>
+            </select>
+            <textarea name="input_data" class="large-textarea" placeholder="Enter your input here..." required>{{ input_data }}</textarea>
+            <button type="submit">Convert</button>
+        </form>
+        {% if error %}
+            <div class="error-details">{{ error }}</div>
+        {% else %}
+            <div class="result">
+                <h3>Output:</h3>
+                <pre>{{ output_data }}</pre>
+            </div>
+        {% endif %}
+    </div>
+</body>
+</html>
