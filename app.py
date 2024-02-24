@@ -7,6 +7,7 @@ from jsonschema.exceptions import ValidationError  # For JSON validation
 import json
 from genson import SchemaBuilder
 import logging 
+import base64
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -124,7 +125,6 @@ def regex_checker():
 
     return render_template('regex_checker.html', match_result=match_result, regex_pattern=regex_pattern, test_string=test_string)
 
-
 def generate_basic_pattern(text_input):
     # Initialize sets to hold unique character types
     char_types = {
@@ -233,6 +233,26 @@ def json_converter():
             error = "Error during conversion: " + str(e)
 
     return render_template('json_converter.html', input_data=input_data, output_data=output_data, error=error, conversion_type=conversion_type)
+
+@app.route('/base64', methods=['GET', 'POST'])
+def base64_encode_decode():
+    output = ""
+    input_text = ""
+    operation = "encode"  # Default operation
+
+    if request.method == 'POST':
+        input_text = request.form.get('input_text', '')
+        operation = request.form.get('operation', 'encode')
+
+        try:
+            if operation == 'encode':
+                output = base64.b64encode(input_text.encode()).decode()
+            elif operation == 'decode':
+                output = base64.b64decode(input_text.encode()).decode()
+        except Exception as e:
+            output = f"Error: {str(e)}"
+
+    return render_template('base64_encoder_decoder.html', output=output, input_text=input_text, operation=operation)
 
 if __name__ == '__main__':
     app.run(debug=True)
