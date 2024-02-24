@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, jsonify
-import qrcode  # For QR Code generation
+# import qrcode  # For QR Code generation
 import difflib  # For Diff viewer
 import re  # For Regex checking
 from jsonschema import validate
@@ -90,21 +90,6 @@ def json_validator():
             validation_result = "An unexpected error occurred. Please check the JSON format and schema."
     # Pass the raw json_input back to the template, along with other variables
     return render_template('json_validator.html', validation_result=validation_result, original_json=original_json, formatted_json_with_lines=formatted_json_with_lines, json_input=json_input, error_details=error_details)
-
-# QR Code Generator Page
-@app.route('/qr-generator', methods=['GET', 'POST'])
-def qr_generator():
-    qr_img = None
-    data = ''  # Initialize data variable to hold the form data
-    if request.method == 'POST':
-        # Generate QR Code
-        data = request.form.get('data', '')
-        img = qrcode.make(data)
-        img_path = 'static/qr_code.png'
-        img.save(img_path)
-        qr_img = url_for('static', filename='qr_code.png')
-    # Pass the data variable to the template
-    return render_template('qr_generator.html', qr_img=qr_img, data=data)
 
 @app.route('/regex-checker', methods=['GET', 'POST'])
 def regex_checker():
