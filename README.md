@@ -8,7 +8,6 @@ This is a Flask web application that provides various developer tools including 
 - **JSON Validator:** Validate JSON format and optionally validate against a JSON schema.
 - **JSON Schema generator:** Generates a JSON schema based on JSON input.
 - **JSON-String-JSON converter:** COnverts JSON object to string and vice-versa.
-- **QR Code Generator:** Generate QR codes from text input.
 - **Regex Checker:** Validate strings against regular expressions.
 - **Regex Generator:** Generate regular expressions for common patterns.
 - **Base64 Encoder Decoder:** Convert text to/from using base64 encoding/decoding.
