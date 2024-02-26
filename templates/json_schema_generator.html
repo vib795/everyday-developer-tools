@@ -6,7 +6,6 @@
     <title>JSON Schema Generator</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <style>
-        /* Custom styles for diff output */
         .diff-container { 
             background-color: #f8f9fa; 
             overflow-x: auto; 
@@ -37,7 +36,7 @@
         .diff_sub { 
             background-color: #ffe8e6; 
         }
-        /* Full width for diff table */
+        /* Existing styles */
         .container { 
             width: 95%; 
             max-width: 100%; 
@@ -46,6 +45,15 @@
         textarea { 
             width: 100%; 
             margin-bottom: 20px; 
+            min-height: 150px; /* Ensure adequate space for input */
+        }
+        /* Style for displaying error messages */
+        .error-message {
+            color: #D8000C;
+            background-color: #FFD2D2;
+            margin: 20px 0;
+            padding: 10px;
+            border-radius: 5px;
         }
     </style>
     <script>
@@ -65,8 +73,17 @@
         <h2>JSON Schema Generator</h2>
         <form method="POST">
             <textarea name="json_input" class="large-textarea" placeholder="Enter JSON here..." required>{{ json_input }}</textarea>
+            <!-- New Textarea for Conditionals Input -->
+            <textarea name="conditionals" class="large-textarea" placeholder='Enter conditionals (e.g., {"oneOf": [...], "anyOf": [...]}) here...'></textarea>
             <button type="submit">Generate Schema</button>
         </form>
+        <!-- Display error message if present -->
+        {% if error_message %}
+            <div class="error-message">
+                {{ error_message }}
+            </div>
+        {% endif %}
+        <!-- Display generated schema result if present -->
         {% if schema_result %}
             <div class="schema-result">
                 <h3>Generated JSON Schema</h3>

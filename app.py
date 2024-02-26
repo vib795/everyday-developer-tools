@@ -8,7 +8,7 @@ from genson import SchemaBuilder
 import logging 
 import base64
 
-logging.basicConfig(level=logging.ERROR)
+logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
@@ -37,41 +37,55 @@ def diff_viewer():
     except Exception as e:
         logger.error(f"An error occurred. {(str(e))}")
 
-# JSON schema generator
-def generate_json_schema(json_input):
+def generate_json_schema(json_input, conditionals=None):
     try:
         json_data = json.loads(json_input)
         builder = SchemaBuilder()
         builder.add_object(json_data)
-        return builder.to_schema()
+        base_schema = builder.to_schema()
+
+        # If conditionals are provided, merge them with the base schema
+        if conditionals:
+            for key, value in conditionals.items():
+                base_schema[key] = value
+
+        return base_schema
     except json.JSONDecodeError as e:
-        logger.error(f"An error occurred. {str(e)}")
+        logger.error(f"An error occurred decoding JSON: {str(e)}")
         raise ValueError("Invalid JSON input.") from e
     except Exception as e:
-        logger.error(f"An error occurred. {str(e)}")
-        raise ValueError("An error occurred while generating the schema: " + str(e)) from e
+        logger.error(f"An error occurred in schema generation: {str(e)}")
+        raise ValueError("An error occurred while generating the schema.") from e
 
+# JSON Schema generator
 @app.route('/json-schema-generator', methods=['GET', 'POST'])
 def json_schema_generator():
-    try:
-        schema_result = None
-        schema_for_copying = None
-        json_input = ""
-        if request.method == 'POST':
-            json_input = request.form.get('json_input', '')
+    schema_result = None
+    schema_for_copying = None
+    json_input = ""
+    error_message = None  # To capture and display errors
+
+    if request.method == 'POST':
+        json_input = request.form.get('json_input', '').strip()
+        conditionals_input = request.form.get('conditionals', '{}').strip()
+
+        logger.debug(f"Processed JSON input: {json_input}")
+        logger.debug(f"Processed conditionals input: {conditionals_input}")
+
+        if not json_input:
+            error_message = "JSON input is empty. Please provide a valid JSON."
+        else:
             try:
-                generated_schema = generate_json_schema(json_input)
+                # Check if conditionals_input is an empty string, set to {} if so
+                conditionals = json.loads(conditionals_input) if conditionals_input else {}
+                generated_schema = generate_json_schema(json_input, conditionals=conditionals)
                 schema_for_copying = json.dumps(generated_schema, indent=2)
-                # Add line numbers for display
-                schema_with_lines = "\n".join(f"{i+1}: {line}" for i, line in 
-                                            enumerate(schema_for_copying.splitlines()))
+                schema_with_lines = "\n".join(f"{i+1}: {line}" for i, line in enumerate(schema_for_copying.splitlines()))
                 schema_result = schema_with_lines
             except ValueError as e:
-                schema_result = str(e)
-        return render_template('json_schema_generator.html', json_input=json_input, 
-                            schema_result=schema_result, schema_for_copying=schema_for_copying)
-    except Exception as e:
-        logger.error(f"An error occurred. {str(e)}")
+                error_message = f"Error processing input: {e}"
+
+    return render_template('json_schema_generator.html', json_input=json_input, schema_result=schema_result, schema_for_copying=schema_for_copying, error_message=error_message)
 
 @app.route('/json-validator', methods=['GET', 'POST'])
 def json_validator():
@@ -314,4 +328,4 @@ def counter():
 
 
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)
