@@ -285,5 +285,33 @@ def base64_encode_decode():
     except Exception as e:
         logger.error(f"An error occurred. {str(e)}")
 
+@app.route('/counter', methods=['GET', 'POST'])
+def counter():
+    text_input = ''
+    count = 0
+    output = ''
+    filter_option = request.form.get('filter_option', 'Character')
+    custom_delimiter = request.form.get('custom_delimiter', '')
+
+    if request.method == 'POST':
+        text_input = request.form.get('text_input', '')
+        
+        if filter_option == 'Character':
+            count = len(text_input)
+            output = '\n'.join(text_input)
+        elif filter_option == 'Word':
+            count = len(text_input.split())
+            output = '\n'.join(text_input.split())
+        elif filter_option == 'Line':
+            count = len(text_input.split('\n'))
+            output = text_input
+        elif filter_option == 'Custom Delimiter' and custom_delimiter:
+            count = len(text_input.split(custom_delimiter))
+            output = custom_delimiter.join(text_input.split(custom_delimiter))
+
+    return render_template('counter.html', text_input=text_input, count=count, output=output, filter_option=filter_option, custom_delimiter=custom_delimiter)
+
+
+
 if __name__ == '__main__':
     app.run()
