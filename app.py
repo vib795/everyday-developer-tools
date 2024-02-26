@@ -37,17 +37,61 @@ def diff_viewer():
     except Exception as e:
         logger.error(f"An error occurred. {(str(e))}")
 
+# def generate_json_schema(json_input, conditionals=None):
+#     try:
+#         json_data = json.loads(json_input)
+#         builder = SchemaBuilder()
+#         builder.add_object(json_data)
+#         base_schema = builder.to_schema()
+
+#         # If conditionals are provided, merge them with the base schema
+#         if conditionals:
+#             for key, value in conditionals.items():
+#                 base_schema[key] = value
+
+#         return base_schema
+#     except json.JSONDecodeError as e:
+#         logger.error(f"An error occurred decoding JSON: {str(e)}")
+#         raise ValueError("Invalid JSON input.") from e
+#     except Exception as e:
+#         logger.error(f"An error occurred in schema generation: {str(e)}")
+#         raise ValueError("An error occurred while generating the schema.") from e
+
+# def generate_json_schema(json_input, conditionals=None):
+#     try:
+#         json_data = json.loads(json_input)
+#         builder = SchemaBuilder(schema_uri="http://json-schema.org/draft-04/schema#")  # Specify Draft 04
+#         builder.add_object(json_data)
+#         base_schema = builder.to_schema()
+
+#         # Ensure the $schema property is set to Draft 04
+#         base_schema['$schema'] = "http://json-schema.org/draft-04/schema#"
+
+#         # If conditionals are provided, merge them with the base schema
+#         if conditionals:
+#             for key, value in conditionals.items():
+#                 base_schema[key] = value
+
+#         return base_schema
+#     except json.JSONDecodeError as e:
+#         logger.error(f"An error occurred decoding JSON: {str(e)}")
+#         raise ValueError("Invalid JSON input.") from e
+#     except Exception as e:
+#         logger.error(f"An error occurred in schema generation: {str(e)}")
+#         raise ValueError("An error occurred while generating the schema.") from e
+
 def generate_json_schema(json_input, conditionals=None):
     try:
         json_data = json.loads(json_input)
-        builder = SchemaBuilder()
+        builder = SchemaBuilder(schema_uri="http://json-schema.org/draft-04/schema#")
         builder.add_object(json_data)
         base_schema = builder.to_schema()
 
-        # If conditionals are provided, merge them with the base schema
+        base_schema['$schema'] = "http://json-schema.org/draft-04/schema#"
+
+        # Make sure conditionals is not None and not empty before proceeding
         if conditionals:
-            for key, value in conditionals.items():
-                base_schema[key] = value
+            apply_conditions_to_schema(base_schema, conditionals)
 
         return base_schema
     except json.JSONDecodeError as e:
@@ -57,27 +101,32 @@ def generate_json_schema(json_input, conditionals=None):
         logger.error(f"An error occurred in schema generation: {str(e)}")
         raise ValueError("An error occurred while generating the schema.") from e
 
-# JSON Schema generator
+def apply_conditions_to_schema(schema, conditions):
+    for condition in conditions:
+        path_parts = condition["path"].split('.')
+        current = schema
+        for part in path_parts[:-1]:
+            if part not in current:
+                raise ValueError(f"Path not found in schema: {condition['path']}")
+            current = current[part]
+        current[path_parts[-1]] = condition["condition"]
+
 @app.route('/json-schema-generator', methods=['GET', 'POST'])
 def json_schema_generator():
     schema_result = None
     schema_for_copying = None
     json_input = ""
-    error_message = None  # To capture and display errors
+    error_message = None
 
     if request.method == 'POST':
         json_input = request.form.get('json_input', '').strip()
-        conditionals_input = request.form.get('conditionals', '{}').strip()
-
-        logger.debug(f"Processed JSON input: {json_input}")
-        logger.debug(f"Processed conditionals input: {conditionals_input}")
+        conditionals_input = request.form.get('conditionals', '').strip()
 
         if not json_input:
             error_message = "JSON input is empty. Please provide a valid JSON."
         else:
             try:
-                # Check if conditionals_input is an empty string, set to {} if so
-                conditionals = json.loads(conditionals_input) if conditionals_input else {}
+                conditionals = json.loads(conditionals_input) if conditionals_input else None
                 generated_schema = generate_json_schema(json_input, conditionals=conditionals)
                 schema_for_copying = json.dumps(generated_schema, indent=2)
                 schema_with_lines = "\n".join(f"{i+1}: {line}" for i, line in enumerate(schema_for_copying.splitlines()))

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Character/Word Counter</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    {% include 'navbar.html' %}
+    <div class="container">
+        <h2>Character/Word Counter</h2>
+        <form method="POST">
+            <textarea name="text_input" placeholder="Enter your text here..." rows="4">{{ text_input }}</textarea>
+            <br>
+            <select name="filter_option">
+                <option value="Character" {% if filter_option == 'Character' %}selected{% endif %}>Character</option>
+                <option value="Word" {% if filter_option == 'Word' %}selected{% endif %}>Word</option>
+                <option value="Line" {% if filter_option == 'Line' %}selected{% endif %}>Line</option>
+                <option value="Custom Delimiter" {% if filter_option == 'Custom Delimiter' %}selected{% endif %}>Custom Delimiter</option>
+            </select>
+            <br>
+            <input type="text" name="custom_delimiter" placeholder="Enter custom delimiter" value="{{ custom_delimiter }}">
+            <br>
+            <button type="submit">Count</button>
+        </form>
+        <div>
+            <h3>Count: {{ count }}</h3>
+            <textarea readonly rows="4">{{ output }}</textarea>
+        </div>
+    </div>
+</body>
+</html>

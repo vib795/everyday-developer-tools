@@ -2641,3 +2641,4 @@ venv/share/man
 venv/share/man/man1
 venv/share/man/man1/qr.1
 .DS_Store
+samples/json_schema_generator_example.jsonc

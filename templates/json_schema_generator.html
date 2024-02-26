@@ -6,37 +6,6 @@
     <title>JSON Schema Generator</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <style>
-        .diff-container { 
-            background-color: #f8f9fa; 
-            overflow-x: auto; 
-        }
-        table.diff { 
-            width: 100%; 
-            border-collapse: collapse; 
-            margin-bottom: 20px; 
-        }
-        .diff th, .diff td { 
-            text-align: left; 
-            border: 1px solid #ddd; 
-            padding: 8px; 
-        }
-        .diff th { 
-            background-color: #f0f0f0; 
-        }
-        .diff td { 
-            white-space: pre-wrap; 
-            font-family: monospace; 
-        }
-        .diff_add { 
-            background-color: #e6ffed; 
-        }
-        .diff_chg { 
-            background-color: #fff3cd; 
-        }
-        .diff_sub { 
-            background-color: #ffe8e6; 
-        }
-        /* Existing styles */
         .container { 
             width: 95%; 
             max-width: 100%; 
@@ -47,7 +16,6 @@
             margin-bottom: 20px; 
             min-height: 150px; /* Ensure adequate space for input */
         }
-        /* Style for displaying error messages */
         .error-message {
             color: #D8000C;
             background-color: #FFD2D2;
@@ -55,15 +23,20 @@
             padding: 10px;
             border-radius: 5px;
         }
+        .help-text {
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+        }
     </style>
     <script>
         function copyToClipboard() {
             var schemaText = document.getElementById("hiddenSchema");
-            schemaText.style.display = "block"; // Temporarily show for copying
-            schemaText.select();
-            document.execCommand("copy");
-            schemaText.style.display = "none"; // Hide again
-            alert("Schema copied to clipboard!");
+            // Use the Clipboard API
+            navigator.clipboard.writeText(schemaText.value).then(function() {
+                alert("Schema copied to clipboard!");
+            }, function(err) {
+                alert("Error in copying text: ", err);
+            });
         }
     </script>
 </head>
@@ -73,23 +46,23 @@
         <h2>JSON Schema Generator</h2>
         <form method="POST">
             <textarea name="json_input" class="large-textarea" placeholder="Enter JSON here..." required>{{ json_input }}</textarea>
-            <!-- New Textarea for Conditionals Input -->
-            <textarea name="conditionals" class="large-textarea" placeholder='Enter conditionals (e.g., {"oneOf": [...], "anyOf": [...]}) here...'></textarea>
+            <!-- Made conditionals optional and updated placeholder for clarity -->
+            <textarea name="conditionals" class="large-textarea" placeholder='Optional: Enter conditional logic here. Example: [{"path": "properties.restrictionUpdates.properties.country", "condition": {"oneOf": [{"required": ["add"]}, {"required": ["remove"]}]} }]' >{{ conditionals }}</textarea>
+            <div class="help-text">
+                Specify conditional logic such as <code>oneOf</code>, <code>anyOf</code> in a JSON format. For more information on formatting, please refer to our <a href="documentation-link">documentation</a>.
+            </div>
             <button type="submit">Generate Schema</button>
         </form>
-        <!-- Display error message if present -->
         {% if error_message %}
             <div class="error-message">
                 {{ error_message }}
             </div>
         {% endif %}
-        <!-- Display generated schema result if present -->
         {% if schema_result %}
             <div class="schema-result">
                 <h3>Generated JSON Schema</h3>
                 <button onclick="copyToClipboard()">Copy Schema</button>
                 <pre>{{ schema_result }}</pre>
-                <!-- Hidden textarea for copying without line numbers -->
                 <textarea id="hiddenSchema" style="display: none;">{{ schema_for_copying }}</textarea>
             </div>
         {% endif %}
