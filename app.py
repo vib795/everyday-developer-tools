@@ -37,49 +37,6 @@ def diff_viewer():
     except Exception as e:
         logger.error(f"An error occurred. {(str(e))}")
 
-# def generate_json_schema(json_input, conditionals=None):
-#     try:
-#         json_data = json.loads(json_input)
-#         builder = SchemaBuilder()
-#         builder.add_object(json_data)
-#         base_schema = builder.to_schema()
-
-#         # If conditionals are provided, merge them with the base schema
-#         if conditionals:
-#             for key, value in conditionals.items():
-#                 base_schema[key] = value
-
-#         return base_schema
-#     except json.JSONDecodeError as e:
-#         logger.error(f"An error occurred decoding JSON: {str(e)}")
-#         raise ValueError("Invalid JSON input.") from e
-#     except Exception as e:
-#         logger.error(f"An error occurred in schema generation: {str(e)}")
-#         raise ValueError("An error occurred while generating the schema.") from e
-
-# def generate_json_schema(json_input, conditionals=None):
-#     try:
-#         json_data = json.loads(json_input)
-#         builder = SchemaBuilder(schema_uri="http://json-schema.org/draft-04/schema#")  # Specify Draft 04
-#         builder.add_object(json_data)
-#         base_schema = builder.to_schema()
-
-#         # Ensure the $schema property is set to Draft 04
-#         base_schema['$schema'] = "http://json-schema.org/draft-04/schema#"
-
-#         # If conditionals are provided, merge them with the base schema
-#         if conditionals:
-#             for key, value in conditionals.items():
-#                 base_schema[key] = value
-
-#         return base_schema
-#     except json.JSONDecodeError as e:
-#         logger.error(f"An error occurred decoding JSON: {str(e)}")
-#         raise ValueError("Invalid JSON input.") from e
-#     except Exception as e:
-#         logger.error(f"An error occurred in schema generation: {str(e)}")
-#         raise ValueError("An error occurred while generating the schema.") from e
-
 def generate_json_schema(json_input, conditionals=None):
     try:
         json_data = json.loads(json_input)
@@ -374,7 +331,5 @@ def counter():
 
     return render_template('counter.html', text_input=text_input, count=count, output=output, filter_option=filter_option, custom_delimiter=custom_delimiter)
 
-
-
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run()
