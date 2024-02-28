@@ -45,16 +45,61 @@ This is a Flask web application that provides various developer tools including 
 
 3. Choose a tool from the navigation menu on the left.
 
-## Dockerized approach
-Run the command:
-```bash
-docker compose up --build
-```
-to build the code and deploy it in a container.
-<br/>OR<br/>
-```bash
-docker run -p 5000:5000 utkarshsingh/developer-tools
-```
+## Production Deployment with Docker, Gunicorn, and Nginx
+### Dockerized Approach
+For deploying the application in a containerized environment with Docker, ensuring scalability and ease of deployment:
+
+1. **Build and Deploy with Docker Compose:** 
+    ```bash
+    docker compose up --build
+    ```
+This command builds the Docker images and starts the containers as defined in the `docker-compose.yml` file.
+
+2. **Running a Pre-Built Container:**
+    ```bash
+    docker run -p 5000:5000 utkarshsingh/developer-tools
+    ```
+
+### Making the Application HTTPS Compliant
+To secure the application with HTTPS, follow these steps:
+
+1. **Generate SSL/TLS Certificates:**
+For local testing, generate a self-signed SSL certificate:
+    ```bash
+    mkdir -p certs && cd certs
+    openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout nginx-selfsigned.key -out nginx-selfsigned.crt
+    ```
+
+For production, obtain certificates from Let's Encrypt or another CA.
+
+2. **Configure Nginx for HTTPS:**
+Update `nginx/nginx.conf` to include the SSL certificate and key, and configure Nginx to listen on HTTPS:
+    ```nginx
+    server {
+        listen 443 ssl;
+        server_name localhost; # Update to your domain for production
+
+        ssl_certificate /etc/ssl/certs/nginx-selfsigned.crt;
+        ssl_certificate_key /etc/ssl/certs/nginx-selfsigned.key;
+
+        # SSL configuration...
+
+        location / {
+            proxy_pass http://web:5000;
+            # Proxy settings...
+        }
+    }
+    ```
+Update docker-compose.yml to mount the certificates directory into the Nginx container.
+
+3. **Docker Compose:**
+    ```bash
+    docker compose up --build
+    ```
+
+### Why and How of Nginx and Gunicorn
+- **Nginx:** Acts as a reverse proxy, handling client requests efficiently before passing them to Gunicorn. It's also responsible for SSL/TLS termination, providing HTTPS support.
+- **Gunicorn:** A WSGI HTTP Server for serving Flask applications in production, offering a robust option to handle concurrent requests.
 
 ## Contributing
 
@@ -87,4 +132,4 @@ A live demo of the application can be viewed [here](https://utkarshsingh0609.pyt
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the Custom Software License - see the [LICENSE](LICENSE) file for details.

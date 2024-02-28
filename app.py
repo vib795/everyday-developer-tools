@@ -7,6 +7,7 @@ import json
 import logging 
 import base64
 from helper import generate_basic_pattern, generate_json_schema
+
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
