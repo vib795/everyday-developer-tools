@@ -41,6 +41,7 @@ def json_schema_generator():
     schema_result = None
     schema_for_copying = None
     json_input = ""
+    conditionals = ""
     error_message = None
 
     if request.method == 'POST':
@@ -59,7 +60,7 @@ def json_schema_generator():
             except ValueError as e:
                 error_message = f"Error processing input: {e}"
 
-    return render_template('json_schema_generator.html', json_input=json_input, schema_result=schema_result, schema_for_copying=schema_for_copying, error_message=error_message)
+    return render_template('json_schema_generator.html', json_input=json_input, conditionals=conditionals, schema_result=schema_result, schema_for_copying=schema_for_copying, error_message=error_message)
 
 @app.route('/json-validator', methods=['GET', 'POST'])
 def json_validator():
