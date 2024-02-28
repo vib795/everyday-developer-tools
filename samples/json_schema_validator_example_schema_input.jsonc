@@ -1,0 +1,23 @@
+{
+    "userId": 12345,
+    "username": "johnDoe",
+    "email": "john.doe@example.com",
+    "age": 30,
+    "isVerified": true,
+    "address": {
+      "street": "123 Main St",
+      "city": "Anytown",
+      "zipcode": "12345"
+    },
+    "phoneNumbers": [
+      {
+        "type": "mobile",
+        "number": "555-1234"
+      },
+      {
+        "type": "home",
+        "number": "555-5678"
+      }
+    ]
+  }
+  

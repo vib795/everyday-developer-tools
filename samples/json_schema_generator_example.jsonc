@@ -1,0 +1,65 @@
+{
+    "userProfile": {
+      "id": "usr_123456789",
+      "type": "admin",
+      "name": "John Doe",
+      "email": "john.doe@example.com",
+      "age": 29,
+      "socialMediaHandles": {
+        "twitter": "@johndoe",
+        "facebook": null
+      },
+      "preferences": {
+        "newsletter": true,
+        "emailNotifications": true
+      },
+      "accountDetails": {
+        "creationDate": "2021-01-01T12:00:00Z",
+        "lastLogin": "2023-04-05T15:30:00Z"
+      },
+      "roles": [
+        "admin",
+        "editor"
+      ],
+      "projects": [
+        {
+          "id": "proj_1",
+          "name": "Project Alpha",
+          "status": "active",
+          "members": [
+            {
+              "id": "usr_123456789",
+              "role": "project manager"
+            },
+            {
+              "id": "usr_987654321",
+              "role": "developer"
+            }
+          ]
+        },
+        {
+          "id": "proj_2",
+          "name": "Project Beta",
+          "status": "completed",
+          "completionDate": "2023-03-30"
+        }
+      ]
+    },
+    "conditionalAttributes": {
+      "employmentStatus": "employed",
+      "employmentDetails": {
+        "employer": "Tech Solutions Inc",
+        "position": "Senior Developer",
+        "startDate": "2019-06-01",
+        "address": {
+          "street": "123 Tech Lane",
+          "city": "Techville",
+          "state": "CA",
+          "zipCode": "12345"
+        }
+      }
+    }
+  }
+
+
+  // [{"path": "properties.restrictionUpdates.properties.property", "condition": {"oneOf": [{"required": ["sub_property1"]}, {"required": ["sub_property2"]}]} }]
