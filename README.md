@@ -87,4 +87,4 @@ A live demo of the application can be viewed [here](https://utkarshsingh0609.pyt
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the Custom Software License - see the [LICENSE](LICENSE) file for details.
