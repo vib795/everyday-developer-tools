@@ -63,42 +63,73 @@ def json_schema_generator():
 
     return render_template('json_schema_generator.html', json_input=json_input, conditionals=conditionals, schema_result=schema_result, schema_for_copying=schema_for_copying, error_message=error_message)
 
+# @app.route('/json-validator', methods=['GET', 'POST'])
+# def json_validator():
+#     try:
+#         validation_result = None
+#         error_details = None
+#         original_json = None  # This will hold the input with line numbers
+#         formatted_json_with_lines = None
+#         json_input = ""  # Initialize json_input to ensure it's always defined
+#         if request.method == 'POST':
+#             json_input = request.form.get('json_input', '')
+#             # Add line numbers to the original input
+#             original_json = "\n".join(f"{i+1:3}: {line}" for i, line in 
+#                                     enumerate(json_input.splitlines()))
+#             try:
+#                 parsed_json = json.loads(json_input)
+#                 formatted_json = json.dumps(parsed_json, indent=2)
+#                 validation_result = "JSON is valid."
+#                 # Add line numbers to the formatted output
+#                 formatted_json_with_lines = "\n".join(f"{i+1:3}: {line}" for i, line 
+#                                                     in enumerate(formatted_json.splitlines()))
+#             except json.JSONDecodeError as e:
+#                 validation_result = "Invalid JSON: The input is not a valid JSON format."
+#                 error_details = f"Error at line {e.lineno}, column {e.colno}: {e.msg}"
+#             except ValidationError as e:
+#                 validation_result = f"Invalid JSON: Schema validation error - {e.message}."
+#             except Exception as e:
+#                 validation_result = "An unexpected error occurred. \
+#                     Please check the JSON format and schema."
+#         # Pass the raw json_input back to the template, along with other variables
+#         return render_template('json_validator.html', 
+#                             validation_result=validation_result, 
+#                             original_json=original_json, 
+#                             formatted_json_with_lines=formatted_json_with_lines, 
+#                             json_input=json_input, error_details=error_details)
+#     except Exception as e:
+#         logger.error(f"An error occurred. {str(e)}")
+
 @app.route('/json-validator', methods=['GET', 'POST'])
 def json_validator():
     try:
         validation_result = None
         error_details = None
-        original_json = None  # This will hold the input with line numbers
-        formatted_json_with_lines = None
+        formatted_json = None  # This will hold the formatted JSON without line numbers for copying
+        formatted_json_with_lines = None  # This will hold the formatted JSON with line numbers for display
         json_input = ""  # Initialize json_input to ensure it's always defined
+        
         if request.method == 'POST':
             json_input = request.form.get('json_input', '')
-            # Add line numbers to the original input
-            original_json = "\n".join(f"{i+1:3}: {line}" for i, line in 
-                                    enumerate(json_input.splitlines()))
             try:
                 parsed_json = json.loads(json_input)
-                formatted_json = json.dumps(parsed_json, indent=2)
+                formatted_json = json.dumps(parsed_json, indent=2)  # Prepare JSON without line numbers
                 validation_result = "JSON is valid."
-                # Add line numbers to the formatted output
+                # Prepare JSON with line numbers for display
                 formatted_json_with_lines = "\n".join(f"{i+1:3}: {line}" for i, line 
                                                     in enumerate(formatted_json.splitlines()))
             except json.JSONDecodeError as e:
                 validation_result = "Invalid JSON: The input is not a valid JSON format."
                 error_details = f"Error at line {e.lineno}, column {e.colno}: {e.msg}"
-            except ValidationError as e:
-                validation_result = f"Invalid JSON: Schema validation error - {e.message}."
-            except Exception as e:
-                validation_result = "An unexpected error occurred. \
-                    Please check the JSON format and schema."
-        # Pass the raw json_input back to the template, along with other variables
+                
         return render_template('json_validator.html', 
                             validation_result=validation_result, 
-                            original_json=original_json, 
-                            formatted_json_with_lines=formatted_json_with_lines, 
+                            formatted_json=formatted_json,  # Pass the copy-ready JSON
+                            formatted_json_with_lines=formatted_json_with_lines,  # Pass the display-ready JSON
                             json_input=json_input, error_details=error_details)
     except Exception as e:
         logger.error(f"An error occurred. {str(e)}")
+
 
 @app.route('/regex-checker', methods=['GET', 'POST'])
 def regex_checker():
