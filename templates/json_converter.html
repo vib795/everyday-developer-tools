@@ -6,48 +6,52 @@
     <title>JSON Converter</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <style>
-        /* Custom styles for diff output */
-        .diff-container { 
-            background-color: #f8f9fa; 
-            overflow-x: auto; 
-        }
-        table.diff { 
-            width: 100%; 
-            border-collapse: collapse; 
-            margin-bottom: 20px; 
-        }
-        .diff th, .diff td { 
-            text-align: left; 
-            border: 1px solid #ddd; 
-            padding: 8px; 
-        }
-        .diff th { 
-            background-color: #f0f0f0; 
-        }
-        .diff td { 
-            white-space: pre-wrap; 
-            font-family: monospace; 
-        }
-        .diff_add { 
-            background-color: #e6ffed; 
-        }
-        .diff_chg { 
-            background-color: #fff3cd; 
-        }
-        .diff_sub { 
-            background-color: #ffe8e6; 
-        }
-        /* Full width for diff table */
         .container { 
             width: 95%; 
             max-width: 100%; 
             margin: auto; 
         }
-        textarea { 
+        textarea, .result pre { 
             width: 100%; 
             margin-bottom: 20px; 
+            min-height: 150px; /* Ensure adequate space for input and output */
+        }
+        .error-details {
+            color: #D8000C;
+            background-color: #FFD2D2;
+            margin: 20px 0;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .result {
+            position: relative;
+            padding: 10px;
+            border-radius: 5px;
+            background-color: #f8f9fa; /* Light background for the result area */
+        }
+        .copy-button {
+            padding: 8px 16px;
+            margin-top: 10px; /* Adjusted margin for better alignment */
+            background-color: #007bff; /* Bootstrap primary color for reference */
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .copy-button:hover {
+            background-color: #0056b3; /* Darker shade for hover effect */
         }
     </style>
+    <script>
+        function copyToClipboard() {
+            var outputText = document.getElementById("hiddenOutput");
+            navigator.clipboard.writeText(outputText.value).then(function() {
+                alert("Output copied to clipboard!");
+            }, function(err) {
+                alert("Error in copying text: ", err);
+            });
+        }
+    </script>
 </head>
 <body>
     {% include 'navbar.html' %}
@@ -64,10 +68,12 @@
         </form>
         {% if error %}
             <div class="error-details">{{ error }}</div>
-        {% else %}
+        {% elif output_data %}
             <div class="result">
                 <h3>Output:</h3>
+                <button onclick="copyToClipboard()">Copy to Clipboard</button>
                 <pre>{{ output_data }}</pre>
+                <textarea id="hiddenOutput" style="display: none;">{{ output_data }}</textarea>
             </div>
         {% endif %}
     </div>
