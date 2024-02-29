@@ -116,33 +116,6 @@ def json_validator():
     except Exception as e:
         logger.error(f"An error occurred. {str(e)}")
 
-# @app.route('/regex-checker', methods=['GET', 'POST'])
-# def regex_checker():
-#     try:
-#         match_result = None
-#         regex_pattern = ''
-#         test_string = ''
-#         if request.method == 'POST':
-#             regex_pattern = request.form.get('regex', '')
-#             test_string = request.form.get('string', '')
-#             try:
-#                 # # Sanitize the regex pattern to escape special characters
-#                 # safe_pattern = re.escape(regex_pattern)
-#                 # Use re.fullmatch() for exact whole string matching with the sanitized pattern
-#                 if re.fullmatch(regex_pattern, test_string):
-#                     match_result = "Pattern matches the string."
-#                 else:
-#                     match_result = "Pattern does not match the string."
-#             except re.error as e:
-#                 match_result = f"Regex Error: {e}"
-
-#         return render_template('regex_checker.html', 
-#                             match_result=match_result, 
-#                             regex_pattern=regex_pattern, 
-#                             test_string=test_string)
-#     except Exception as e:
-#         logger.error(f"An error occurred. {str(e)}")
-
 @app.route('/regex-checker', methods=['GET', 'POST'])
 @limiter.limit("15 per minute")  # Rate limiting
 def regex_checker():
