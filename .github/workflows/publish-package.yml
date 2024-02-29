@@ -1,0 +1,29 @@
+name: Publish Docker image to GitHub Packages
+
+on:
+  push:
+    branches:
+      - main  # or any other branch
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v3
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GH_PACKAGES_TOKEN }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          file: ./Dockerfile.dev
+          push: true
+          tags: ghcr.io/${{ github.repository_owner }}/utkarshsingh/developer-tools-dev:latest
