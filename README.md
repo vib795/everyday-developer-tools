@@ -50,14 +50,21 @@ This is a Flask web application that provides various developer tools including 
 For deploying the application in a containerized environment with Docker, ensuring scalability and ease of deployment:
 
 1. **Build and Deploy with Docker Compose:** 
+    <br/>_Dev build_
     ```bash
-    docker compose up --build
+    docker-compose -f docker-compose-dev.yml up --build
     ```
+    OR
+    <br/> _Deployable build_
+    ```bash
+    docker-compose -f docker-compose.yml up --build
+    ``` 
+    
 This command builds the Docker images and starts the containers as defined in the `docker-compose.yml` file.
 
 2. **Running a Pre-Built Container:**
     ```bash
-    docker run -p 5000:5000 utkarshsingh/developer-tools
+    docker run -p 5000:5000 utkarshsingh/developer-tools-dev:latest
     ```
 
 ### Making the Application HTTPS Compliant
@@ -92,27 +99,17 @@ Update `nginx/nginx.conf` to include the SSL certificate and key, and configure 
     ```
 Update docker-compose.yml to mount the certificates directory into the Nginx container.
 
-3. **Docker Compose:**
-    ```bash
-    docker-compose -f docker-compose-dev.yml up --build
-    ```
-    OR
-    ```
-    bash
-    docker-compose -f docker-compose.yml up --build
-    ```
-
-4. To pull from GHCR:
+3. **To pull from GHCR:**
     ```bash
     docker pull ghcr.io/vib795/utkarshsingh/developer-tools-dev:latest
     ```
 
-5. To pull from Docker hub (dev build):
+4. **To pull from Docker hub (dev build):**
     ```bash
     docker pull utkarshsingh/developer-tools-dev:latest
     ```
 
-6. To pull from Docker hub (deployable build):
+5. **To pull from Docker hub (deployable build):**
     ```bash
     docker pull utkarshsingh/developer-tools:latest
     ```
