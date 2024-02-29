@@ -4,12 +4,104 @@
     <meta charset="UTF-8">
     <title>Developer Tools Home</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <!-- LinkedIn Badge Script -->
+    <script src="https://platform.linkedin.com/badges/js/profile.js" async defer type="text/javascript"></script>
+    <style>
+        body {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            background-color: #F0F2F5;
+            margin: 0;
+            padding-top: 60px;
+            color: #333;
+        }
+        .navbar {
+            background-color: #333;
+            overflow: hidden;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+        }
+        .navbar a {
+            float: left;
+            display: block;
+            color: white;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+        }
+        .container {
+            width: 85%;
+            margin: auto;
+            overflow: hidden;
+            padding: 20px 0;
+        }
+        header {
+            background: #FFFFFF;
+            color: #333;
+            padding: 20px 0;
+            text-align: center;
+        }
+        header h1 {
+            margin: 0;
+            font-size: 2.5rem;
+        }
+        .prompt-text {
+            text-align: center;
+            font-size: 1.25rem;
+            margin: 20px 0;
+        }
+        .middle-content {
+            text-align: center;
+            margin: 40px 0; /* Adjusted for visual balance */
+        }
+        .middle-content p {
+            padding: 15px;
+            background-color: #FFFFFF;
+            color: #333;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            display: inline-block;
+            margin: 10px auto; /* Centered margin */
+            width: 100%;
+        }
+        .middle-content a, .developer-info a {
+            color: #6225e6;
+            text-decoration: none;
+        }
+        .middle-content a:hover, .developer-info a:hover {
+            text-decoration: underline;
+        }
+        .badge-base {
+            display: inline-flex;
+            justify-content: center;
+            width: 100%;
+            margin-top: 20px; /* Space between text and badge */
+        }
+        .badge-base a::before {
+            content: '';
+            display: block;
+            width: 84px;
+            height: 84px;
+            background-size: cover;
+            background-position: center;
+        }
+    </style>
 </head>
 <body>
     {% include 'navbar.html' %}
-    <div class="container">
+    <header>
         <h1>Welcome to Developer Tools</h1>
-        <p>Select a tool from the menu to get started.</p>
+    </header>
+    <div class="container">
+        <div class="prompt-text">Explore the suite of tools to enhance your development workflow.</div>
+    </div>
+    <div class="middle-content">
+        <p>This suite of developer tools is brought to you by <a href="https://www.linkedin.com/in/connectwithutkarshsingh">Utkarsh Singh</a>.</p>
+        <!-- LinkedIn Badge centered relative to the text -->
+        <div class="badge-base LI-profile-badge" data-locale="en_US" data-size="large" data-theme="dark" data-type="VERTICAL" data-vanity="connectwithutkarshsingh" data-version="v1">
+            <a class="badge-base__link LI-simple-link" href="https://www.linkedin.com/in/connectwithutkarshsingh?trk=profile-badge"></a>
+        </div>
     </div>
 </body>
 </html>

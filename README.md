@@ -1,6 +1,6 @@
 # Developer Tools Web Application
 
-This is a Flask web application that provides various developer tools including a Diff Viewer, JSON Validator, QR Code Generator, Regex Checker, and Regex Generator.
+This is a Flask web application that provides various developer tools including a Diff Viewer, JSON Validator, Regex Checker, and Regex Generator.
 
 ## Features
 

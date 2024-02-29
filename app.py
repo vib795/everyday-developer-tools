@@ -15,8 +15,10 @@ app = Flask(__name__)
 
 # Route for the home page, redirects to the Diff Viewer
 @app.route('/')
+@app.route('/home')
 def home():
-    return redirect(url_for('diff_viewer'))
+    # return redirect(url_for('diff_viewer'))
+    return render_template('index.html')
 
 # Diff Viewer Page
 @app.route('/diff-viewer', methods=['GET', 'POST'])
