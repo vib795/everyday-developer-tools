@@ -120,8 +120,10 @@ def regex_checker():
             regex_pattern = request.form.get('regex', '')
             test_string = request.form.get('string', '')
             try:
-                # Use re.fullmatch() for exact whole string matching
-                if re.fullmatch(regex_pattern, test_string):
+                # Sanitize the regex pattern to escape special characters
+                safe_pattern = re.escape(regex_pattern)
+                # Use re.fullmatch() for exact whole string matching with the sanitized pattern
+                if re.fullmatch(safe_pattern, test_string):
                     match_result = "Pattern matches the string."
                 else:
                     match_result = "Pattern does not match the string."
