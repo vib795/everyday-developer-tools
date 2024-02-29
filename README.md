@@ -97,6 +97,21 @@ Update docker-compose.yml to mount the certificates directory into the Nginx con
     docker compose up --build
     ```
 
+4. To pull from GHCR:
+    ```bash
+    docker pull ghcr.io/vib795/utkarshsingh/developer-tools-dev:latest
+    ```
+
+5. To pull from Docker hub (dev build):
+    ```bash
+    docker pull utkarshsingh/developer-tools-dev:latest
+    ```
+
+6. To pull from Docker hub (deployable build):
+    ```bash
+    docker pull utkarshsingh/developer-tools:latest
+    ```
+
 ### Why and How of Nginx and Gunicorn
 - **Nginx:** Acts as a reverse proxy, handling client requests efficiently before passing them to Gunicorn. It's also responsible for SSL/TLS termination, providing HTTPS support.
 - **Gunicorn:** A WSGI HTTP Server for serving Flask applications in production, offering a robust option to handle concurrent requests.
