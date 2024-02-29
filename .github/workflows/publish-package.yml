@@ -3,7 +3,7 @@ name: Publish Docker image to GitHub Packages
 on:
   push:
     branches:
-      - main  # or any other branch
+      - master  # or any other branch
 
 jobs:
   publish:
