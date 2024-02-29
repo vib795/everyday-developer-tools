@@ -94,7 +94,12 @@ Update docker-compose.yml to mount the certificates directory into the Nginx con
 
 3. **Docker Compose:**
     ```bash
-    docker compose up --build
+    docker-compose -f docker-compose-dev.yml up --build
+    ```
+    OR
+    ```
+    bash
+    docker-compose -f docker-compose.yml up --build
     ```
 
 4. To pull from GHCR:
