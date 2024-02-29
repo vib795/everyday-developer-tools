@@ -1,0 +1,34 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    # Build and push the dev image
+    - name: Build the Docker image (Dev)
+      run: docker build . --file Dockerfile.dev --tag utkarshsingh/developer-tools-dev:latest
+
+    - name: Log in to Docker Hub
+      uses: docker/login-action@v1
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+
+    - name: Push the Docker image (Dev)
+      run: docker push utkarshsingh/developer-tools-dev:latest
+
+    # Build and push the prod image
+    - name: Build the Docker image (Prod)
+      run: docker build . --file Dockerfile --tag utkarshsingh/developer-tools:latest
+
+    - name: Push the Docker image (Prod)
+      run: docker push utkarshsingh/developer-tools:latest
