@@ -1,0 +1,39 @@
+# This workflow warns and then closes issues and PRs that have had no activity for a specified amount of time.
+#
+# You can adjust the behavior by modifying this file.
+# For more information, see:
+# https://github.com/actions/stale
+name: Mark stale issues and pull requests
+
+on:
+  schedule:
+  - cron: '44 22 * * *'
+
+jobs:
+  stale:
+
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      pull-requests: write
+
+    steps:
+    - uses: actions/stale@v5
+      with:
+        repo-token: ${{ secrets.GITHUB_TOKEN }}
+        days-before-stale: 60
+        days-before-close: 7
+        stale-issue-message: "📌 **This issue has been marked as stale because it has not had any activity for the past 60 days.**
+          To the community: If you believe this issue is still relevant, please provide a comment or a thumbs up. Your input will bring attention back to this issue and keep it open.
+          To the issue author: Thank you for your contribution. If you're still experiencing this problem or have more information to provide, please comment with updates to re-engage the community.
+          If no further activity occurs within the next 7 days, this issue will be automatically closed to help keep our repository tidy.
+          Thank you for your understanding and contributions!"
+
+        stale-pr-message: "🔄 **This pull request has been marked as stale due to a lack of activity in the past 60 days.**
+            We appreciate your contributions and understand that work on PRs can sometimes be delayed. To keep this PR open, please respond to this message or push new commits to show that you are still working on it.
+            If you believe this PR is still relevant and beneficial to the project, a comment expressing your continued interest or any updates you have would be greatly appreciated.
+            Without further activity, this PR will be closed in 7 days to help maintain the project's health and workflow.
+            Thank you for your contribution!"
+        
+        stale-issue-label: 'no-issue-activity'
+        stale-pr-label: 'no-pr-activity'
