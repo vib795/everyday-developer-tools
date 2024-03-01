@@ -284,6 +284,7 @@ def counter():
 @app.route('/time-converter', methods=['GET', 'POST'])
 def time_converter():
     converted_time = ""
+    output = {}
     if request.method == 'POST':
         time_input = request.form.get('time_input', '')
 
@@ -330,11 +331,35 @@ def time_converter():
 
             if not converted_time:
                 raise ValueError("Input time format not recognized.")
+            
+            if input_time:
+                et_time = input_time.astimezone(pytz.timezone('America/New_York'))
+                output['Local Time'] = et_time.strftime('%m/%d/%Y, %I:%M:%S %p')
+                output['UTC Time'] = et_time.astimezone(pytz.utc).strftime('%a, %d %b %Y %H:%M:%S GMT')
+                # output['Relative Time'] = "Use JavaScript for live relative time"
+                output['UNIX Time'] = str(int(et_time.timestamp()))
+                output['Day of week'] = et_time.strftime('%A')
+                output['Day of year'] = str(et_time.timetuple().tm_yday)
+                output['Is leap year?'] = "Yes" if et_time.year % 4 == 0 and (et_time.year % 100 != 0 or et_time.year % 400 == 0) else "No"
+                output['Other date formats (local time)'] = [
+                    et_time.strftime('%Y-%m-%d'),
+                    et_time.strftime('%m-%d-%Y'),
+                    et_time.strftime('%Y/%m/%d'),
+                    et_time.strftime('%m/%d/%Y'),
+                    et_time.strftime('%a %B %d, %Y'),
+                    et_time.strftime('%A %B %d, %Y'),
+                    et_time.strftime('%a %b %d, %Y'),
+                    et_time.strftime('%A %b %d, %Y'),
+                ]
+                # Append original format
+                output['ISO Format'] = input_time.strftime('%Y-%m-%dT%H:%M:%S') + 'Z'
+
+
 
         except Exception as e:
             converted_time = f"Error converting time: {str(e)}"
 
-    return render_template('time_converter.html', converted_time=converted_time)
+    return render_template('time_converter.html', output=output)
 
 
 if __name__ == '__main__':
