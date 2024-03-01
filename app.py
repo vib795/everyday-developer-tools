@@ -11,6 +11,8 @@ import json
 import logging 
 import base64
 from helper import generate_basic_pattern, generate_json_schema
+from datetime import datetime
+import pytz
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -278,6 +280,62 @@ def counter():
             output = custom_delimiter.join(text_input.split(custom_delimiter))
 
     return render_template('counter.html', text_input=text_input, count=count, output=output, filter_option=filter_option, custom_delimiter=custom_delimiter)
+
+@app.route('/time-converter', methods=['GET', 'POST'])
+def time_converter():
+    converted_time = ""
+    if request.method == 'POST':
+        time_input = request.form.get('time_input', '')
+
+        try:
+            # Initialize input_time as None for other time formats handling
+            input_time = None
+
+            # Specific handling for PostgreSQL timestamp format
+            if " " in time_input and "-" in time_input and ":" in time_input:
+                # Parse PostgreSQL timestamp
+                input_time = datetime.strptime(time_input, '%Y-%m-%d %H:%M:%S')
+                # Localize to Eastern Time considering DST
+                eastern = pytz.timezone('America/New_York')
+                input_time = eastern.localize(input_time, is_dst=None)
+                # Format the output, appending 'Z' to denote Eastern Time handling
+                converted_time = input_time.strftime('%Y-%m-%dT%H:%M:%S') + 'Z'
+            
+            # Handling for ISO 8601 format
+            if input_time is None:
+                try:
+                    input_time = datetime.fromisoformat(time_input)
+                    # Convert to Eastern Time
+                    input_time = input_time.astimezone(pytz.timezone('America/New_York'))
+                    converted_time = input_time.strftime('%Y-%m-%dT%H:%M:%S') + 'Z'
+                except ValueError:
+                    pass  # If parsing fails, proceed to next format
+
+            # Handling for Epoch time (seconds then milliseconds)
+            if input_time is None:
+                try:
+                    # First, try assuming seconds
+                    input_time = datetime.fromtimestamp(float(time_input), tz=pytz.utc)
+                except ValueError:
+                    try:
+                        # Then try milliseconds
+                        input_time = datetime.fromtimestamp(float(time_input) / 1000, tz=pytz.utc)
+                    except ValueError:
+                        pass
+
+                if input_time:
+                    # Convert to Eastern Time
+                    input_time = input_time.astimezone(pytz.timezone('America/New_York'))
+                    converted_time = input_time.strftime('%Y-%m-%dT%H:%M:%S') + 'Z'
+
+            if not converted_time:
+                raise ValueError("Input time format not recognized.")
+
+        except Exception as e:
+            converted_time = f"Error converting time: {str(e)}"
+
+    return render_template('time_converter.html', converted_time=converted_time)
+
 
 if __name__ == '__main__':
     app.run()

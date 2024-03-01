@@ -1,0 +1,95 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Time Converter</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    {% include 'navbar.html' %}
+    <div class="container">
+        <h2>Time Converter</h2>
+        <form method="POST">
+            <input type="text" name="time_input" placeholder="Enter time (ISO, EPOCH, Postgres)" required>
+            <button type="submit">Convert</button>
+        </form>
+        {% if converted_time %}
+            <div class="result">Converted Time: <span class="highlight">{{ converted_time }}</span></div>
+        {% endif %}
+    </div>
+</body>
+</html> -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Time Converter</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    {% include 'navbar.html' %}
+    <div class="container">
+        <h2>Time Converter</h2>
+        <form method="POST">
+            <select id="timeFormat" onchange="updatePlaceholder()">
+                <option value="ISO8601">ISO 8601</option>
+                <option value="SecondsSinceEpoch">Seconds Since Epoch</option>
+                <option value="MillisecondsSinceEpoch">Milliseconds Since Epoch</option>
+                <option value="PostgresTimestamp">Postgres Timestamp</option>
+            </select>
+            <input type="text" name="time_input" id="time_input" placeholder="Enter time" required>
+            <button type="button" onclick="setCurrentTime()">Now</button>
+            <button type="submit">Convert</button>
+        </form>
+        {% if converted_time %}
+            <div class="result">Converted Time: <span class="highlight">{{ converted_time }}</span></div>
+        {% endif %}
+    </div>
+    <script>
+        function setCurrentTime() {
+            const format = document.getElementById('timeFormat').value;
+            let now = new Date();
+            let formattedTime;
+            
+            switch(format) {
+                case 'ISO8601':
+                    formattedTime = now.toISOString();
+                    break;
+                case 'SecondsSinceEpoch':
+                    formattedTime = Math.floor(now.getTime() / 1000).toString();
+                    break;
+                case 'MillisecondsSinceEpoch':
+                    formattedTime = now.getTime().toString();
+                    break;
+                case 'PostgresTimestamp':
+                    formattedTime = now.toISOString().slice(0, 19).replace('T', ' ');
+                    break;
+            }
+            
+            document.getElementById('time_input').value = formattedTime;
+        }
+
+        function updatePlaceholder() {
+            const format = document.getElementById('timeFormat').value;
+            const inputField = document.getElementById('time_input');
+            switch(format) {
+                case 'ISO8601':
+                    inputField.placeholder = "Enter time in ISO 8601 format";
+                    break;
+                case 'SecondsSinceEpoch':
+                    inputField.placeholder = "Enter time in seconds since epoch";
+                    break;
+                case 'MillisecondsSinceEpoch':
+                    inputField.placeholder = "Enter time in milliseconds since epoch";
+                    break;
+                case 'PostgresTimestamp':
+                    inputField.placeholder = "Enter time in PostgreSQL timestamp format (YYYY-MM-DD HH:MM:SS)";
+                    break;
+            }
+        }
+
+        // Update placeholder text on page load
+        document.addEventListener('DOMContentLoaded', updatePlaceholder);
+    </script>
+</body>
+</html>
