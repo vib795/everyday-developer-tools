@@ -119,6 +119,27 @@ Update docker-compose.yml to mount the certificates directory into the Nginx con
 - **Nginx:** Acts as a reverse proxy, handling client requests efficiently before passing them to Gunicorn. It's also responsible for SSL/TLS termination, providing HTTPS support.
 - **Gunicorn:** A WSGI HTTP Server for serving Flask applications in production, offering a robust option to handle concurrent requests.
 
+### Redis for rate limiting
+- We are using redis to rate limit the site to avoid DDoS or ReDoS attacks.
+- This is installed as part of the docker image but you can do it manually as well, if you are running the flask app manually.
+    - This installs redis on an ubuntu server and checks for its status.   
+        ```bash 
+        sudo apt-get update && sudo apt-get install redis-server -y && sudo systemctl status redis
+        ```
+    
+    - Check status of redis server:
+        ```bash
+        redis-cli ping
+        ```
+        You should receive `PONG` back.
+    - Install Redis python library
+        ```bash
+        pip install redis
+        ```
+    
+This should set the app to be configured with redis and ready to use. Now you can run `flask app.py` and everything should work fine without docker intervention.
+
+
 ## Contributing
 
 Contributions are welcome! If you would like to contribute to this project, please follow these steps:
