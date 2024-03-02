@@ -10,3 +10,8 @@ services:
       - .:/app
     environment:
       FLASK_ENV: development
+    depends_on:
+      - redis
+
+  redis:
+    image: redis:latest

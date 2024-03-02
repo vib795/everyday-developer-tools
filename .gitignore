@@ -160,3 +160,4 @@ cython_debug/
 #.idea/
 certs/nginx-selfsigned.key
 .DS_Store
+.vscode

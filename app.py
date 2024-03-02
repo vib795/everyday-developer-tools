@@ -18,10 +18,12 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
-limiter = Limiter(key_func=get_remote_address, default_limits=["15 per minute"])
+limiter = Limiter(key_func=get_remote_address, 
+                  storage_uri="redis://redis:6379", 
+                  default_limits=["15 per minute"])
 limiter.init_app(app)
 
-# Route for the home page, redirects to the Diff Viewer
+# Route for the home page
 @app.route('/')
 @app.route('/home')
 def home():
@@ -47,6 +49,7 @@ def diff_viewer():
     except Exception as e:
         logger.error(f"An error occurred. {(str(e))}")
 
+# JSON schema generator
 @app.route('/json-schema-generator', methods=['GET', 'POST'])
 def json_schema_generator():
     schema_result = None
@@ -73,6 +76,7 @@ def json_schema_generator():
 
     return render_template('json_schema_generator.html', json_input=json_input, conditionals=conditionals, schema_result=schema_result, schema_for_copying=schema_for_copying, error_message=error_message)
 
+# JSON Validator
 @app.route('/json-validator', methods=['GET', 'POST'])
 def json_validator():
     try:
@@ -118,6 +122,7 @@ def json_validator():
     except Exception as e:
         logger.error(f"An error occurred. {str(e)}")
 
+# RegEx Checker
 @app.route('/regex-checker', methods=['GET', 'POST'])
 @limiter.limit("15 per minute")  # Rate limiting
 def regex_checker():
@@ -174,6 +179,7 @@ def regex_generator():
     except Exception as e:
         logger.error(f"An error occurred. {str(e)}")
 
+# JSON COnverter
 @app.route('/json-converter', methods=['GET', 'POST'])
 def json_converter():
     try:
@@ -229,6 +235,7 @@ def json_converter():
     except Exception as e:
         logger.error(f"An error occurred. {str(e)}")
 
+# Base64 Encoder Decoder
 @app.route('/base64', methods=['GET', 'POST'])
 def base64_encode_decode():
     try:
@@ -255,6 +262,7 @@ def base64_encode_decode():
     except Exception as e:
         logger.error(f"An error occurred. {str(e)}")
 
+# Word/Character counter
 @app.route('/counter', methods=['GET', 'POST'])
 def counter():
     text_input = ''
@@ -281,6 +289,7 @@ def counter():
 
     return render_template('counter.html', text_input=text_input, count=count, output=output, filter_option=filter_option, custom_delimiter=custom_delimiter)
 
+# Time Converter
 @app.route('/time-converter', methods=['GET', 'POST'])
 def time_converter():
     converted_time = ""
@@ -360,7 +369,6 @@ def time_converter():
             converted_time = f"Error converting time: {str(e)}"
 
     return render_template('time_converter.html', output=output)
-
 
 if __name__ == '__main__':
     app.run()
