@@ -18,9 +18,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
-limiter = Limiter(key_func=get_remote_address, 
-                  storage_uri="redis://redis:6379", 
-                  default_limits=["15 per minute"])
+limiter = Limiter(key_func=get_remote_address, default_limits=["15 per minute"])
 limiter.init_app(app)
 
 # Route for the home page
