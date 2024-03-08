@@ -24,7 +24,7 @@
             <div class="result">
                 {% for key, value in output.items() %}
                     <p><strong>{{ key }}:</strong> 
-                        {% if key == 'Other date formats (local time)' %}
+                        {% if key == 'Other date formats' %}<br/>
                             {% for format in value %}
                                 {{ format }}<br>
                             {% endfor %}

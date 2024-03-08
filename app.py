@@ -349,7 +349,7 @@ def time_converter():
                 output['Day of week'] = et_time.strftime('%A')
                 output['Day of year'] = str(et_time.timetuple().tm_yday)
                 output['Is leap year?'] = "Yes" if et_time.year % 4 == 0 and (et_time.year % 100 != 0 or et_time.year % 400 == 0) else "No"
-                output['Other date formats (local time)'] = [
+                output['Other date formats'] = [
                     et_time.strftime('%Y-%m-%d'),
                     et_time.strftime('%m-%d-%Y'),
                     et_time.strftime('%Y/%m/%d'),
