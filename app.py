@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, jsonify
+from flask import Flask, render_template, request
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 import concurrent.futures
@@ -27,7 +27,6 @@ limiter.init_app(app)
 @app.route('/')
 @app.route('/home')
 def home():
-    # return redirect(url_for('diff_viewer'))
     return render_template('index.html')
 
 # Diff Viewer Page
@@ -343,7 +342,7 @@ def time_converter():
             
             if input_time:
                 et_time = input_time.astimezone(pytz.timezone('America/New_York'))
-                output['Local Time'] = et_time.strftime('%m/%d/%Y, %I:%M:%S %p')
+                # output['Local Time'] = et_time.strftime('%m/%d/%Y, %I:%M:%S %p')
                 output['UTC Time'] = et_time.astimezone(pytz.utc).strftime('%a, %d %b %Y %H:%M:%S GMT')
                 # output['Relative Time'] = "Use JavaScript for live relative time"
                 output['UNIX Time'] = str(int(et_time.timestamp()))
@@ -361,7 +360,7 @@ def time_converter():
                     et_time.strftime('%A %b %d, %Y'),
                 ]
                 # Append original format
-                output['ISO Format'] = input_time.strftime('%Y-%m-%dT%H:%M:%S') + 'Z'
+                output['ISO Format - EST'] = input_time.strftime('%Y-%m-%dT%H:%M:%S') + 'Z'
 
 
 
