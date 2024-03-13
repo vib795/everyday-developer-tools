@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JSON Parser</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script>
+        function copyToClipboard() {
+            var outputText = document.getElementById("hiddenOutput");
+            outputText.style.display = "block";
+            outputText.select();
+            document.execCommand("copy");
+            outputText.style.display = "none";
+            alert("Beautified JSON copied to clipboard!");
+        }
+    </script>
+</head>
+<body>
+    {% include 'navbar.html' %}
+    <div class="container">
+        <h2>JSON Parser</h2>
+        <form method="POST">
+            <textarea name="input_json" class="large-textarea" placeholder="Enter your JSON here..." required>{{ input_json }}</textarea>
+            <button type="submit">Beautify JSON</button>
+        </form>
+        {% if error %}
+            <div class="error-details">{{ error }}</div>
+        {% elif output_json %}
+            <div class="result">
+                <h3>Beautified JSON:</h3>
+                <button type="button" onclick="copyToClipboard()">Copy to Clipboard</button>
+                <pre>{{ output_json }}</pre>
+                <textarea id="hiddenOutput" style="display: none;">{{ output_json }}</textarea>
+            </div>
+        {% endif %}
+    </div>
+</body>
+</html>

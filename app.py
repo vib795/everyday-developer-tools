@@ -370,5 +370,29 @@ def time_converter():
 
     return render_template('time_converter.html', output=output)
 
+# JSON Parser - beautify JSON
+@app.route('/json-parser', methods=['GET', 'POST'])
+def json_parser():
+    input_json = ""
+    output_json = ""
+    error = None
+
+    if request.method == 'POST':
+        input_json = request.form.get('input_json', '')
+
+        try:
+            # Parse the input JSON to ensure it's valid
+            parsed_json = json.loads(input_json)
+            # Beautify the JSON
+            output_json = json.dumps(parsed_json, indent=4)
+        except json.JSONDecodeError as e:
+            error = f"Invalid JSON: {e.msg} at line {e.lineno}, column {e.colno}"
+
+    return render_template('json_parser.html', 
+                           input_json=input_json, 
+                           output_json=output_json, 
+                           error=error)
+
+
 if __name__ == '__main__':
     app.run()
