@@ -10,8 +10,13 @@
         </div>
     </div>
     <a href="{{ url_for('diff_viewer') }}">Diff Viewer</a>
-    <a href="{{ url_for('regex_checker') }}">Regex Checker</a>
-    <a href="{{ url_for('regex_generator') }}">Regex Generator</a>
+    <div class="dropdown">
+        <button class="dropbtn">RegEx Tools</button>
+        <div class="dropdown-content">
+            <a href="{{ url_for('regex_checker') }}">Regex Checker</a>
+            <a href="{{ url_for('regex_generator') }}">Regex Generator</a> 
+        </div>
+    </div>
     <a href="{{ url_for('base64_encode_decode') }}">Base64 Encoder Decoder</a>
     <a href="{{ url_for('counter') }}">Character/Word Counter</a>
     <a href="{{ url_for('time_converter') }}">Time Converter</a>
