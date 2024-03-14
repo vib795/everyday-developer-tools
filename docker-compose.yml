@@ -7,9 +7,9 @@ services:
       dockerfile: Dockerfile
     volumes:
       - .:/app
-    environment:
-      - FLASK_ENV=development
-      - FLASK_APP=app.py
+    # environment:
+    #   - FLASK_ENV=development
+    #   - FLASK_APP=app.py
 
   redis:
     image: redis:latest
