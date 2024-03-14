@@ -170,7 +170,7 @@ Contributions are welcome! If you would like to contribute to this project, plea
 5. Submit a pull request.
 
 ## Live demo
-A live demo of the application can be viewed [here](https://utkarshsingh0609.pythonanywhere.com/)
+A live demo of the application can be viewed <a href="https://utkarshsingh0609.pythonanywhere.com/" target="_blank">here</a>
 
 ## License
 
