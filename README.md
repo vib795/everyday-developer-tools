@@ -5,14 +5,17 @@ This is a Flask web application that provides various developer tools including 
 ## Features
 
 - **Diff Viewer:** Compare two blocks of text and visualize the differences.
-- **JSON Validator:** Validate JSON format and optionally validate against a JSON schema.
-- **JSON Schema generator:** Generates a JSON schema based on JSON input.
-- **JSON-String-JSON converter:** Converts JSON object to string and vice-versa.
-- **Regex Checker:** Validate strings against regular expressions.
-- **Regex Generator:** Generate regular expressions for common patterns.
+- **JSON TOOLS:**
+    - **JSON Validator:** Validate JSON format and optionally validate against a JSON schema.
+    - **JSON Schema generator:** Generates a JSON schema based on JSON input.
+    - **JSON-String-JSON converter:** Converts JSON object to string and vice-versa.
+    - **JSON Parser:** Beaufity and format JSON.
+- **RegEx TOOLS:**
+    - **Regex Checker:** Validate strings against regular expressions.
+    - **Regex Generator:** Generate regular expressions for common patterns.
 - **Base64 Encoder Decoder:** Convert text to/from using base64 encoding/decoding.
 - **Character/Word Counter:** Count number of characters/words/lines in an input text. Also, works on text with custom delimiters.
-- **UNIX Time Converter:** Convert timestamps from ISO/EPOCH to all versions you can think of and more.
+- **Time Converter:** Convert timestamps from ISO/EPOCH to all versions you can think of and more.
 
 ## Installation
 
