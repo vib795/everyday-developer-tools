@@ -3,7 +3,7 @@ body {
     margin: 0;
     padding: 0;
     background-color: #f4f4f4;
-    padding-top: 60px; /* Adjust for fixed navbar */
+    padding-top: 60px;
 }
 
 .navbar {
@@ -12,8 +12,8 @@ body {
     left: 0;
     width: 100%;
     background-color: #333;
-    z-index: 1000;
-    overflow: hidden;
+    z-index: 9999;
+    overflow: visible;
 }
 
 .navbar a {
@@ -25,7 +25,7 @@ body {
     text-decoration: none;
 }
 
-.navbar a:hover {
+.navbar a:hover, .dropdown:hover .dropbtn {
     background-color: #ddd;
     color: black;
 }
@@ -33,7 +33,7 @@ body {
 .container {
     padding: 20px;
     margin: auto;
-    max-width: 1200px; /* Optimal reading width */
+    max-width: 1200px;
 }
 
 h1, h2 {
@@ -41,15 +41,15 @@ h1, h2 {
 }
 
 input[type="text"], textarea {
-    width: calc(100% - 30px); /* Ensure consistent horizontal padding */
+    width: calc(100% - 30px); 
     padding: 10px;
-    margin-bottom: 15px; /* Increase bottom margin for spacing between elements */
+    margin-bottom: 15px; 
     border: 1px solid #ccc;
-    border-radius: 5px; /* Rounded corners for a modern look */
+    border-radius: 5px; 
     box-sizing: border-box;
-    resize: vertical; /* Allow users to resize textarea vertically */
-    font-size: 16px; /* Increase font size for better readability */
-    line-height: 1.5; /* Improve line spacing */
+    resize: vertical; 
+    font-size: 16px; 
+    line-height: 1.5;
 }
 
 input[type="text"][readonly], textarea[readonly] {
@@ -70,7 +70,7 @@ button {
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    display: inline-block; /* Align button properly with form fields */
+    display: inline-block; 
 }
 
 button:hover {
@@ -83,13 +83,13 @@ button:hover {
     padding: 15px;
     margin-top: 20px;
     border-radius: 5px;
-    overflow-x: auto; /* Enable horizontal scrolling for overflow content */
-    word-wrap: break-word; /* Break long words to prevent horizontal overflow */
+    overflow-x: auto; 
+    word-wrap: break-word; 
 }
 
 .result * {
-    max-width: 100%; /* Ensure children of .result do not exceed its width */
-    box-sizing: border-box; /* Include padding and border in child elements' size */
+    max-width: 100%; 
+    box-sizing: border-box;
 }
 
 .input-display {
@@ -111,9 +111,65 @@ button:hover {
     margin-top: 20px;
 }
 
-/* Specific enhancements for larger textareas in JSON Validator and Diff Viewer */
 textarea.large-textarea {
-    min-height: 250px; /* Increase minimum height for larger content visibility */
+    min-height: 250px;
     background-color: #fff;
-    box-shadow: inset 0 1px 3px rgba(0,0,0,0.1); /* Subtle inner shadow for depth */
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.dropdown {
+    float: left;
+    overflow: hidden;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    max-width: 13%;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 5001;
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+.dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    text-align: left;
+    background-color: #ddd;
+    width: 100%;
+}
+
+.dropbtn {
+    background-color: #333;
+    color: white;
+    padding: 14px 20px;
+    font-family: Arial, sans-serif;
+    text-align: center;
+    text-decoration: none;
+    border: none;
+    border-radius: none;
+    cursor: pointer;
+    display: inline-block;
+}
+
+.dropbtn:hover {
+    text-decoration: none;
+    border-radius: none;
+}
+
+.dropdown-content::after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+.dropdown-content a:hover {
+    background-color: #d0d0d0;
+    color: #333; 
 }
