@@ -1,10 +1,15 @@
 <div class="navbar">
     <a href="{{ url_for('home') }}">Home</a>
+    <div class="dropdown">
+        <button class="dropbtn">JSON Tools</button>
+        <div class="dropdown-content">
+            <a href="{{ url_for('json_validator') }}">JSON Validator</a>
+            <a href="{{ url_for('json_schema_generator') }}">JSON Schema Generator</a>
+            <a href="{{ url_for('json_converter') }}">JSON-String-JSON Converter</a>
+            <a href="{{ url_for('json_parser') }}">JSON Parser</a>
+        </div>
+    </div>
     <a href="{{ url_for('diff_viewer') }}">Diff Viewer</a>
-    <a href="{{ url_for('json_validator') }}">JSON Validator</a>
-    <a href="{{ url_for('json_schema_generator') }}">JSON Schema Generator</a>
-    <a href="{{ url_for('json_converter') }}">JSON-String-JSON Converter</a>
-    <a href="{{ url_for('json_parser') }}">JSON Parser</a>
     <a href="{{ url_for('regex_checker') }}">Regex Checker</a>
     <a href="{{ url_for('regex_generator') }}">Regex Generator</a>
     <a href="{{ url_for('base64_encode_decode') }}">Base64 Encoder Decoder</a>
