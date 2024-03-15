@@ -217,7 +217,7 @@ def json_converter():
 
                     # Convert the JSON object back to a string with special escaping
                     json_string = json.dumps(json_object)
-                    escaped_json_string = json_string.replace('"', '\\"')
+                    escaped_json_string = json_string.replace('"', '\\\\"')
 
                     # Wrap the escaped string in additional quotes
                     output_data = f'"{escaped_json_string}"'
