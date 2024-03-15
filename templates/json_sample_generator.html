@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JSON Sample Data Generator</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        .container { 
+            width: 95%; 
+            max-width: 100%; 
+            margin: auto; 
+        }
+        textarea { 
+            width: 100%; 
+            margin-bottom: 20px; 
+            min-height: 150px;
+        }
+        .error-message {
+            color: #D8000C;
+            background-color: #FFD2D2;
+            margin: 20px 0;
+            padding: 10px;
+            border-radius: 5px;
+        }
+    </style>
+    <script>
+        function copyToClipboard() {
+            var sampleText = document.getElementById("hiddenSample");
+            navigator.clipboard.writeText(sampleText.value).then(function() {
+                alert("Sample JSON copied to clipboard!");
+            }, function(err) {
+                alert("Error in copying text: ", err);
+            });
+        }
+    </script>
+</head>
+<body>
+    {% include 'navbar.html' %}
+    <div class="container">
+        <h2>JSON Sample Data Generator</h2>
+        <form method="POST">
+            <textarea name="schema_input" class="large-textarea" placeholder="Enter JSON Schema here..." required>{{ schema_input }}</textarea>
+            <button type="submit">Generate Sample Data</button>
+        </form>
+        {% if error_message %}
+            <div class="error-message">
+                {{ error_message }}
+            </div>
+        {% endif %}
+        {% if sample_data %}
+            <div class="sample-result">
+                <h3>Generated Sample JSON</h3>
+                <button onclick="copyToClipboard()">Copy Sample JSON</button>
+                <pre>{{ sample_data }}</pre>
+                <textarea id="hiddenSample" style="display: none;">{{ sample_data }}</textarea>
+            </div>
+        {% endif %}
+    </div>
+</body>
+</html>
