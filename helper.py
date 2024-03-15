@@ -136,6 +136,11 @@ def generate_sample_data(schema):
             # Generates an array with a random length of 1 to 3 items
             return [generate_from_schema(item_schema) for _ in range(randint(1, 3))]
         elif schema["type"] == "string":
+            # Check for enum constraint
+            if "enum" in schema:
+                # Randomly choose one of the options from the enum list
+                return choice(schema["enum"])
+            # Handle other formats like 'date-time', 'email', 'uuid', etc.
             format = schema.get("format", "")
             if format == "date-time":
                 return datetime.now().isoformat()
@@ -146,7 +151,25 @@ def generate_sample_data(schema):
             else:
                 return "example string"
         elif schema["type"] == "number":
-            return 123.45
+            # Check if there's a minimum or maximum specified
+            min_value = schema.get("minimum", float('-inf'))
+            max_value = schema.get("maximum", float('inf'))
+            # Generate a random number within the range
+            # This is a simple case where we assume the range is not too narrow
+            # For more precise control over the range, you might use a library like `numpy`
+            if min_value == float('-inf') and max_value == float('inf'):
+                # No bounds defined
+                return 123.45
+            elif min_value == float('-inf'):
+                # Only maximum is defined
+                return min(max_value - 1, 123.45)
+            elif max_value == float('inf'):
+                # Only minimum is defined
+                return max(min_value + 1, 123.45)
+            else:
+                # Both minimum and maximum are defined
+                return (min_value + max_value) / 2  # Or any other logic to pick a number within the range
+            # return 123.45
         elif schema["type"] == "integer":
             return 123
         elif schema["type"] == "boolean":
