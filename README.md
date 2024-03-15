@@ -8,6 +8,7 @@ This is a Flask web application that provides various developer tools including 
 - **JSON TOOLS:**
     - **JSON Validator:** Validate JSON format and optionally validate against a JSON schema.
     - **JSON Schema generator:** Generates a JSON schema based on JSON input.
+    - **JSON sample data generator:** Generates sample data for a provided JSON schema.
     - **JSON-String-JSON converter:** Converts JSON object to string and vice-versa.
     - **JSON Parser:** Beaufity and format JSON.
 - **RegEx TOOLS:**
