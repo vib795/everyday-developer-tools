@@ -2,6 +2,9 @@ import json
 from genson import SchemaBuilder
 import logging
 import re
+import uuid
+from random import choice, randint
+from datetime import datetime
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -89,3 +92,93 @@ def generate_basic_pattern(text_input):
         return regex_pattern
     except Exception as e:
         logger.error(f"An error occurred. {str(e)}")
+
+def generate_sample_data(schema):
+    """
+    Generates sample data for more complex JSON schemas, including handling
+    conditional properties, compositions (allOf, anyOf, oneOf), specific data formats,
+    and generating UUIDs for properties that specify a UUID format.
+    
+    Args:
+        schema (dict): A JSON schema.
+    
+    Returns:
+        dict: Sample data adhering to the given schema.
+    """
+    def generate_from_schema(schema):
+        if "type" not in schema:
+            return {}
+
+        if schema["type"] == "object":
+            obj = {}
+            # Handle allOf, anyOf, oneOf by merging their properties or choosing one respectively
+            for key in ["allOf", "anyOf", "oneOf"]:
+                if key in schema:
+                    if key == "anyOf" or key == "oneOf":
+                        chosen_schema = choice(schema[key])
+                        obj.update(generate_from_schema(chosen_schema))
+                    elif key == "allOf":
+                        for subschema in schema[key]:
+                            obj.update(generate_from_schema(subschema))
+            for prop, prop_schema in schema.get("properties", {}).items():
+                # Conditional handling (simple example)
+                if "if" in schema and prop in schema["if"].get("properties", {}):
+                    if_choice = choice([True, False])
+                    if if_choice:
+                        obj.update(generate_from_schema(schema["then"]))
+                    else:
+                        obj.update(generate_from_schema(schema.get("else", {})))
+                else:
+                    obj[prop] = generate_from_schema(prop_schema)
+            return obj
+        elif schema["type"] == "array":
+            item_schema = schema.get("items", {})
+            # Generates an array with a random length of 1 to 3 items
+            return [generate_from_schema(item_schema) for _ in range(randint(1, 3))]
+        elif schema["type"] == "string":
+            format = schema.get("format", "")
+            if format == "date-time":
+                return datetime.now().isoformat()
+            elif format == "email":
+                return "example@example.com"
+            elif format == "uuid":
+                return str(uuid.uuid4())
+            else:
+                return "example string"
+        elif schema["type"] == "number":
+            return 123.45
+        elif schema["type"] == "integer":
+            return 123
+        elif schema["type"] == "boolean":
+            return choice([True, False])
+        elif schema["type"] == "null":
+            return None
+        else:
+            return {}
+
+    return generate_from_schema(schema)
+
+# # Example usage
+# if __name__ == "__main__":
+#     example_schema = {
+#         "type": "object",
+#         "properties": {
+#             "userId": {"type": "string", "format": "uuid"},
+#             "name": {"type": "string"},
+#             "birthdate": {"type": "string", "format": "date-time"},
+#             "emails": {
+#                 "type": "array",
+#                 "items": {"type": "string", "format": "email"}
+#             },
+#             "address": {
+#                 "type": "object",
+#                 "properties": {
+#                     "street": {"type": "string"},
+#                     "city": {"type": "string"}
+#                 }
+#             }
+#         }
+#     }
+
+#     sample_data = generate_sample_data(example_schema)
+#     print(json.dumps(sample_data, indent=4))

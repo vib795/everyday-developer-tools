@@ -10,7 +10,7 @@ from jsonschema.exceptions import ValidationError  # For JSON validation
 import json
 import logging 
 import base64
-from helper import generate_basic_pattern, generate_json_schema
+from helper import generate_basic_pattern, generate_json_schema, generate_sample_data
 from datetime import datetime
 import pytz
 
@@ -393,6 +393,20 @@ def json_parser():
                            output_json=output_json, 
                            error=error)
 
+# Generate JSON from JSON schema
+@app.route('/json-sample-generator', methods=['GET', 'POST'])
+def json_sample_generator():
+    sample_data = None
+    schema_input = ""
+    if request.method == 'POST':
+        schema_input = request.form.get('schema_input', '').strip()
+        if schema_input:
+            try:
+                # Assume generate_sample_data is a function you've defined or imported
+                sample_data = json.dumps(generate_sample_data(json.loads(schema_input)), indent=4)
+            except Exception as e:
+                sample_data = f"Error generating sample data: {str(e)}"
+    return render_template('json_sample_generator.html', schema_input=schema_input, sample_data=sample_data or "")
 
 if __name__ == '__main__':
     app.run()
