@@ -402,7 +402,6 @@ def json_sample_generator():
         schema_input = request.form.get('schema_input', '').strip()
         if schema_input:
             try:
-                # Assume generate_sample_data is a function you've defined or imported
                 sample_data = json.dumps(generate_sample_data(json.loads(schema_input)), indent=4)
             except Exception as e:
                 sample_data = f"Error generating sample data: {str(e)}"

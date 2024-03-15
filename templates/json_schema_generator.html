@@ -14,7 +14,7 @@
         textarea { 
             width: 100%; 
             margin-bottom: 20px; 
-            min-height: 150px; /* Ensure adequate space for input */
+            min-height: 150px;
         }
         .error-message {
             color: #D8000C;
@@ -31,7 +31,6 @@
     <script>
         function copyToClipboard() {
             var schemaText = document.getElementById("hiddenSchema");
-            // Use the Clipboard API
             navigator.clipboard.writeText(schemaText.value).then(function() {
                 alert("Schema copied to clipboard!");
             }, function(err) {
@@ -46,7 +45,6 @@
         <h2>JSON Schema Generator</h2>
         <form method="POST">
             <textarea name="json_input" class="large-textarea" placeholder="Enter JSON here..." required>{{ json_input }}</textarea>
-            <!-- Made conditionals optional and updated placeholder for clarity -->
             <textarea name="conditionals" class="large-textarea" placeholder='Optional: Enter conditional logic here. Example: [{"path": "properties.restrictionUpdates.properties.property", "condition": {"oneOf": [{"required": ["subproperty1"]}, {"required": ["subproperty2"]}, {"required": ["subproperty3"]}, {"required": ["subproperty4"]}]} }]' >{{ conditionals }}</textarea>
             <div class="help-text">
                 Specify conditional logic such as <code>oneOf</code>, <code>anyOf</code> in a JSON format. For more information on formatting, please refer to our <a href="documentation-link">documentation</a>.

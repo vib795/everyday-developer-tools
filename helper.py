@@ -157,28 +157,3 @@ def generate_sample_data(schema):
             return {}
 
     return generate_from_schema(schema)
-
-# # Example usage
-# if __name__ == "__main__":
-#     example_schema = {
-#         "type": "object",
-#         "properties": {
-#             "userId": {"type": "string", "format": "uuid"},
-#             "name": {"type": "string"},
-#             "birthdate": {"type": "string", "format": "date-time"},
-#             "emails": {
-#                 "type": "array",
-#                 "items": {"type": "string", "format": "email"}
-#             },
-#             "address": {
-#                 "type": "object",
-#                 "properties": {
-#                     "street": {"type": "string"},
-#                     "city": {"type": "string"}
-#                 }
-#             }
-#         }
-#     }
-
-#     sample_data = generate_sample_data(example_schema)
-#     print(json.dumps(sample_data, indent=4))

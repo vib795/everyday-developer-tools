@@ -1,82 +1,3 @@
-<!-- <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JSON Validator</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <style>
-        /* Custom styles for diff output */
-        .diff-container { 
-            background-color: #f8f9fa; 
-            overflow-x: auto; 
-        }
-        table.diff { 
-            width: 100%; 
-            border-collapse: collapse; 
-            margin-bottom: 20px; 
-        }
-        .diff th, .diff td { 
-            text-align: left; 
-            border: 1px solid #ddd; 
-            padding: 8px; 
-        }
-        .diff th { 
-            background-color: #f0f0f0; 
-        }
-        .diff td { 
-            white-space: pre-wrap; 
-            font-family: monospace; 
-        }
-        .diff_add { 
-            background-color: #e6ffed; 
-        }
-        .diff_chg { 
-            background-color: #fff3cd; 
-        }
-        .diff_sub { 
-            background-color: #ffe8e6; 
-        }
-        /* Full width for diff table */
-        .container { 
-            width: 95%; 
-            max-width: 100%; 
-            margin: auto; 
-        }
-        textarea { 
-            width: 100%; 
-            margin-bottom: 20px; 
-        }
-    </style>
-</head>
-<body>
-    {% include 'navbar.html' %}
-    <div class="container">
-        <h2>JSON Validator</h2>
-        <form method="POST">
-            <textarea name="json_input" class="large-textarea" placeholder="Enter JSON here..." required>{{ json_input }}</textarea>
-            <textarea name="schema_input" class="large-textarea" placeholder="Enter JSON Schema here (optional)">{{ schema_input }}</textarea>
-            <button type="submit">Validate</button>
-        </form>
-        {% if validation_result %}
-            <div class="result">{{ validation_result }}</div>
-        {% endif %}
-        {% if error_details %}
-            <div class="error-details">{{ error_details }}</div>
-        {% endif %}
-        {% if formatted_json_with_lines %}
-            <div class="formatted-json">
-                <pre>{{ formatted_json_with_lines }}</pre>
-            </div>
-        {% elif original_json %}
-            <div class="original-json">
-                <pre>{{ original_json }}</pre>
-            </div>
-        {% endif %}
-    </div>
-</body>
-</html> -->
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -85,7 +6,6 @@
     <title>JSON Validator</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <style>
-        /* Custom styles for diff output */
         .diff-container { 
             background-color: #f8f9fa; 
             overflow-x: auto; 
