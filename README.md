@@ -40,7 +40,7 @@ This is a Flask web application that provides various developer tools including 
 
 ## Usage
 
-1. Run the Flask application:
+1. Run the Flask application using the branch flask-app:
 
     ```bash
     flask run
