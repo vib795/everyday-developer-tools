@@ -175,4 +175,4 @@ A live demo of the application can be viewed <a href="https://utkarshsingh0609.p
 
 ## License
 
-This project is licensed under the Custom Software License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
