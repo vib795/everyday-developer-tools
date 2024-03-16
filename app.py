@@ -1,6 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, jsonify
-from flask_limiter import Limiter
-from flask_limiter.util import get_remote_address
+from flask import Flask, render_template, request
 import concurrent.futures
 
 import difflib  # For Diff viewer
@@ -18,10 +16,6 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
-limiter = Limiter(key_func=get_remote_address, 
-                  storage_uri="redis://redis:6379", 
-                  default_limits=["15 per minute"])
-limiter.init_app(app)
 
 # Route for the home page
 @app.route('/')
@@ -124,7 +118,6 @@ def json_validator():
 
 # RegEx Checker
 @app.route('/regex-checker', methods=['GET', 'POST'])
-@limiter.limit("15 per minute")  # Rate limiting
 def regex_checker():
     match_result = None
     regex_pattern = ''
