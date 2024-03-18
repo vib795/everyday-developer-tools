@@ -162,3 +162,4 @@ certs/nginx-selfsigned.key
 .DS_Store
 .vscode
 dump.rdb
+Archive.zip

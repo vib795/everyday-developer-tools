@@ -395,6 +395,7 @@ def json_parser():
 
 # Generate JSON from JSON schema
 @app.route('/json-sample-generator', methods=['GET', 'POST'])
+@limiter.limit("15 per minute")  # Rate limiting
 def json_sample_generator():
     sample_data = None
     schema_input = ""
