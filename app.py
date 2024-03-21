@@ -408,5 +408,23 @@ def json_sample_generator():
                 sample_data = f"Error generating sample data: {str(e)}"
     return render_template('json_sample_generator.html', schema_input=schema_input, sample_data=sample_data or "")
 
+# CRON Expression generator
+@app.route('/schedule_cron', methods=['GET', 'POST'])
+def schedule_cron():
+    if request.method == 'POST':
+        # Process the form data and generate CRON expression
+        minute = request.form.get('minute')
+        hour = request.form.get('hour')
+        day_of_month = request.form.get('day_of_month')
+        month = request.form.get('month')
+        day_of_week = request.form.get('day_of_week')
+        
+        cron_expression = f"{minute} {hour} {day_of_month} {month} {day_of_week}"
+        # You can then save this expression, display it, or use it as needed
+        return f"CRON Expression: {cron_expression}"
+    else:
+        # Display the form
+        return render_template('cron_scheduler.html')
+
 if __name__ == '__main__':
     app.run()

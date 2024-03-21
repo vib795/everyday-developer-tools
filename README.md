@@ -17,6 +17,7 @@ This is a Flask web application that provides various developer tools including 
 - **Base64 Encoder Decoder:** Convert text to/from using base64 encoding/decoding.
 - **Character/Word Counter:** Count number of characters/words/lines in an input text. Also, works on text with custom delimiters.
 - **Time Converter:** Convert timestamps from ISO/EPOCH to all versions you can think of and more.
+- **CRON Expression Generator:** Create CRON schedule expressions by selecting specific times and frequencies for tasks to be executed by a computer system.
 
 ## Installation
 
