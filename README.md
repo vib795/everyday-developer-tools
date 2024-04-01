@@ -105,19 +105,9 @@ Update `nginx/nginx.conf` to include the SSL certificate and key, and configure 
     ```
 Update docker-compose.yml to mount the certificates directory into the Nginx container.
 
-3. **To pull from GHCR:**
-    ```bash
-    docker pull ghcr.io/vib795/utkarshsingh/developer-tools-dev:latest
-    ```
-
-4. **To pull from Docker hub (dev build):**
+3. **To pull from Docker hub (dev build):**
     ```bash
     docker pull utkarshsingh/developer-tools-dev:latest
-    ```
-
-5. **To pull from Docker hub (deployable build):**
-    ```bash
-    docker pull utkarshsingh/developer-tools:latest
     ```
 
 ### Why and How of Nginx and Gunicorn
