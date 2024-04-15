@@ -1,21 +1,18 @@
-from flask import Flask, render_template, request, redirect, url_for, jsonify
-from flask_limiter import Limiter
-from flask_limiter.util import get_remote_address
-import concurrent.futures
+from imports import *
 
-import difflib  # For Diff viewer
-import re  # For Regex checking
-from jsonschema import validate
-from jsonschema.exceptions import ValidationError  # For JSON validation
-import json
-import logging 
-import base64
-from helper import generate_basic_pattern, generate_json_schema, generate_sample_data
-from datetime import datetime
-import pytz
+log_dir = os.getenv("LOG_DIRECTORY", "/app/logs/")
+if not os.path.exists(log_dir):
+    os.makedirs(log_dir)
 
-logging.basicConfig(level=logging.INFO)
+log_file_path = os.path.join(log_dir, "application.log")
+logging.basicConfig(level=logging.INFO,
+                    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+                    handlers=[
+                        logging.FileHandler(log_file_path),
+                        logging.StreamHandler()
+                    ])
 logger = logging.getLogger(__name__)
+logger.info("Logging system initialized")
 
 app = Flask(__name__)
 limiter = Limiter(key_func=get_remote_address, 
@@ -28,6 +25,7 @@ limiter.init_app(app)
 @app.route('/home')
 def home():
     # return redirect(url_for('diff_viewer'))
+    logger.info(f"Home page loaded!!!")
     return render_template('index.html')
 
 # Diff Viewer Page
@@ -159,16 +157,16 @@ def regex_generator():
         if request.method == 'POST':
             text_input = request.form.get('text_input', '')
             # Email address pattern
-            if re.match(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$', text_input):
+            if re.match(r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$", text_input):
                 regex_pattern = "[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}"
             # Phone number pattern (simple example, adjust as needed)
-            elif re.match(r'^\+?1?\d{10,15}$', text_input):
+            elif re.match(r"^\+?1?\d{10,15}$", text_input):
                 regex_pattern = "\+?1?\d{10,15}"
             # Birthday pattern (in the format YYYY-MM-DD)
-            elif re.match(r'^\d{4}-\d{2}-\d{2}$', text_input):
+            elif re.match(r"^\d{4}-\d{2}-\d{2}$", text_input):
                 regex_pattern = "\d{4}-\d{2}-\d{2}"
             # SSN pattern (simple example, adjust as needed)
-            elif re.match(r'^\d{3}-\d{2}-\d{4}$', text_input):
+            elif re.match(r"^\d{3}-\d{2}-\d{4}$", text_input):
                 regex_pattern = "\d{3}-\d{2}-\d{4}"
             else:
                 regex_pattern = generate_basic_pattern(text_input)
@@ -421,7 +419,7 @@ def schedule_cron():
         
         cron_expression = f"{minute} {hour} {day_of_month} {month} {day_of_week}"
         # You can then save this expression, display it, or use it as needed
-        return f"CRON Expression: {cron_expression}"
+        return make_response(f"CRON Expression: {escape(cron_expression)}")
     else:
         # Display the form
         return render_template('cron_scheduler.html')

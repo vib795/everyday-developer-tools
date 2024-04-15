@@ -7,7 +7,6 @@ from random import choice, randint
 from datetime import datetime
 import exrex
 
-logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 def generate_json_schema(json_input, conditionals=None):
