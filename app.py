@@ -1,6 +1,6 @@
 from imports import *
 
-log_dir = os.getenv("LOG_DIRECTORY", "/app/logs/")
+log_dir = os.getenv("LOG_DIRECTORY", "logs/")
 if not os.path.exists(log_dir):
     os.makedirs(log_dir)
 
@@ -15,10 +15,10 @@ logger = logging.getLogger(__name__)
 logger.info("Logging system initialized")
 
 app = Flask(__name__)
-limiter = Limiter(key_func=get_remote_address, 
-                  storage_uri="redis://redis:6379", 
-                  default_limits=["15 per minute"])
-limiter.init_app(app)
+# limiter = Limiter(key_func=get_remote_address, 
+#                   storage_uri="redis://redis:6379", 
+#                   default_limits=["15 per minute"])
+# limiter.init_app(app)
 
 # Route for the home page
 @app.route('/')
@@ -122,7 +122,7 @@ def json_validator():
 
 # RegEx Checker
 @app.route('/regex-checker', methods=['GET', 'POST'])
-@limiter.limit("15 per minute")  # Rate limiting
+# @limiter.limit("15 per minute")  # Rate limiting
 def regex_checker():
     match_result = None
     regex_pattern = ''
@@ -393,7 +393,7 @@ def json_parser():
 
 # Generate JSON from JSON schema
 @app.route('/json-sample-generator', methods=['GET', 'POST'])
-@limiter.limit("15 per minute")  # Rate limiting
+# @limiter.limit("15 per minute")  # Rate limiting
 def json_sample_generator():
     sample_data = None
     schema_input = ""
