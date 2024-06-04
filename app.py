@@ -424,5 +424,31 @@ def schedule_cron():
         # Display the form
         return render_template('cron_scheduler.html')
 
+@app.route('/yaml-to-json')
+def yaml_to_json_page():
+    return render_template('yaml_to_json.html')
+
+@app.route('/generate-json', methods=['POST'])
+def generate_json():
+    yaml_data = request.form['yaml_data']
+    try:
+        data = yaml.safe_load(yaml_data)
+        if not data:
+            return jsonify({"error": "Invalid YAML input"}), 400
+        
+        api_endpoints = list(data.keys())
+        requested_endpoint = request.form.get('endpoint', '').strip().lower()
+        
+        if requested_endpoint:
+            for endpoint in api_endpoints:
+                if endpoint.lower() == requested_endpoint:
+                    return jsonify({endpoint: data[endpoint]})
+            return jsonify({"error": f"Endpoint '{requested_endpoint}' not found"}), 404
+        else:
+            return jsonify(data)
+    except yaml.YAMLError as e:
+        return jsonify({"error": "Failed to parse YAML", "details": str(e)}), 400
+
+
 if __name__ == '__main__':
     app.run()
