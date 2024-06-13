@@ -7,7 +7,7 @@ exrex==0.11.0
 Flask==3.0.2
 Flask-Limiter==3.5.1
 genson==1.2.2
-gunicorn==21.2.0
+gunicorn==22.0.0
 importlib_resources==6.1.2
 iniconfig==2.0.0
 itsdangerous==2.1.2
