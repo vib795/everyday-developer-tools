@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Text Statistics</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    {% include 'navbar.html' %}
+    <div class="container">
+        <h2>Text Statistics</h2>
+        <p>Produce statistics for text passages including values for the number of words, characters, sentences, and lines.</p>
+        <form method="post" class="form-inline">
+            <label for="text">Text:</label>
+            <textarea id="text" name="text" class="form-control large-textarea">{{ original_text }}</textarea>
+            <button type="submit" class="btn">Generate Statistics</button>
+        </form>
+        {% if stats %}
+            <h3>Text Statistics:</h3>
+            <div class="result">
+                <p>Length: {{ stats.num_chars }} characters</p>
+                <p>Length without white-space: {{ stats.num_chars_no_space }} characters</p>
+                <p>Lines: {{ stats.num_lines }}</p>
+                <p>Words: {{ stats.num_words }}</p>
+                <p>Sentences: {{ stats.num_sentences }}</p>
+                <p>Unique words: {{ stats.num_unique_words }}</p>
+                <p>Unique words(%): {{ stats.percent_unique_words }}%</p>
+                <p>Length of shortest word: {{ stats.length_shortest_word }} characters</p>
+                <p>Length of longest word: {{ stats.length_longest_word }} characters</p>
+                <p>Avg. word length: {{ stats.avg_word_length }}</p>
+            </div>
+        {% endif %}
+    </div>
+</body>
+</html>

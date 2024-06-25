@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Random String Generator</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    {% include 'navbar.html' %}
+    <div class="container">
+        <h2>Random String Generator</h2>
+        <p>With this utility, you generate a 16-character output based on your input of numbers and upper and lower case letters. Random strings can be unique and are useful for creating security codes.</p>
+        <form method="post" class="form-inline">
+            <label for="length">Length:</label>
+            <input type="number" id="length" name="length" value="{{ original_text }}" min="1" class="form-control">
+            <button type="submit" class="btn">Generate</button>
+        </form>
+        {% if random_string %}
+            <h3>Your Random String:</h3>
+            <div class="result">{{ random_string }}</div>
+        {% endif %}
+    </div>
+</body>
+</html>

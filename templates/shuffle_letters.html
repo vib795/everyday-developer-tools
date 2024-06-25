@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Shuffle Letters</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    {% include 'navbar.html' %}
+    <div class="container">
+        <h2>Shuffle Letters</h2>
+        <p>Randomize the letters in a text so that the letters do not make up words that you originally enter. For example, for "apple" you would see "aplep" instead.</p>
+        <form method="post" class="form-inline">
+            <label for="text">Text:</label>
+            <input type="text" id="text" name="text" value="{{ original_text }}" class="form-control">
+            <button type="submit" class="btn">Shuffle</button>
+        </form>
+        {% if shuffled_text %}
+            <h3>Shuffled Text:</h3>
+            <div class="result">{{ shuffled_text }}</div>
+        {% endif %}
+    </div>
+</body>
+</html>

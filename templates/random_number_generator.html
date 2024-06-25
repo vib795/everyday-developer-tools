@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Random Number Generator</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    {% include 'navbar.html' %}
+    <div class="container">
+        <h2>Random Number Generator</h2>
+        <p>Get a random number based on your input. Delivered from a computer program as in this case or physical device in some applications, in general a random number generator normally provides a sequence of numbers with no pattern. A large number of random numbers could be useful in cases such as for statistics. These can be helpful for creating security codes also. This random number can be unique so this is an important tool if you want to generate a unique set of strings with no pattern.</p>
+        <form method="post" class="form-inline">
+            <label for="min_val">Min Value:</label>
+            <input type="number" id="min_val" name="min_val" value="{{ original_min }}" min="0" class="form-control">
+            <label for="max_val">Max Value:</label>
+            <input type="number" id="max_val" name="max_val" value="{{ original_max }}" min="1" class="form-control">
+            <button type="submit" class="btn">Generate</button>
+        </form>
+        {% if random_number %}
+            <h3>Your Random Number:</h3>
+            <div class="result">{{ random_number }}</div>
+        {% endif %}
+    </div>
+</body>
+</html>

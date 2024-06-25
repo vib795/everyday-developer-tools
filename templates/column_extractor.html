@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Column Extractor</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    {% include 'navbar.html' %}
+    <div class="container">
+        <h2>Column Extractor</h2>
+        <p>Extract columns from the data in the Input window. You specify which column to extract and can use delimiters such as a period, comma, colon, letter, or code.</p>
+        <form method="post" class="form-inline">
+            <label for="text">Text:</label>
+            <textarea id="text" name="text" class="form-control large-textarea">{{ original_text }}</textarea>
+            <label for="column_number">Column number:</label>
+            <input type="number" id="column_number" name="column_number" value="{{ original_column_number }}" min="1" class="form-control">
+            <label for="delimiter">Delimiter:</label>
+            <input type="text" id="delimiter" name="delimiter" value="{{ original_delimiter }}" class="form-control">
+            <button type="submit" class="btn">Extract Column</button>
+        </form>
+        {% if extracted_columns %}
+            <h3>Extracted Columns:</h3>
+            <div class="result">
+                {% for column in extracted_columns %}
+                    <p>{{ column }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+</body>
+</html>
