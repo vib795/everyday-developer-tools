@@ -424,17 +424,19 @@ def schedule_cron():
         # Display the form
         return render_template('cron_scheduler.html')
 
+# Random string generator
 @app.route('/string-tools/random-string-generator', methods=['GET', 'POST'])
 def random_string_generator():
     random_string = ''
     original_text = ''
     if request.method == 'POST':
         length = int(request.form.get('length', 16))
-        characters = string.ascii_letters + string.digits
+        characters = string.ascii_letters + string.digits + string.punctuation
         random_string = ''.join(random.choice(characters) for _ in range(length))
         original_text = request.form.get('length', '16')
     return render_template('random_string_generator.html', random_string=random_string, original_text=original_text)
 
+# Random number generator
 @app.route('/string-tools/random-number-generator', methods=['GET', 'POST'])
 def random_number_generator():
     random_number = None
@@ -448,6 +450,7 @@ def random_number_generator():
         original_max = request.form.get('max_val', '100')
     return render_template('random_number_generator.html', random_number=random_number, original_min=original_min, original_max=original_max)
 
+# Shuffle letters
 @app.route('/string-tools/shuffle-letters', methods=['GET', 'POST'])
 def shuffle_letters():
     shuffled_text = ''
@@ -458,6 +461,7 @@ def shuffle_letters():
         original_text = text
     return render_template('shuffle_letters.html', shuffled_text=shuffled_text, original_text=original_text)
 
+# Clean text
 @app.route('/string-tools/clean-text', methods=['GET', 'POST'])
 def clean_text():
     cleaned_text = ''
@@ -471,6 +475,7 @@ def clean_text():
         original_text = text
     return render_template('clean_text.html', cleaned_text=cleaned_text, original_text=original_text)
 
+# Text statistics
 @app.route('/string-tools/text-statistics', methods=['GET', 'POST'])
 def text_statistics():
     stats = {}
@@ -500,6 +505,7 @@ def text_statistics():
         }
     return render_template('text_statistics.html', stats=stats, original_text=original_text)
 
+# Column extractor
 @app.route('/string-tools/column-extractor', methods=['GET', 'POST'])
 def column_extractor():
     extracted_columns = []
