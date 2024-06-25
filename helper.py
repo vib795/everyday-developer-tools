@@ -6,6 +6,8 @@ import uuid
 from random import choice, randint
 from datetime import datetime
 import exrex
+import random
+import uuid
 
 logger = logging.getLogger(__name__)
 
@@ -183,3 +185,40 @@ def generate_sample_data(schema):
             return {}
 
     return generate_from_schema(schema)
+
+def generate_sample(data):
+    if isinstance(data, dict):
+        sample = {}
+        for key, value in data.items():
+            if key == "parameters" and isinstance(value, list):
+                sample[key] = [generate_parameter_sample(param) for param in value]
+            else:
+                sample[key] = generate_sample(value) if key != "parameters" else value
+        return sample
+    elif isinstance(data, list):
+        return [generate_sample(data[0]) if data else {}]
+    else:
+        return data
+
+def generate_sample_value(type_str):
+    if type_str == 'string':
+        return "sample_string"
+    elif type_str == 'int':
+        return 123
+    elif type_str == 'float':
+        return 123.45
+    elif type_str == 'bool':
+        return True
+    elif type_str == 'uuid':
+        return str(uuid.uuid4())
+    else:
+        return "sample_value"
+
+def generate_parameter_sample(param):
+    sample = {}
+    for key, value in param.items():
+        if key == 'name':
+            sample[key] = generate_sample_value(param.get('type', 'string'))
+        else:
+            sample[key] = value
+    return sample

@@ -29,7 +29,7 @@ def home():
     return render_template('index.html')
 
 # Diff Viewer Page
-@app.route('/diff-viewer', methods=['GET', 'POST'])
+@app.route('/string-tools/diff-viewer', methods=['GET', 'POST'])
 def diff_viewer():
     try:
         diff_result = None
@@ -48,7 +48,7 @@ def diff_viewer():
         logger.error(f"An error occurred. {(str(e))}")
 
 # JSON schema generator
-@app.route('/json-schema-generator', methods=['GET', 'POST'])
+@app.route('/json-tools/json-schema-generator', methods=['GET', 'POST'])
 def json_schema_generator():
     schema_result = None
     schema_for_copying = None
@@ -75,7 +75,7 @@ def json_schema_generator():
     return render_template('json_schema_generator.html', json_input=json_input, conditionals=conditionals, schema_result=schema_result, schema_for_copying=schema_for_copying, error_message=error_message)
 
 # JSON Validator
-@app.route('/json-validator', methods=['GET', 'POST'])
+@app.route('/json-tools/json-validator', methods=['GET', 'POST'])
 def json_validator():
     try:
         validation_result = None
@@ -121,7 +121,7 @@ def json_validator():
         logger.error(f"An error occurred. {str(e)}")
 
 # RegEx Checker
-@app.route('/regex-checker', methods=['GET', 'POST'])
+@app.route('/regex-tools/regex-checker', methods=['GET', 'POST'])
 # @limiter.limit("15 per minute")  # Rate limiting
 def regex_checker():
     match_result = None
@@ -149,7 +149,7 @@ def regex_checker():
                            test_string=test_string)
 
 #Regex generator
-@app.route('/regex-generator', methods=['GET', 'POST'])
+@app.route('/regex-tools/regex-generator', methods=['GET', 'POST'])
 def regex_generator():
     try:
         regex_pattern = ""
@@ -178,7 +178,7 @@ def regex_generator():
         logger.error(f"An error occurred. {str(e)}")
 
 # JSON COnverter
-@app.route('/json-converter', methods=['GET', 'POST'])
+@app.route('/json-tools/json-converter', methods=['GET', 'POST'])
 def json_converter():
     try:
         input_data = ""
@@ -261,7 +261,7 @@ def base64_encode_decode():
         logger.error(f"An error occurred. {str(e)}")
 
 # Word/Character counter
-@app.route('/counter', methods=['GET', 'POST'])
+@app.route('/string-tools/counter', methods=['GET', 'POST'])
 def counter():
     text_input = ''
     count = 0
@@ -369,7 +369,7 @@ def time_converter():
     return render_template('time_converter.html', output=output)
 
 # JSON Parser - beautify JSON
-@app.route('/json-parser', methods=['GET', 'POST'])
+@app.route('/json-tools/json-parser', methods=['GET', 'POST'])
 def json_parser():
     input_json = ""
     output_json = ""
@@ -392,7 +392,7 @@ def json_parser():
                            error=error)
 
 # Generate JSON from JSON schema
-@app.route('/json-sample-generator', methods=['GET', 'POST'])
+@app.route('/json-tools/json-sample-generator', methods=['GET', 'POST'])
 # @limiter.limit("15 per minute")  # Rate limiting
 def json_sample_generator():
     sample_data = None
@@ -424,31 +424,101 @@ def schedule_cron():
         # Display the form
         return render_template('cron_scheduler.html')
 
-@app.route('/yaml-to-json')
-def yaml_to_json_page():
-    return render_template('yaml_to_json.html')
+@app.route('/string-tools/random-string-generator', methods=['GET', 'POST'])
+def random_string_generator():
+    random_string = ''
+    original_text = ''
+    if request.method == 'POST':
+        length = int(request.form.get('length', 16))
+        characters = string.ascii_letters + string.digits
+        random_string = ''.join(random.choice(characters) for _ in range(length))
+        original_text = request.form.get('length', '16')
+    return render_template('random_string_generator.html', random_string=random_string, original_text=original_text)
 
-@app.route('/generate-json', methods=['POST'])
-def generate_json():
-    yaml_data = request.form['yaml_data']
-    try:
-        data = yaml.safe_load(yaml_data)
-        if not data:
-            return jsonify({"error": "Invalid YAML input"}), 400
-        
-        api_endpoints = list(data.keys())
-        requested_endpoint = request.form.get('endpoint', '').strip().lower()
-        
-        if requested_endpoint:
-            for endpoint in api_endpoints:
-                if endpoint.lower() == requested_endpoint:
-                    return jsonify({endpoint: data[endpoint]})
-            return jsonify({"error": f"Endpoint '{requested_endpoint}' not found"}), 404
-        else:
-            return jsonify(data)
-    except yaml.YAMLError as e:
-        return jsonify({"error": "Failed to parse YAML", "details": str(e)}), 400
+@app.route('/string-tools/random-number-generator', methods=['GET', 'POST'])
+def random_number_generator():
+    random_number = None
+    original_min = ''
+    original_max = ''
+    if request.method == 'POST':
+        min_val = int(request.form.get('min_val', 0))
+        max_val = int(request.form.get('max_val', 100))
+        random_number = random.randint(min_val, max_val)
+        original_min = request.form.get('min_val', '0')
+        original_max = request.form.get('max_val', '100')
+    return render_template('random_number_generator.html', random_number=random_number, original_min=original_min, original_max=original_max)
 
+@app.route('/string-tools/shuffle-letters', methods=['GET', 'POST'])
+def shuffle_letters():
+    shuffled_text = ''
+    original_text = ''
+    if request.method == 'POST':
+        text = request.form.get('text', '')
+        shuffled_text = ''.join(random.sample(text, len(text)))
+        original_text = text
+    return render_template('shuffle_letters.html', shuffled_text=shuffled_text, original_text=original_text)
+
+@app.route('/string-tools/clean-text', methods=['GET', 'POST'])
+def clean_text():
+    cleaned_text = ''
+    original_text = ''
+    if request.method == 'POST':
+        text = request.form.get('text', '')
+        cleaned_text = re.sub(r'\s+', ' ', text).strip()
+        cleaned_text = re.sub(r'([.!?])\s*', r'\1 ', cleaned_text)
+        sentences = re.split(r'([.!?] )', cleaned_text)
+        cleaned_text = ''.join([s.capitalize() if i % 2 == 0 else s for i, s in enumerate(sentences)])
+        original_text = text
+    return render_template('clean_text.html', cleaned_text=cleaned_text, original_text=original_text)
+
+@app.route('/string-tools/text-statistics', methods=['GET', 'POST'])
+def text_statistics():
+    stats = {}
+    original_text = ''
+    if request.method == 'POST':
+        text = request.form.get('text', '')
+        original_text = text
+        words = text.split()
+        num_words = len(words)
+        num_chars = len(text)
+        num_chars_no_space = len(text.replace(' ', ''))
+        num_lines = text.count('\n') + 1
+        num_sentences = len(re.findall(r'[.!?]', text))
+        word_lengths = [len(word) for word in words]
+        unique_words = set(words)
+        stats = {
+            'num_chars': num_chars,
+            'num_chars_no_space': num_chars_no_space,
+            'num_lines': num_lines,
+            'num_words': num_words,
+            'num_sentences': num_sentences,
+            'num_unique_words': len(unique_words),
+            'percent_unique_words': (len(unique_words) / num_words) * 100 if num_words > 0 else 0,
+            'length_shortest_word': min(word_lengths) if words else 0,
+            'length_longest_word': max(word_lengths) if words else 0,
+            'avg_word_length': sum(word_lengths) / num_words if num_words > 0 else 0
+        }
+    return render_template('text_statistics.html', stats=stats, original_text=original_text)
+
+@app.route('/string-tools/column-extractor', methods=['GET', 'POST'])
+def column_extractor():
+    extracted_columns = []
+    original_text = ''
+    original_column_number = ''
+    original_delimiter = ''
+    if request.method == 'POST':
+        text = request.form.get('text', '')
+        column_number = int(request.form.get('column_number', 1)) - 1
+        delimiter = request.form.get('delimiter', ',')
+        lines = text.split('\n')
+        for line in lines:
+            columns = line.split(delimiter)
+            if len(columns) > column_number:
+                extracted_columns.append(columns[column_number].strip())
+        original_text = text
+        original_column_number = request.form.get('column_number', '1')
+        original_delimiter = request.form.get('delimiter', ',')
+    return render_template('column_extractor.html', extracted_columns=extracted_columns, original_text=original_text, original_column_number=original_column_number, original_delimiter=original_delimiter)
 
 if __name__ == '__main__':
     app.run()

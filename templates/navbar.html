@@ -8,19 +8,31 @@
             <a href="{{ url_for('json_sample_generator') }}">JSON Sample Data Generator</a>
             <a href="{{ url_for('json_converter') }}">JSON-String-JSON Converter</a>
             <a href="{{ url_for('json_parser') }}">JSON Parser</a>
-            <a class="nav-link" href="/yaml-to-json">YAML to JSON Generator</a>
         </div>
     </div>
     <div class="dropdown">
         <button class="dropbtn">RegEx Tools</button>
         <div class="dropdown-content">
             <a href="{{ url_for('regex_checker') }}">Regex Checker</a>
-            <a href="{{ url_for('regex_generator') }}">Regex Generator</a> 
+            <a href="{{ url_for('regex_generator') }}">Regex Generator</a>
         </div>
     </div>
-    <a href="{{ url_for('diff_viewer') }}">Diff Viewer</a>
+    <div class="dropdown">
+        <button class="dropbtn">STRING Tools</button>
+        <div class="dropdown-content">
+            <a href="{{ url_for('random_number_generator') }}">Random Number Generator</a>
+            <a href="{{ url_for('random_string_generator') }}">Random String Generator</a>
+            <a href="{{ url_for('shuffle_letters') }}">Shuffle Letters</a>
+            <a href="{{ url_for('clean_text') }}">Clean Text</a>
+            <a href="{{ url_for('text_statistics') }}">Text Statistics</a>
+            <a href="{{ url_for('column_extractor') }}">Column Extractor</a>
+            <a href="{{ url_for('diff_viewer') }}">Diff Viewer</a>
+            <a href="{{ url_for('counter') }}">Character/Word Counter</a>
+        </div>
+    </div>
+
     <a href="{{ url_for('base64_encode_decode') }}">Base64 Encoder Decoder</a>
-    <a href="{{ url_for('counter') }}">Character/Word Counter</a>
     <a href="{{ url_for('time_converter') }}">Time Converter</a>
     <a href="{{ url_for('schedule_cron') }}">CRON Scheduler</a>
+    
 </div>
