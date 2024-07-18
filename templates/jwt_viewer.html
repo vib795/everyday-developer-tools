@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>JWT Viewer</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    {% include 'navbar.html' %}
+    <div class="container">
+        <h1>JWT Viewer</h1>
+        <form id="jwtForm">
+            <div class="form-group">
+                <label for="jwtInput">JWT Token:</label>
+                <textarea id="jwtInput" name="jwtInput" class="form-control" rows="5" placeholder="Paste your JWT here..." required></textarea>
+            </div>
+            <button type="button" class="btn btn-primary" onclick="decodeJWT()">Decode</button>
+        </form>
+        <div class="row mt-4">
+            <div class="col-md-6">
+                <h2>Header:</h2>
+                <pre id="headerOutput" class="output-box"></pre>
+            </div>
+            <div class="col-md-6">
+                <h2>Payload:</h2>
+                <pre id="payloadOutput" class="output-box"></pre>
+            </div>
+        </div>
+    </div>
+    <script>
+        function decodeJWT() {
+            const jwt = document.getElementById('jwtInput').value;
+            const parts = jwt.split('.');
+
+            if (parts.length !== 3) {
+                alert('Invalid JWT');
+                return;
+            }
+
+            const header = JSON.parse(atob(parts[0]));
+            const payload = JSON.parse(atob(parts[1]));
+
+            document.getElementById('headerOutput').textContent = JSON.stringify(header, null, 2);
+            document.getElementById('payloadOutput').textContent = JSON.stringify(payload, null, 2);
+        }
+    </script>
+</body>
+</html>

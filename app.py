@@ -526,5 +526,22 @@ def column_extractor():
         original_delimiter = request.form.get('delimiter', ',')
     return render_template('column_extractor.html', extracted_columns=extracted_columns, original_text=original_text, original_column_number=original_column_number, original_delimiter=original_delimiter)
 
+@app.route('/jwt_viewer', methods=['GET', 'POST'])
+def jwt_viewer():
+    decoded_jwt = None
+    error = None
+    if request.method == 'POST':
+        jwt_token = request.form.get('jwt_token')
+        secret_key = request.form.get('secret_key')
+        try:
+            decoded_jwt = jwt.decode(jwt_token, secret_key, algorithms=["HS256"])
+        except jwt.ExpiredSignatureError:
+            error = "Token has expired"
+        except jwt.InvalidTokenError:
+            error = "Invalid token"
+    return render_template('jwt_viewer.html', decoded_jwt=decoded_jwt, error=error)
+
+
+
 if __name__ == '__main__':
     app.run()
