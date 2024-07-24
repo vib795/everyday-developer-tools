@@ -16,7 +16,7 @@ genson==1.2.2
 gevent==24.2.1
 geventhttpclient==2.3.1
 greenlet==3.0.3
-gunicorn==21.2.0
+gunicorn==22.0.0
 idna==3.7
 importlib_resources==6.1.2
 iniconfig==2.0.0
