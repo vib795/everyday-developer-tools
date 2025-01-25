@@ -41,7 +41,7 @@ Nuitka==2.1.2
 ordered-set==4.1.0
 packaging==23.2
 pdfminer.six==20240706
-pillow==10.2.0
+pillow==10.3.0
 pluggy==1.4.0
 psutil==6.0.0
 pyarmor.cli.core==6.5.0
