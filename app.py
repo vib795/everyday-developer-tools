@@ -14,11 +14,15 @@ logging.basicConfig(level=logging.INFO,
 logger = logging.getLogger(__name__)
 logger.info("Logging system initialized")
 
+load_dotenv()
+
 app = Flask(__name__)
 # limiter = Limiter(key_func=get_remote_address, 
 #                   storage_uri="redis://redis:6379", 
 #                   default_limits=["15 per minute"])
 # limiter.init_app(app)
+
+app.secret_key = os.environ.get('SECRET_KEY', 'dev-secret-key')
 
 # Route for the home page
 @app.route('/')
@@ -589,6 +593,177 @@ def export_fake_data():
     except Exception as e:
         logger.error(f"Export error: {str(e)}")
         return "An error occurred while generating the export. Please try again.", 400
+
+@app.route('/markdown-pdf-converter', methods=['GET', 'POST'])
+def markdown_pdf_converter():
+   if request.method == 'POST':
+       conversion_type = request.form.get('conversion_type')
+       try:
+           if conversion_type == 'md_to_pdf':
+               markdown_text = request.form.get('markdown_text', '')
+               html = markdown.markdown(markdown_text)
+
+               pdf_path = tempfile.mktemp(suffix='.pdf')
+               doc = SimpleDocTemplate(pdf_path, pagesize=letter)
+               styles = getSampleStyleSheet()
+               
+               # Custom styles
+            #    styles.add(ParagraphStyle(
+            #        'Bullet',
+            #        parent=styles['Normal'],
+            #        leftIndent=20,
+            #        spaceAfter=10
+            #    ))
+               
+               story = []
+               lines = markdown_text.split('\n')
+               current_list_items = []
+               in_code_block = False
+               code_buffer = []
+               
+               for line in lines:
+                   if line.strip().startswith('```'):
+                       in_code_block = not in_code_block
+                       if not in_code_block and code_buffer:
+                           # Add code block to story
+                           code_style = ParagraphStyle(
+                               'Code',
+                               parent=styles['Code'],
+                               fontName='Courier',
+                               fontSize=8,
+                               leading=10,
+                               leftIndent=20,
+                               backgroundColor=colors.lightgrey
+                           )
+                           code_text = '\n'.join(code_buffer)
+                           story.append(Paragraph(code_text, code_style))
+                           code_buffer = []
+                       continue
+                       
+                   if in_code_block:
+                       code_buffer.append(line)
+                       continue
+
+                   if line.strip():
+                       if line.startswith('# '):
+                           if current_list_items:
+                               story.append(ListFlowable(
+                                   current_list_items,
+                                   bulletType='bullet',
+                                   leftIndent=35,
+                                   spaceBefore=10,
+                                   spaceAfter=10
+                               ))
+                               current_list_items = []
+                           story.append(Paragraph(line[2:], styles['Title']))
+                           
+                       elif line.startswith('## '):
+                           if current_list_items:
+                               story.append(ListFlowable(current_list_items,
+                                   bulletType='bullet',
+                                   leftIndent=35,
+                                   spaceBefore=10,
+                                   spaceAfter=10
+                               ))
+                               current_list_items = []
+                           story.append(Paragraph(line[3:], styles['Heading2']))
+                           
+                       elif line.startswith('### '):
+                           if current_list_items:
+                               story.append(ListFlowable(current_list_items,
+                                   bulletType='bullet', 
+                                   leftIndent=35,
+                                   spaceBefore=10,
+                                   spaceAfter=10
+                               ))
+                               current_list_items = []
+                           story.append(Paragraph(line[4:], styles['Heading3']))
+                           
+                       elif line.startswith('- ') or line.startswith('* '):
+                           current_list_items.append(
+                                ListItem(Paragraph(line[2:], styles['BodyText']))
+                           )
+                           
+                       else:
+                           if current_list_items:
+                               story.append(ListFlowable(
+                                   current_list_items,
+                                   bulletType='bullet',
+                                   leftIndent=35,
+                                   spaceBefore=10,
+                                   spaceAfter=10
+                               ))
+                               current_list_items = []
+                           story.append(Paragraph(line, styles['Normal']))
+                   
+                   story.append(Spacer(1, 6))
+               
+               # Add any remaining list items
+               if current_list_items:
+                   story.append(ListFlowable(
+                       current_list_items,
+                       bulletType='bullet',
+                       leftIndent=35,
+                       spaceBefore=10,
+                       spaceAfter=10
+                   ))
+               
+               doc.build(story)
+               session['pdf_path'] = pdf_path
+               
+               return render_template('markdown_pdf.html',
+                   output_text="PDF generated successfully",
+                   markdown_text=markdown_text,
+                   conversion_type=conversion_type
+               )
+               
+           else:  # pdf_to_md
+               if 'pdf_file' not in request.files:
+                   raise ValueError("No file uploaded")
+                   
+               pdf_file = request.files['pdf_file']
+               pdf_reader = PdfReader(pdf_file)
+               text = ""
+               for page in pdf_reader.pages:
+                   text += page.extract_text()
+               
+               return render_template('markdown_pdf.html',
+                   output_text=text,
+                   conversion_type=conversion_type
+               )
+               
+       except Exception as e:
+           logger.error(f"Conversion error: {str(e)}")
+           return render_template('markdown_pdf.html',
+               error="An error occurred during conversion",
+               markdown_text=markdown_text if conversion_type == 'md_to_pdf' else '',
+               conversion_type=conversion_type
+           )
+           
+   return render_template('markdown_pdf.html')
+
+@app.route('/download-pdf')
+def download_pdf():
+    try:
+        pdf_path = session.get('pdf_path')
+        if not pdf_path:
+            raise ValueError("No PDF file generated")
+            
+        with open(pdf_path, 'rb') as f:
+            pdf_data = f.read()
+            
+        # Clean up temp file
+        os.unlink(pdf_path)
+        session.pop('pdf_path', None)
+        
+        response = make_response(pdf_data)
+        response.headers['Content-Type'] = 'application/pdf'
+        response.headers['Content-Disposition'] = 'attachment; filename=output.pdf'
+        return response
+        
+    except Exception as e:
+        logger.error(f"Download error: {str(e)}")
+        return "Error downloading PDF", 400
 
 if __name__ == '__main__':
     app.run(port=5001)

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Markdown/PDF Converter</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        .preview-section {
+            margin-top: 20px;
+            border: 1px solid #ddd;
+            padding: 20px;
+            border-radius: 5px;
+        }
+        .preview-section h3 {
+            margin-top: 0;
+        }
+        #markdown_preview {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 4px;
+            margin-top: 10px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .converter-options {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        .file-input-wrapper {
+            margin: 20px 0;
+        }
+        .download-btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            margin-top: 10px;
+        }
+        .download-btn:hover {
+            background-color: #45a049;
+        }
+        .error-message {
+            color: #dc3545;
+            padding: 10px;
+            border: 1px solid #dc3545;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+    </style>
+    {% include 'google_analytics.html' %}
+</head>
+<body>
+    {% include 'navbar.html' %}
+    <div class="container">
+        <h2>Markdown/PDF Converter</h2>
+        
+        <form method="POST" enctype="multipart/form-data" class="converter-form">
+            <div class="converter-options">
+                <div class="form-group">
+                    <label for="conversion_type">Conversion Type:</label>
+                    <select name="conversion_type" id="conversion_type" onchange="toggleInputs()" class="form-control">
+                        <option value="md_to_pdf" {% if conversion_type == 'md_to_pdf' %}selected{% endif %}>Markdown to PDF</option>
+                        <option value="pdf_to_md" {% if conversion_type == 'pdf_to_md' %}selected{% endif %}>PDF to Markdown</option>
+                    </select>
+                </div>
+            </div>
+
+            <div id="markdown_input" class="form-group" {% if conversion_type == 'pdf_to_md' %}style="display: none;"{% endif %}>
+                <label for="markdown_text">Markdown Text:</label>
+                <textarea name="markdown_text" id="markdown_text" class="form-control large-textarea">{{ markdown_text or '' }}</textarea>
+            </div>
+
+            <div id="pdf_input" class="file-input-wrapper" {% if not conversion_type or conversion_type == 'md_to_pdf' %}style="display: none;"{% endif %}>
+                <label for="pdf_file">Upload PDF File:</label>
+                <input type="file" name="pdf_file" id="pdf_file" accept=".pdf" class="form-control">
+            </div>
+
+            <button type="submit" class="btn">Convert</button>
+        </form>
+
+        {% if error %}
+            <div class="error-message">
+                {{ error }}
+            </div>
+        {% endif %}
+
+        {% if output_text %}
+            <div class="preview-section">
+                <h3>Output:</h3>
+                {% if conversion_type == 'pdf_to_md' %}
+                    <pre>{{ output_text }}</pre>
+                {% endif %}
+                
+                {% if conversion_type == 'md_to_pdf' %}
+                    <div id="markdown_preview"></div>
+                    <a href="{{ url_for('download_pdf') }}" class="download-btn">Download PDF</a>
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script>
+        function toggleInputs() {
+            const convType = document.getElementById('conversion_type').value;
+            document.getElementById('markdown_input').style.display = 
+                convType === 'md_to_pdf' ? 'block' : 'none';
+            document.getElementById('pdf_input').style.display = 
+                convType === 'pdf_to_md' ? 'block' : 'none';
+        }
+
+        function updatePreview() {
+            const markdownText = document.getElementById('markdown_text').value;
+            const previewElement = document.getElementById('markdown_preview');
+            if (previewElement) {
+                previewElement.innerHTML = marked.parse(markdownText);
+            }
+        }
+
+        // Initialize preview if markdown text exists
+        document.addEventListener('DOMContentLoaded', function() {
+            updatePreview();
+        });
+    </script>
+</body>
+</html>
