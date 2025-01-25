@@ -587,7 +587,8 @@ def export_fake_data():
             
         return response
     except Exception as e:
-        return f"Error generating export: {str(e)}", 400
+        logger.error(f"Export error: {str(e)}")
+        return "An error occurred while generating the export. Please try again.", 400
 
 if __name__ == '__main__':
     app.run(port=5001)
