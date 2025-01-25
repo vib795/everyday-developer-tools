@@ -4,20 +4,40 @@ This is a Flask web application that provides various developer tools including 
 
 ## Features
 
-- **Diff Viewer:** Compare two blocks of text and visualize the differences.
-- **JSON TOOLS:**
-    - **JSON Validator:** Validate JSON format and optionally validate against a JSON schema.
-    - **JSON Schema generator:** Generates a JSON schema based on JSON input.
-    - **JSON sample data generator:** Generates sample data for a provided JSON schema.
-    - **JSON-String-JSON converter:** Converts JSON object to string and vice-versa.
-    - **JSON Parser:** Beaufity and format JSON.
-- **RegEx TOOLS:**
-    - **Regex Checker:** Validate strings against regular expressions.
-    - **Regex Generator:** Generate regular expressions for common patterns.
-- **Base64 Encoder Decoder:** Convert text to/from using base64 encoding/decoding.
-- **Character/Word Counter:** Count number of characters/words/lines in an input text. Also, works on text with custom delimiters.
-- **Time Converter:** Convert timestamps from ISO/EPOCH to all versions you can think of and more.
-- **CRON Expression Generator:** Create CRON schedule expressions by selecting specific times and frequencies for tasks to be executed by a computer system.
+### JSON Tools
+- **Validator:** Validate JSON format and against schema
+- **Schema Generator:** Generate schema from JSON input
+- **Sample Data Generator:** Create sample data from schema
+- **JSON-String Converter:** Convert between JSON object and string
+- **Parser:** Beautify and format JSON
+
+### RegEx Tools
+- **Checker:** Validate strings against regular expressions
+- **Generator:** Generate regex patterns for common formats
+
+### String Tools
+- **Character/Word Counter:** Count chars/words/lines, supports custom delimiters
+- **Column Extractor:** Extract specific columns from delimited text
+- **Text Cleaner:** Clean and format text
+- **Text Statistics:** Generate text metrics
+- **Diff Viewer:** Compare text and visualize differences
+- **Random Generators:** Generate random numbers and strings
+- **Shuffle Letters:** Randomize text characters
+
+### Data Generation
+- **Fake Data Generator:** Generate sample datasets
+  - Up to 1000 records
+  - Categories: Personal, Professional, Vehicle, Technical
+  - Export to JSON/CSV
+  - Customizable fields and data types
+
+### Time & Scheduling
+- **Time Converter:** Convert between various time formats (ISO/EPOCH)
+- **CRON Scheduler:** Create CRON expressions visually
+
+### Encoding Tools
+- **Base64 Encoder/Decoder:** Convert to/from base64
+- **JWT Viewer:** Decode and view JWT tokens
 
 ## Installation
 
