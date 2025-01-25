@@ -25,11 +25,16 @@ This is a Flask web application that provides various developer tools including 
 - **Shuffle Letters:** Randomize text characters
 
 ### Data Generation
-- **Fake Data Generator:** Generate sample datasets
-  - Up to 1000 records
+- **Fake Data Generator:** Generate sample datasets (up to 1000 records)
   - Categories: Personal, Professional, Vehicle, Technical
   - Export to JSON/CSV
   - Customizable fields and data types
+
+### Document Tools
+- **Markdown/PDF Converter:** Convert between Markdown and PDF formats
+  - Preserves formatting and structure
+  - Supports headings, lists, code blocks
+  - Both MD to PDF and PDF to MD conversion
 
 ### Time & Scheduling
 - **Time Converter:** Convert between various time formats (ISO/EPOCH)
