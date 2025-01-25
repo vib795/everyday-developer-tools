@@ -603,7 +603,10 @@ def markdown_pdf_converter():
                markdown_text = request.form.get('markdown_text', '')
                html = markdown.markdown(markdown_text)
 
-               pdf_path = tempfile.mktemp(suffix='.pdf')
+            #    pdf_path = tempfile.mktemp(suffix='.pdf')
+               pdf_file = tempfile.NamedTemporaryFile(suffix='.pdf', delete=False)
+               pdf_path = pdf_file.name
+               pdf_file.close()
                doc = SimpleDocTemplate(pdf_path, pagesize=letter)
                styles = getSampleStyleSheet()
                
