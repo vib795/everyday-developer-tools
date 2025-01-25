@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, make_response, jsonify
+from flask import Flask, render_template, request, make_response, jsonify, send_file
 from markupsafe import escape
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
@@ -11,7 +11,7 @@ from jsonschema.exceptions import ValidationError  # For JSON validation
 import json
 import logging 
 import base64
-from helper import generate_basic_pattern, generate_json_schema, generate_sample_data, generate_sample
+from helper import generate_basic_pattern, generate_json_schema, generate_sample_data, generate_sample, generate_fake_data
 from datetime import datetime
 import pytz
 import os
@@ -20,3 +20,5 @@ import string
 import random
 from collections import Counter
 import jwt
+from io import StringIO
+import csv

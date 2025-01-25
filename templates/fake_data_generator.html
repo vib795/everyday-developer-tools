@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Fake Data Generator</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        .field-container {
+            margin-bottom: 15px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .add-field-btn {
+            margin: 20px 0;
+            background-color: #4CAF50;
+        }
+        .remove-field-btn {
+            background-color: #f44336;
+            margin-left: 10px;
+        }
+        .preview-container {
+            margin-top: 20px;
+            overflow-x: auto;
+        }
+        .preview-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .preview-table th, .preview-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        .preview-table th {
+            background-color: #f5f5f5;
+        }
+        .export-options {
+            margin-top: 20px;
+        }
+        .field-options {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+    </style>
+    {% include 'google_analytics.html' %}
+</head>
+<body>
+    {% include 'navbar.html' %}
+    <div class="container">
+        <h2>Fake Data Generator</h2>
+        <form id="fakeDataForm" method="POST">
+            <div id="fieldsContainer">
+                <!-- Default field -->
+                <div class="field-container">
+                    <div class="field-options">
+                        <input type="text" name="field_names[]" placeholder="Field Name" required>
+                        <select name="field_types[]" required>
+                            <optgroup label="Personal Info">
+                                <option value="name">Full Name</option>
+                                <option value="email">Email</option>
+                                <option value="phone">Phone Number</option>
+                                <option value="address">Address</option>
+                            </optgroup>
+                            <optgroup label="Professional">
+                                <option value="company">Company</option>
+                                <option value="job">Job Title</option>
+                            </optgroup>
+                            <optgroup label="Vehicle Info">
+                                <option value="car_make">Car Make</option>
+                                <option value="car_model">Car Model</option>
+                                <option value="car_year">Car Year</option>
+                                <option value="car_vin">VIN</option>
+                                <option value="car_color">Car Color</option>
+                                <option value="car_fuel">Fuel Type</option>
+                                <option value="car_transmission">Transmission</option>
+                                <option value="license_plate">License Plate</option>
+                            </optgroup>
+                            <optgroup label="Technical">
+                                <option value="date">Date</option>
+                                <option value="number">Number</option>
+                                <option value="text">Text</option>
+                                <option value="boolean">Boolean</option>
+                                <option value="uuid">UUID</option>
+                                <option value="url">URL</option>
+                                <option value="ip">IP Address</option>
+                                <option value="credit_card">Credit Card</option>
+                            </optgroup>
+                        </select>
+                        <button type="button" class="remove-field-btn" onclick="removeField(this)">Remove</button>
+                    </div>
+                </div>
+            </div>
+            
+            <button type="button" class="add-field-btn" onclick="addField()">Add Field</button>
+            
+            <div class="form-group">
+                <label for="num_records">Number of Records:</label>
+                <input type="number" id="num_records" name="num_records" min="1" max="1000" value="10" required>
+            </div>
+            
+            <button type="submit">Generate Data</button>
+        </form>
+
+        {% if preview_data %}
+            <div class="preview-container">
+                <h3>Preview</h3>
+                <table class="preview-table">
+                    <thead>
+                        <tr>
+                            {% for header in preview_data[0].keys() %}
+                                <th>{{ header }}</th>
+                            {% endfor %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in preview_data %}
+                            <tr>
+                                {% for value in row.values() %}
+                                    <td>{{ value }}</td>
+                                {% endfor %}
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- In fake_data_generator.html, update the export form -->
+            <div class="export-options">
+                <form action="{{ url_for('export_fake_data') }}" method="POST">
+                    {% for field_name in field_names %}
+                        <input type="hidden" name="field_names[]" value="{{ field_name }}">
+                    {% endfor %}
+                    {% for field_type in field_types %}
+                        <input type="hidden" name="field_types[]" value="{{ field_type }}">
+                    {% endfor %}
+                    <input type="hidden" name="num_records" value="{{ num_records }}">
+                    <select name="format">
+                        <option value="json">JSON</option>
+                        <option value="csv">CSV</option>
+                    </select>
+                    <button type="submit">Export</button>
+                </form>
+            </div>
+        {% endif %}
+    </div>
+
+    <script>
+        function addField() {
+            const container = document.getElementById('fieldsContainer');
+            const fieldDiv = document.createElement('div');
+            fieldDiv.className = 'field-container';
+            fieldDiv.innerHTML = `
+                <div class="field-options">
+                    <input type="text" name="field_names[]" placeholder="Field Name" required>
+                    <select name="field_types[]" required>
+                            <optgroup label="Personal Info">
+                                <option value="name">Full Name</option>
+                                <option value="email">Email</option>
+                                <option value="phone">Phone Number</option>
+                                <option value="address">Address</option>
+                            </optgroup>
+                            <optgroup label="Professional">
+                                <option value="company">Company</option>
+                                <option value="job">Job Title</option>
+                            </optgroup>
+                            <optgroup label="Vehicle Info">
+                                <option value="car_make">Car Make</option>
+                                <option value="car_model">Car Model</option>
+                                <option value="car_year">Car Year</option>
+                                <option value="car_vin">VIN</option>
+                                <option value="car_color">Car Color</option>
+                                <option value="car_fuel">Fuel Type</option>
+                                <option value="car_transmission">Transmission</option>
+                                <option value="license_plate">License Plate</option>
+                            </optgroup>
+                            <optgroup label="Technical">
+                                <option value="date">Date</option>
+                                <option value="number">Number</option>
+                                <option value="text">Text</option>
+                                <option value="boolean">Boolean</option>
+                                <option value="uuid">UUID</option>
+                                <option value="url">URL</option>
+                                <option value="ip">IP Address</option>
+                                <option value="credit_card">Credit Card</option>
+                            </optgroup>
+                        </select>
+                    <button type="button" class="remove-field-btn" onclick="removeField(this)">Remove</button>
+                </div>
+            `;
+            container.appendChild(fieldDiv);
+        }
+
+        function removeField(button) {
+            const container = document.getElementById('fieldsContainer');
+            if (container.children.length > 1) {
+                button.closest('.field-container').remove();
+            }
+        }
+    </script>
+</body>
+</html>

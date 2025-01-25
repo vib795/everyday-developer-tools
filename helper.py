@@ -8,8 +8,15 @@ from datetime import datetime
 import exrex
 import random
 import uuid
+from faker import Faker
+from faker.providers import automotive
+from random import choice, randint
 
 logger = logging.getLogger(__name__)
+
+# Initialize Faker
+fake = Faker()
+fake.add_provider(automotive)
 
 def generate_json_schema(json_input, conditionals=None):
     try:
@@ -222,3 +229,65 @@ def generate_parameter_sample(param):
         else:
             sample[key] = value
     return sample
+
+
+def generate_fake_data(field_names, field_types, num_records):
+    fake = Faker()
+    car_models = {
+        'BMW': ['M3', 'M5', '3 Series', '5 Series', '7 Series', 'X3', 'X5', 'X7', 'M8', 'iX', 'i4', 'X6'],
+        'Mercedes-Benz': ['C-Class', 'E-Class', 'S-Class', 'GLC', 'GLE', 'G-Wagon', 'GLA', 'GLB', 'GLS', 'AMG GT'],
+        'Audi': ['A3', 'A4', 'A6', 'Q3', 'Q5', 'Q7', 'RS6', 'RS7', 'e-tron', 'A8', 'Q8', 'R8'],
+        'Toyota': ['Camry', 'Corolla', 'RAV4', 'Highlander', '4Runner', 'Tundra', 'Tacoma', 'Prius', 'Sienna', 'Land Cruiser'],
+        'Honda': ['Civic', 'Accord', 'CR-V', 'Pilot', 'Odyssey', 'Ridgeline', 'HR-V', 'Passport', 'Fit'],
+        'Ford': ['F-150', 'Mustang', 'Explorer', 'Bronco', 'Escape', 'Edge', 'Ranger', 'Expedition', 'Mach-E'],
+        'Tesla': ['Model 3', 'Model Y', 'Model S', 'Model X', 'Cybertruck', 'Roadster'],
+        'Porsche': ['911', 'Cayenne', 'Macan', 'Panamera', 'Taycan', '718 Cayman', '718 Boxster', 'GT3', 'GT2 RS'],
+        'Ferrari': ['488', 'F8 Tributo', 'SF90', 'Roma', '812', 'Portofino', 'LaFerrari'],
+        'Lamborghini': ['Urus', 'Huracán', 'Aventador', 'Revuelto', 'Countach']
+    }
+    faker_methods = {
+        'name': fake.name,
+        'email': fake.email,
+        'phone': lambda: f"({randint(100,999)})-{randint(100,999)}-{randint(1000,9999)}",
+        'address': fake.address,
+        'company': fake.company,
+        'job': fake.job,
+        'date': lambda: fake.date_time().strftime('%Y-%m-%d %H:%M:%S'),
+        'number': lambda: fake.random_number(digits=5),
+        'text': fake.text,
+        'boolean': fake.boolean,
+        'uuid': lambda: str(uuid.uuid4()),
+        'url': fake.url,
+        'ip': fake.ipv4,
+        'credit_card': fake.credit_card_number,
+        'car_make': lambda: choice(list(car_models.keys())),
+        'car_model': lambda current_data: choice(car_models[current_data.get('car_make', choice(list(car_models.keys())))]),
+        'car_vin': fake.vin,
+        'car_year': lambda: randint(1990, 2024),
+        'car_color': fake.color_name,
+        'car_fuel': lambda: choice(['Gasoline', 'Diesel', 'Electric', 'Hybrid']),
+        'car_transmission': lambda: choice(['Automatic', 'Manual']),
+        'license_plate': fake.license_plate
+    }
+    
+    data = []
+    for _ in range(num_records):
+        record = {}
+        make = None
+        
+        for name, type_ in zip(field_names, field_types):
+            if type_ == 'car_make':
+                make = choice(list(car_models.keys()))
+                record[name] = make
+            elif type_ == 'car_model' and make:
+                record[name] = choice(car_models[make])
+            elif type_ == 'car_model':  # If model is requested before make
+                make = choice(list(car_models.keys()))
+                record[name] = choice(car_models[make])
+            else:
+                if type_ in faker_methods:
+                    record[name] = faker_methods[type_]()
+                    
+        data.append(record)
+    
+    return data

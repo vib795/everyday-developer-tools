@@ -541,7 +541,53 @@ def jwt_viewer():
             error = "Invalid token"
     return render_template('jwt_viewer.html', decoded_jwt=decoded_jwt, error=error)
 
+@app.route('/fake-data-generator', methods=['GET', 'POST'])
+def fake_data_generator():
+    preview_data = None
+    field_names = []
+    field_types = []
+    num_records = 10
 
+    if request.method == 'POST':
+        field_names = request.form.getlist('field_names[]')
+        field_types = request.form.getlist('field_types[]')
+        num_records = int(request.form.get('num_records', 10))
+        preview_data = generate_fake_data(field_names, field_types, num_records)
+    
+    return render_template('fake_data_generator.html', 
+                         preview_data=preview_data,
+                         field_names=field_names,
+                         field_types=field_types,
+                         num_records=num_records)
+
+@app.route('/export-fake-data', methods=['POST'])
+def export_fake_data():
+    try:
+        # Get generated data directly from the session
+        field_names = request.form.getlist('field_names[]')
+        field_types = request.form.getlist('field_types[]')
+        num_records = int(request.form.get('num_records', 10))
+        
+        # Generate fresh data
+        data = generate_fake_data(field_names, field_types, num_records)
+        export_format = request.form.get('format', 'json')
+        
+        if export_format == 'json':
+            response = make_response(json.dumps(data, indent=2))
+            response.headers['Content-Type'] = 'application/json'
+            response.headers['Content-Disposition'] = 'attachment; filename=fake_data.json'
+        else:
+            si = StringIO()
+            writer = csv.DictWriter(si, fieldnames=field_names)
+            writer.writeheader()
+            writer.writerows(data)
+            response = make_response(si.getvalue())
+            response.headers['Content-Type'] = 'text/csv'
+            response.headers['Content-Disposition'] = 'attachment; filename=fake_data.csv'
+            
+        return response
+    except Exception as e:
+        return f"Error generating export: {str(e)}", 400
 
 if __name__ == '__main__':
-    app.run()
+    app.run(port=5001)
