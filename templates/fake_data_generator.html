@@ -11,6 +11,18 @@
             border: 1px solid #ddd;
             border-radius: 5px;
         }
+        .copy-btn {
+            margin-bottom: 10px;
+            background-color: #4CAF50;
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .copy-btn:hover {
+            background-color: #45a049;
+        }
         .add-field-btn {
             margin: 20px 0;
             background-color: #4CAF50;
@@ -106,7 +118,8 @@
         {% if preview_data %}
             <div class="preview-container">
                 <h3>Preview</h3>
-                <table class="preview-table">
+                <button onclick="copyTableData()" class="copy-btn">Copy Data</button>
+                <table class="preview-table" id="previewTable">
                     <thead>
                         <tr>
                             {% for header in preview_data[0].keys() %}
@@ -197,6 +210,21 @@
             if (container.children.length > 1) {
                 button.closest('.field-container').remove();
             }
+        }
+
+        function copyTableData() {
+            const table = document.getElementById('previewTable');
+            const rows = Array.from(table.rows);
+            
+            const data = rows.map(row => 
+                Array.from(row.cells)
+                    .map(cell => cell.textContent)
+                    .join('\t')
+            ).join('\n');
+            
+            navigator.clipboard.writeText(data).then(() => {
+                alert('Data copied to clipboard!');
+            });
         }
     </script>
 </body>

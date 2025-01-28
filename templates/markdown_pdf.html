@@ -50,6 +50,18 @@
             border-radius: 4px;
             margin: 10px 0;
         }
+        .copy-btn {
+            padding: 8px 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            cursor: pointer;
+        }
+        .copy-btn:hover {
+            background-color: #45a049;
+        }
     </style>
     {% include 'google_analytics.html' %}
 </head>
@@ -92,7 +104,8 @@
             <div class="preview-section">
                 <h3>Output:</h3>
                 {% if conversion_type == 'pdf_to_md' %}
-                    <pre>{{ output_text }}</pre>
+                    <button onclick="copyOutput()" class="copy-btn">Copy Output</button>
+                    <pre id="outputText">{{ output_text }}</pre>
                 {% endif %}
                 
                 {% if conversion_type == 'md_to_pdf' %}
@@ -125,6 +138,13 @@
         document.addEventListener('DOMContentLoaded', function() {
             updatePreview();
         });
+
+        function copyOutput() {
+            const text = document.getElementById('outputText').textContent;
+            navigator.clipboard.writeText(text).then(() => {
+                alert('Output copied to clipboard!');
+            });
+        }
     </script>
 </body>
 </html>
