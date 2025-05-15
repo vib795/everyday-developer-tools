@@ -9,7 +9,7 @@ charset-normalizer==3.4.1
 click==8.1.8
 commonmark==0.9.1
 ConfigArgParse==1.7
-cryptography==44.0.0
+cryptography==44.0.1
 cssselect2==0.7.0
 Deprecated==1.2.17
 exrex==0.12.0
