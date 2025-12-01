@@ -58,19 +58,22 @@ This is a Flask web application that provides various developer tools including 
     cd developer-tools
     ```
 
-3. Install dependencies using pip:
+3. Install dependencies using uv (recommended):
 
     ```bash
-    pip install -r requirements.txt
+    # create a virtualenv in .venv and install dependencies
+    uv venv
+    uv pip install -r requirements.txt
+
+    # or, if you've migrated to pyproject.toml + uv.lock:
+    # uv sync
     ```
 
 ## Usage
 
-1. Run the Flask application using the branch flask-app:
+1. Run the Flask application:
 
-    ```bash
-    flask run
-    ```
+    uv run flask run --host 0.0.0.0 --port 5000
 
 2. Open a web browser and navigate to [http://localhost:5000](http://localhost:5000).
 
