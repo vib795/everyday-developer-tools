@@ -3,11 +3,11 @@ FROM python:3.12.2-alpine
 
 WORKDIR /app
 
-# Install build deps + curl
-RUN apk add --no-cache gcc python3-dev musl-dev linux-headers curl
+# Install build deps
+RUN apk add --no-cache gcc python3-dev musl-dev linux-headers
 
-# Install uv
-RUN curl -LsSf https://astral.sh/uv/install.sh | sh -s -- --install-dir /usr/local/bin --exe-name uv
+# Install uv (from official image)
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /bin/uv
 
 # Copy metadata first, so dependency layer is cacheable
 COPY pyproject.toml uv.lock ./
