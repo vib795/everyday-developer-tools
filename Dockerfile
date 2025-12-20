@@ -1,4 +1,3 @@
-# Use an official Python runtime as a parent image
 FROM python:3.9-slim
 
 WORKDIR /app
@@ -7,11 +6,10 @@ WORKDIR /app
 RUN apt-get update && apt-get install -y --no-install-recommends \
     gcc \
     libc6-dev \
-    curl \
- && rm -rf /var/lib/apt/lists/*
+    && rm -rf /var/lib/apt/lists/*
 
-# Install uv (single, static binary)
-RUN curl -LsSf https://astral.sh/uv/install.sh | sh -s -- --install-dir /usr/local/bin --exe-name uv
+# Install uv (from official image)
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /bin/uv
 
 # Copy project metadata first to leverage Docker cache
 COPY pyproject.toml uv.lock ./
