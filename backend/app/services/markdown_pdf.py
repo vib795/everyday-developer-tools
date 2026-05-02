@@ -1,6 +1,6 @@
 import io
 
-from PyPDF2 import PdfReader
+from pypdf import PdfReader
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import letter
 from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
