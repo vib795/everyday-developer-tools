@@ -23,6 +23,13 @@ dependencies = [
     "reportlab>=4.2",
     "pypdf2>=3.0",
     "pillow>=11",
+    "pyyaml>=6.0",
+    "tomli>=2.0; python_version<'3.11'",
+    "tomli-w>=1.0",
+    "xmltodict>=0.14",
+    "jsonpath-ng>=1.6",
+    "croniter>=3.0",
+    "qrcode>=8.0",
 ]
 
 [dependency-groups]

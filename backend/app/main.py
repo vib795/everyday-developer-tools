@@ -12,10 +12,14 @@ from .config import settings
 from .logging import configure_logging
 from .rate_limit import limiter
 from .routers import (
+    calc,
+    codec,
+    convert,
     document,
     encoding,
     fake_data,
     json_tools,
+    misc,
     regex_tools,
     string_tools,
     time_tools,
@@ -45,6 +49,10 @@ def create_app() -> FastAPI:
     app.include_router(time_tools.router)
     app.include_router(document.router)
     app.include_router(fake_data.router)
+    app.include_router(codec.router)
+    app.include_router(convert.router)
+    app.include_router(calc.router)
+    app.include_router(misc.router)
 
     @app.get("/api/health")
     def health() -> dict:

@@ -101,3 +101,143 @@ export interface FakeRecord {
 export interface FakePreviewResponse {
   records: FakeRecord[];
 }
+
+// Codec & hash
+
+export interface UuidGenerateResponse {
+  values: string[];
+}
+
+export interface UuidInspectResponse {
+  valid: boolean;
+  version?: number | null;
+  variant?: string | null;
+  is_nil?: boolean | null;
+  hex?: string | null;
+  urn?: string | null;
+  timestamp_iso?: string | null;
+  error?: string | null;
+}
+
+export interface HashResponse {
+  digests: Record<string, string>;
+}
+
+export interface HmacResponse {
+  digest: string;
+}
+
+export interface UrlCodecResponse {
+  output: string;
+}
+
+export interface QueryParamPair {
+  key: string;
+  value: string;
+}
+
+export interface QueryStringResponse {
+  params: QueryParamPair[];
+  base?: string | null;
+}
+
+export interface CaseConvertResponse {
+  output: string;
+}
+
+export interface JwtSignResponse {
+  token?: string | null;
+  error?: string | null;
+}
+
+// Format converters
+
+export interface FormatConvertResponse {
+  output: string;
+  error?: string | null;
+}
+
+export interface JsonPathResponse {
+  matches: unknown[];
+  error?: string | null;
+}
+
+export interface CurlConvertResponse {
+  outputs: Record<string, string>;
+  error?: string | null;
+}
+
+// Calculators & previews
+
+export interface CronNextRunsResponse {
+  runs: string[];
+  error?: string | null;
+}
+
+export interface ColorConvertResponse {
+  hex: string;
+  rgb: string;
+  hsl: string;
+  oklch?: string | null;
+  error?: string | null;
+}
+
+export interface ContrastResponse {
+  ratio: number;
+  aa_normal: boolean;
+  aa_large: boolean;
+  aaa_normal: boolean;
+  aaa_large: boolean;
+  error?: string | null;
+}
+
+export interface ChmodResponse {
+  numeric: string;
+  symbolic: string;
+  error?: string | null;
+}
+
+export interface CidrResponse {
+  network: string;
+  netmask: string;
+  broadcast: string | null;
+  first_host: string | null;
+  last_host: string | null;
+  num_hosts: number;
+  prefix: number;
+  version: number;
+  error?: string | null;
+}
+
+export interface MarkdownPreviewResponse {
+  html: string;
+}
+
+// Reference & misc
+
+export interface HttpStatus {
+  code: number;
+  name: string;
+  description: string;
+}
+export interface HttpStatusListResponse {
+  statuses: HttpStatus[];
+}
+
+export interface MimeType {
+  type: string;
+  extensions: string[];
+  description: string;
+}
+export interface MimeTypeListResponse {
+  mime_types: MimeType[];
+}
+
+export interface LoremResponse {
+  text: string;
+}
+
+export interface QrCodeResponse {
+  svg: string;
+  error?: string | null;
+}

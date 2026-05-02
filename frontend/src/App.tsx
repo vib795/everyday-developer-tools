@@ -19,6 +19,23 @@ import { RandomString } from "./pages/string/RandomString";
 import { ShuffleLetters } from "./pages/string/ShuffleLetters";
 import { Base64Page } from "./pages/encoding/Base64Page";
 import { JwtViewer } from "./pages/encoding/JwtViewer";
+import { UuidGenerator } from "./pages/codec/UuidGenerator";
+import { HashTool } from "./pages/codec/HashTool";
+import { UrlCodec } from "./pages/codec/UrlCodec";
+import { CaseConverter } from "./pages/codec/CaseConverter";
+import { JwtSigner } from "./pages/codec/JwtSigner";
+import { FormatConverter } from "./pages/convert/FormatConverter";
+import { JsonPath } from "./pages/convert/JsonPath";
+import { CurlConverter } from "./pages/convert/CurlConverter";
+import { CronNext } from "./pages/calc/CronNext";
+import { Color } from "./pages/calc/Color";
+import { Chmod } from "./pages/calc/Chmod";
+import { Cidr } from "./pages/calc/Cidr";
+import { MarkdownPreview } from "./pages/calc/MarkdownPreview";
+import { HttpStatuses } from "./pages/misc/HttpStatuses";
+import { MimeTypes } from "./pages/misc/MimeTypes";
+import { Lorem } from "./pages/misc/Lorem";
+import { QrCode } from "./pages/misc/QrCode";
 import { TimeConverter } from "./pages/time/TimeConverter";
 import { CronScheduler } from "./pages/time/CronScheduler";
 import { MarkdownPdf } from "./pages/document/MarkdownPdf";
@@ -52,6 +69,23 @@ export function App() {
         <Route path="/base64" element={<Base64Page />} />
         <Route path="/jwt-viewer" element={<JwtViewer />} />
         <Route path="/jwt_viewer" element={<Navigate to="/jwt-viewer" replace />} />
+        <Route path="/codec/uuid" element={<UuidGenerator />} />
+        <Route path="/codec/hash" element={<HashTool />} />
+        <Route path="/codec/url" element={<UrlCodec />} />
+        <Route path="/codec/case" element={<CaseConverter />} />
+        <Route path="/codec/jwt-signer" element={<JwtSigner />} />
+        <Route path="/convert/format" element={<FormatConverter />} />
+        <Route path="/convert/jsonpath" element={<JsonPath />} />
+        <Route path="/convert/curl" element={<CurlConverter />} />
+        <Route path="/calc/cron-next" element={<CronNext />} />
+        <Route path="/calc/color" element={<Color />} />
+        <Route path="/calc/chmod" element={<Chmod />} />
+        <Route path="/calc/cidr" element={<Cidr />} />
+        <Route path="/calc/markdown-preview" element={<MarkdownPreview />} />
+        <Route path="/ref/http-statuses" element={<HttpStatuses />} />
+        <Route path="/ref/mime-types" element={<MimeTypes />} />
+        <Route path="/misc/lorem" element={<Lorem />} />
+        <Route path="/misc/qr" element={<QrCode />} />
 
         <Route path="/time-converter" element={<TimeConverter />} />
         <Route path="/cron-scheduler" element={<CronScheduler />} />
