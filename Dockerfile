@@ -1,35 +1,34 @@
-FROM python:3.9-slim
+FROM node:20-alpine AS spa
+WORKDIR /app/frontend
+COPY frontend/package.json frontend/package-lock.json* ./
+RUN npm install --no-audit --no-fund
+COPY frontend/ ./
+RUN npm run build
 
+FROM python:3.12-slim AS runtime
 WORKDIR /app
 
-# Install system dependencies + curl for uv installer
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    gcc \
-    libc6-dev \
+    gcc libc6-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# Install uv (from official image)
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /bin/uv
 
-# Copy project metadata first to leverage Docker cache
-COPY pyproject.toml uv.lock ./
+COPY backend/pyproject.toml backend/uv.lock* ./backend/
+RUN cd backend && uv sync --no-dev
 
-# Install dependencies (no dev deps) into .venv inside /app
-RUN uv sync --frozen --no-dev
+COPY backend/ ./backend/
+COPY --from=spa /app/frontend/dist ./frontend/dist
 
-# Now copy the rest of the app
-COPY . /app
+ENV SPA_DIST=/app/frontend/dist \
+    LOG_DIRECTORY=/app/logs/
 
-# Create a non-root user and switch to it
-RUN adduser --disabled-password --gecos '' myuser
-USER myuser
+RUN adduser --disabled-password --gecos '' appuser \
+    && mkdir -p /app/logs \
+    && chown -R appuser:appuser /app
+USER appuser
 
-EXPOSE 5000
+WORKDIR /app/backend
+EXPOSE 8000
 
-ENV FLASK_APP=app.py \
-    FLASK_RUN_HOST=0.0.0.0 \
-    FLASK_ENV=production
-
-# Run with gunicorn via uv so the .venv is used automatically
-CMD ["uv", "run", "gunicorn", "--workers=4", "--bind=0.0.0.0:5000", "app:app"]
-
+CMD ["uv", "run", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]

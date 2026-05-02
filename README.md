@@ -1,197 +1,175 @@
-# Developer Tools Web Application
+# Developer Tools
 
-This is a Flask web application that provides various developer tools including a Diff Viewer, JSON Validator, Regex Checker, and Regex Generator.
+A web app that bundles 16+ everyday developer tools — JSON validators and generators, regex helpers, string and time utilities, encoding tools, fake-data generation, and Markdown ⇄ PDF conversion.
 
-## Features
+The application is split into two pieces:
 
-### JSON Tools
-- **Validator:** Validate JSON format and against schema
-- **Schema Generator:** Generate schema from JSON input
-- **Sample Data Generator:** Create sample data from schema
-- **JSON-String Converter:** Convert between JSON object and string
-- **Parser:** Beautify and format JSON
+- **`backend/`** — a [FastAPI](https://fastapi.tiangolo.com/) service exposing every tool as a typed JSON endpoint under `/api/...`.
+- **`frontend/`** — a [Vite](https://vitejs.dev/) + [React](https://react.dev/) + TypeScript single-page app served by the backend in production.
 
-### RegEx Tools
-- **Checker:** Validate strings against regular expressions
-- **Generator:** Generate regex patterns for common formats
+In production both ship in a single Docker image. In development you can run them as two processes (Vite proxies `/api` to the API).
 
-### String Tools
-- **Character/Word Counter:** Count chars/words/lines, supports custom delimiters
-- **Column Extractor:** Extract specific columns from delimited text
-- **Text Cleaner:** Clean and format text
-- **Text Statistics:** Generate text metrics
-- **Diff Viewer:** Compare text and visualize differences
-- **Random Generators:** Generate random numbers and strings
-- **Shuffle Letters:** Randomize text characters
+## Tools
 
-### Data Generation
-- **Fake Data Generator:** Generate sample datasets (up to 1000 records)
-  - Categories: Personal, Professional, Vehicle, Technical
-  - Export to JSON/CSV
-  - Customizable fields and data types
+### JSON
+- **Validator** — validate JSON, optionally against a JSON Schema.
+- **Schema Generator** — produce a draft-04 JSON Schema from a sample.
+- **Sample Generator** — generate sample data conforming to a schema (handles `enum`, `pattern`, `format`, `allOf`/`anyOf`/`oneOf`, `if`/`then`/`else`).
+- **String ⇄ JSON Converter** — turn JSON into an escaped string and back.
+- **Parser** — pretty-print JSON.
 
-### Document Tools
-- **Markdown/PDF Converter:** Convert between Markdown and PDF formats
-  - Preserves formatting and structure
-  - Supports headings, lists, code blocks
-  - Both MD to PDF and PDF to MD conversion
+### RegEx
+- **Checker** — test a pattern against a string. Each call is bounded to 1 s of CPU and rate-limited (15/min by default) to mitigate ReDoS.
+- **Generator** — suggest a regex for an input; recognises emails, phone numbers, ISO dates, and SSNs.
 
-### Time & Scheduling
-- **Time Converter:** Convert between various time formats (ISO/EPOCH)
-- **CRON Scheduler:** Create CRON expressions visually
+### String
+- **Diff Viewer** — side-by-side diff with line numbers and per-row colouring.
+- **Char/Word Counter** — character/word/line count, with optional custom delimiter.
+- **Column Extractor** — pull a column out of delimited text.
+- **Clean Text** — collapse whitespace and capitalise sentence starts.
+- **Text Statistics** — char/word/sentence counts plus min/max/avg word length.
+- **Random Number / Random String / Shuffle Letters**.
 
-### Encoding Tools
-- **Base64 Encoder/Decoder:** Convert to/from base64
-- **JWT Viewer:** Decode and view JWT tokens
+### Encoding
+- **Base64** — encode/decode UTF-8 text.
+- **JWT Viewer** — decode HS256 tokens.
 
-## Installation
+### Time
+- **Time Converter** — accepts ISO-8601, epoch seconds, epoch milliseconds, and `YYYY-MM-DD HH:MM:SS` Postgres timestamps; emits Eastern, UTC, UNIX, day-of-week/year, leap-year, and several locale formats.
+- **CRON Scheduler** — build a CRON expression from form fields.
 
-1. Clone this repository:
+### Document
+- **Markdown ⇄ PDF** — render Markdown to a downloadable PDF (headings, bullets, fenced code) or extract text from a PDF.
 
-    ```bash
-    git clone https://github.com/vib795/everyday-developer-tools.git
-    ```
+### Fake Data
+- **Generator** — build a synthetic dataset of up to 1000 records with 25+ field types (names, emails, vehicle make/model pairs, license plates, etc.) and export as JSON or CSV.
 
-2. Navigate to the project directory:
+## Architecture
 
-    ```bash
-    cd developer-tools
-    ```
+```
+┌────────────────────────────────────────────────┐
+│              single Docker image               │
+│                                                │
+│  uvicorn (FastAPI)                             │
+│     ├─ /api/*  → routers/ → services/          │
+│     │      json, regex, string, encoding,      │
+│     │      time, document, fake_data           │
+│     └─ /*      → SPA (Vite build)              │
+└────────────────────────────────────────────────┘
+                        │
+                        └── redis  (slowapi rate limiting)
+```
 
-3. Install dependencies using uv (recommended):
+- **Pure-function services** in `backend/app/services/` hold the heavy lifting; routers stay thin. This is what makes the helpers easy to unit-test.
+- **Pydantic v2** request/response models on every endpoint give automatic validation and a useful `/docs` (Swagger) page.
+- **slowapi** sits in front of expensive routes (`/api/regex/check`, `/api/json/sample`). It uses Redis when `REDIS_URL` is set and falls back to in-memory storage otherwise.
 
-    ```bash
-    # create a virtualenv in .venv and install dependencies
-    uv venv
-    uv pip install -r requirements.txt
+## Local development
 
-    # or, if you've migrated to pyproject.toml + uv.lock:
-    # uv sync
-    ```
+Prerequisites: Python 3.10+, Node 20+, [`uv`](https://docs.astral.sh/uv/).
 
-## Usage
+### Backend
 
-1. Run the Flask application:
+```bash
+cd backend
+uv sync                              # install deps into .venv
+uv run uvicorn app.main:app --reload # http://localhost:8000
+uv run pytest                        # run the test suite
+```
 
-    uv run flask run --host 0.0.0.0 --port 5000
+OpenAPI docs: <http://localhost:8000/docs>.
 
-2. Open a web browser and navigate to [http://localhost:5000](http://localhost:5000).
+### Frontend
 
-3. Choose a tool from the navigation menu on the left.
+```bash
+cd frontend
+npm install
+npm run dev                          # http://localhost:5173
+```
 
-## Production Deployment with Docker, Gunicorn, and Nginx
-### Dockerized Approach
-For deploying the application in a containerized environment with Docker, ensuring scalability and ease of deployment:
+The dev server proxies `/api` → `http://localhost:8000`, so just run both processes side by side.
 
-1. **Build and Deploy with Docker Compose:** 
-    <br/>_Dev build_
-    ```bash
-    docker-compose -f docker-compose-dev.yml up --build
-    ```
-    OR
-    <br/> _Deployable build_
-    ```bash
-    docker-compose -f docker-compose.yml up --build
-    ``` 
-    
-This command builds the Docker images and starts the containers as defined in the `docker-compose.yml` file.
+### Docker (dev)
 
-2. **Running a Pre-Built Container:**
-    ```bash
-    docker run -p 5000:5000 utkarshsingh/developer-tools-dev:latest
-    ```
+```bash
+docker compose -f docker-compose-dev.yml up --build
+# API:    http://localhost:8000
+# Vite:   http://localhost:5173
+```
 
-### Making the Application HTTPS Compliant
-To secure the application with HTTPS, follow these steps:
+### Docker (prod, single image + nginx)
 
-1. **Generate SSL/TLS Certificates:**
-For local testing, generate a self-signed SSL certificate:
-    ```bash
-    mkdir -p certs && cd certs
-    openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout nginx-selfsigned.key -out nginx-selfsigned.crt
-    ```
+```bash
+docker compose -f docker-compose.yml up --build
+# Nginx terminates TLS on :443 and proxies everything to the FastAPI container.
+```
 
-For production, obtain certificates from Let's Encrypt or another CA.
+The production Dockerfile is multi-stage:
 
-2. **Configure Nginx for HTTPS:**
-Update `nginx/nginx.conf` to include the SSL certificate and key, and configure Nginx to listen on HTTPS:
-    ```nginx
-    server {
-        listen 443 ssl;
-        server_name localhost; # Update to your domain for production
+1. `node:20-alpine` builds the SPA (`npm run build`) into `/app/frontend/dist`.
+2. `python:3.12-slim` installs runtime deps with `uv sync --no-dev` and serves both the API and the built SPA from a single uvicorn process. `SPA_DIST` points at the built assets.
 
-        ssl_certificate /etc/ssl/certs/nginx-selfsigned.crt;
-        ssl_certificate_key /etc/ssl/certs/nginx-selfsigned.key;
+For HTTPS, generate (or replace) `certs/nginx-selfsigned.{crt,key}`:
 
-        # SSL configuration...
+```bash
+mkdir -p certs && cd certs
+openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+  -keyout nginx-selfsigned.key -out nginx-selfsigned.crt
+```
 
-        location / {
-            proxy_pass http://web:5000;
-            # Proxy settings...
-        }
-    }
-    ```
-Update docker-compose.yml to mount the certificates directory into the Nginx container.
+## Configuration
 
-3. **To pull from Docker hub (dev build):**
-    ```bash
-    docker pull utkarshsingh/developer-tools-dev:latest
-    ```
+All settings are read from environment variables (or a `backend/.env` file).
 
-### Why and How of Nginx and Gunicorn
-- **Nginx:** Acts as a reverse proxy, handling client requests efficiently before passing them to Gunicorn. It's also responsible for SSL/TLS termination, providing HTTPS support.
-- **Gunicorn:** A WSGI HTTP Server for serving Flask applications in production, offering a robust option to handle concurrent requests.
+| Variable                  | Default                                         | Description |
+| ------------------------- | ----------------------------------------------- | ----------- |
+| `LOG_DIRECTORY`           | `logs/`                                         | Log file directory; created on startup. |
+| `REDIS_URL`               | (unset → in-memory)                             | Storage URI for the slowapi limiter. |
+| `SPA_DIST`                | `<repo>/frontend/dist`                          | Path to the built SPA. |
+| `CORS_ORIGINS`            | `http://localhost:5173,http://127.0.0.1:5173`   | Allowed dev origins. |
+| `RATE_LIMIT_DEFAULT`      | `60/minute`                                     | Default per-IP limit. |
+| `RATE_LIMIT_REGEX_CHECK`  | `15/minute`                                     | Limit on `/api/regex/check`. |
+| `RATE_LIMIT_JSON_SAMPLE`  | `30/minute`                                     | Limit on `/api/json/sample`. |
 
-### Redis for rate limiting
-- We are using redis to rate limit the site to avoid DDoS or ReDoS attacks.
-- This is installed as part of the docker image but you can do it manually as well, if you are running the flask app manually.
-    - This installs redis on an ubuntu server and checks for its status.   
-        ```bash 
-        sudo apt-get update && sudo apt-get install redis-server -y && sudo systemctl status redis
-        ```
-    
-    - Check status of redis server:
-        ```bash
-        redis-cli ping
-        ```
-        You should receive `PONG` back.
-    - Install Redis python library
-        ```bash
-        pip install redis
-        ```
-    
-This should set the app to be configured with redis and ready to use. Now you can run `flask app.py` and everything should work fine without docker intervention.
+## API quick reference
 
+Every endpoint returns JSON unless noted. All POST bodies are JSON.
+
+| Method | Path                          | Notes |
+| ------ | ----------------------------- | ----- |
+| POST   | `/api/json/validate`          |       |
+| POST   | `/api/json/schema`            |       |
+| POST   | `/api/json/sample`            | rate-limited |
+| POST   | `/api/json/convert`           |       |
+| POST   | `/api/json/parse`             |       |
+| POST   | `/api/regex/check`            | rate-limited; 1 s timeout |
+| POST   | `/api/regex/generate`         |       |
+| POST   | `/api/string/diff`            | structured hunks |
+| POST   | `/api/string/count`           |       |
+| POST   | `/api/string/columns`         |       |
+| POST   | `/api/string/clean`           |       |
+| POST   | `/api/string/stats`           |       |
+| POST   | `/api/string/random-number`   |       |
+| POST   | `/api/string/random-string`   |       |
+| POST   | `/api/string/shuffle`         |       |
+| POST   | `/api/encoding/base64`        |       |
+| POST   | `/api/encoding/jwt`           |       |
+| POST   | `/api/time/convert`           |       |
+| POST   | `/api/time/cron`              |       |
+| POST   | `/api/document/md-to-pdf`     | streams `application/pdf` |
+| POST   | `/api/document/pdf-to-md`     | multipart upload |
+| GET    | `/api/fake-data/types`        | list of supported field types |
+| POST   | `/api/fake-data/preview`      |       |
+| POST   | `/api/fake-data/export`       | streams CSV or JSON |
+| GET    | `/api/health`                 |       |
 
 ## Contributing
 
-Contributions are welcome! If you would like to contribute to this project, please follow these steps:
-
-1. Fork the [repository](https://github.com/vib795/everyday-developer-tools.git).
-
-2. Create a new branch for your feature or bug fix:
-
-    ```bash
-    git checkout -b feature-name
-    ```
-
-3. Make your changes and commit them:
-
-    ```bash
-    git commit -m "Add feature-name"
-    ```
-
-4. Push to your branch:
-
-    ```bash
-    git push origin feature-name
-    ```
-
-5. Submit a pull request.
-
-## Live demo
-A live demo of the application can be viewed <a href="https://utkarshsingh0609.pythonanywhere.com/" target="_blank">here</a>
+1. Fork the repo and create a branch.
+2. Make changes; add or update tests in `backend/tests/`.
+3. Ensure `cd backend && uv run pytest` and `cd frontend && npm run build` both pass.
+4. Open a PR.
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+MIT — see [LICENSE](LICENSE).

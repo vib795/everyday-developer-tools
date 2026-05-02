@@ -164,3 +164,12 @@ certs/nginx-selfsigned.key
 dump.rdb
 Archive.zip
 Developer Tools.pptx
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+
+# Logs
+logs/
+
