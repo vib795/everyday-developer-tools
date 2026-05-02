@@ -2,7 +2,6 @@
 name = "developer-tools-backend"
 version = "1.0.0"
 description = "FastAPI backend for the developer-tools web app"
-readme = "../README.md"
 requires-python = ">=3.10"
 dependencies = [
     "fastapi>=0.115",

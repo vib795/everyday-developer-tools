@@ -89,7 +89,16 @@ npm run dev                          # http://localhost:5173
 
 The dev server proxies `/api` → `http://localhost:8000`, so just run both processes side by side.
 
-### Docker (dev)
+### Docker (single command, recommended)
+
+```bash
+docker compose up --build
+# everything on http://localhost:8000
+```
+
+One container: a multi-stage build assembles the SPA with `node:20-alpine`, then `python:3.12-slim` installs runtime deps with `uv sync --no-dev` and serves both the API and the built SPA from a single uvicorn process. `SPA_DIST` points at the built assets.
+
+### Docker (dev with hot reload)
 
 ```bash
 docker compose -f docker-compose-dev.yml up --build
@@ -97,17 +106,15 @@ docker compose -f docker-compose-dev.yml up --build
 # Vite:   http://localhost:5173
 ```
 
-### Docker (prod, single image + nginx)
+### Docker (prod with nginx + redis + TLS)
+
+For deployments that want TLS termination and Redis-backed rate limiting:
 
 ```bash
-docker compose -f docker-compose.yml up --build
-# Nginx terminates TLS on :443 and proxies everything to the FastAPI container.
+docker compose -f docker-compose-prod.yml up --build
 ```
 
-The production Dockerfile is multi-stage:
-
-1. `node:20-alpine` builds the SPA (`npm run build`) into `/app/frontend/dist`.
-2. `python:3.12-slim` installs runtime deps with `uv sync --no-dev` and serves both the API and the built SPA from a single uvicorn process. `SPA_DIST` points at the built assets.
+You'll need self-signed certs in `certs/` (see below) before bringing up the nginx container.
 
 For HTTPS, generate (or replace) `certs/nginx-selfsigned.{crt,key}`:
 
