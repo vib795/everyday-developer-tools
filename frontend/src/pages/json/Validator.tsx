@@ -64,16 +64,16 @@ export function Validator() {
           <p
             className={
               data.valid
-                ? "rounded bg-emerald-50 px-3 py-2 text-sm text-emerald-900"
-                : "rounded bg-rose-50 px-3 py-2 text-sm text-rose-900"
+                ? "rounded bg-emerald-50 dark:bg-emerald-950/40 px-3 py-2 text-sm text-emerald-900 dark:text-emerald-200"
+                : "rounded bg-rose-50 dark:bg-rose-950/40 px-3 py-2 text-sm text-rose-900 dark:text-rose-200"
             }
           >
             {data.message}
           </p>
-          {data.error_details && <p className="text-xs text-slate-600">{data.error_details}</p>}
+          {data.error_details && <p className="text-xs text-slate-600 dark:text-slate-300">{data.error_details}</p>}
           {data.formatted_json && (
             <div>
-              <h3 className="mb-1 text-sm font-semibold text-slate-700">Formatted JSON</h3>
+              <h3 className="mb-1 text-sm font-semibold text-slate-700 dark:text-slate-200">Formatted JSON</h3>
               <CodeBlock value={data.formatted_json} showLineNumbers />
             </div>
           )}

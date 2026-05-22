@@ -37,16 +37,16 @@ export function Chmod() {
       </form>
       <ErrorBanner message={error} />
       {data && data.error && (
-        <div role="alert" className="rounded-md border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-900">
+        <div role="alert" className="rounded-md border border-rose-200 dark:border-rose-900 bg-rose-50 dark:bg-rose-950/40 px-4 py-3 text-sm text-rose-900 dark:text-rose-200">
           {data.error}
         </div>
       )}
       {data && !data.error && (
         <section className="card text-sm">
           <dl className="grid grid-cols-[100px_1fr] gap-y-2">
-            <dt className="text-slate-500">Numeric</dt>
+            <dt className="text-slate-500 dark:text-slate-400">Numeric</dt>
             <dd className="font-mono">{data.numeric}</dd>
-            <dt className="text-slate-500">Symbolic</dt>
+            <dt className="text-slate-500 dark:text-slate-400">Symbolic</dt>
             <dd className="font-mono">{data.symbolic}</dd>
           </dl>
         </section>

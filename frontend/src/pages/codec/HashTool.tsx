@@ -67,7 +67,7 @@ export function HashTool() {
       <ErrorBanner message={hash.error} />
       {hash.data && (
         <section className="card">
-          <h3 className="mb-2 text-sm font-semibold text-slate-700">Digests</h3>
+          <h3 className="mb-2 text-sm font-semibold text-slate-700 dark:text-slate-200">Digests</h3>
           <CodeBlock
             value={Object.entries(hash.data.digests)
               .map(([k, v]) => `${k}: ${v}`)
@@ -77,7 +77,7 @@ export function HashTool() {
       )}
 
       <form onSubmit={onHmac} className="card space-y-4">
-        <h2 className="text-base font-semibold text-slate-700">HMAC</h2>
+        <h2 className="text-base font-semibold text-slate-700 dark:text-slate-200">HMAC</h2>
         <div className="grid gap-4 sm:grid-cols-2">
           <div>
             <label className="label" htmlFor="secret">Secret</label>
@@ -110,7 +110,7 @@ export function HashTool() {
       <ErrorBanner message={hmac.error} />
       {hmac.data && (
         <section className="card">
-          <h3 className="mb-2 text-sm font-semibold text-slate-700">HMAC digest</h3>
+          <h3 className="mb-2 text-sm font-semibold text-slate-700 dark:text-slate-200">HMAC digest</h3>
           <CodeBlock value={hmac.data.digest} />
         </section>
       )}

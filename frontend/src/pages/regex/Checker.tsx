@@ -59,10 +59,10 @@ export function RegexChecker() {
           <p
             className={
               data.match === true
-                ? "rounded bg-emerald-50 px-3 py-2 text-sm text-emerald-900"
+                ? "rounded bg-emerald-50 dark:bg-emerald-950/40 px-3 py-2 text-sm text-emerald-900 dark:text-emerald-200"
                 : data.match === false
-                  ? "rounded bg-amber-50 px-3 py-2 text-sm text-amber-900"
-                  : "rounded bg-rose-50 px-3 py-2 text-sm text-rose-900"
+                  ? "rounded bg-amber-50 dark:bg-amber-950/40 px-3 py-2 text-sm text-amber-900 dark:text-amber-200"
+                  : "rounded bg-rose-50 dark:bg-rose-950/40 px-3 py-2 text-sm text-rose-900 dark:text-rose-200"
             }
           >
             {data.message}

@@ -54,12 +54,12 @@ export function TextStatistics() {
 
       {data && (
         <section className="card">
-          <h3 className="mb-3 text-sm font-semibold text-slate-700">Text Statistics</h3>
+          <h3 className="mb-3 text-sm font-semibold text-slate-700 dark:text-slate-200">Text Statistics</h3>
           <dl className="grid gap-3 sm:grid-cols-2">
             {ROWS.map((row) => (
-              <div key={row.key} className="rounded border border-slate-200 p-3">
-                <dt className="text-xs uppercase tracking-wide text-slate-500">{row.label}</dt>
-                <dd className="text-base font-semibold text-slate-900">
+              <div key={row.key} className="rounded border border-slate-200 dark:border-slate-800 p-3">
+                <dt className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">{row.label}</dt>
+                <dd className="text-base font-semibold text-slate-900 dark:text-slate-100">
                   {row.format ? row.format(data[row.key] as number) : data[row.key]}
                 </dd>
               </div>

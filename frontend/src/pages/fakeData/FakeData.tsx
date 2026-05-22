@@ -110,7 +110,7 @@ export function FakeData() {
               </select>
               <button
                 type="button"
-                className="btn-ghost text-rose-600"
+                className="btn-ghost text-rose-600 dark:text-rose-400"
                 onClick={() => removeField(i)}
                 disabled={fields.length === 1}
               >
@@ -163,24 +163,24 @@ export function FakeData() {
 
       {preview && preview.length > 0 && (
         <section className="card overflow-x-auto p-0">
-          <table className="min-w-full divide-y divide-slate-200 text-xs">
-            <thead className="bg-slate-50">
+          <table className="min-w-full divide-y divide-slate-200 dark:divide-slate-800 text-xs">
+            <thead className="bg-slate-50 dark:bg-slate-800">
               <tr>
                 {Object.keys(preview[0]).map((k) => (
                   <th
                     key={k}
-                    className="px-3 py-2 text-left font-semibold uppercase tracking-wide text-slate-600"
+                    className="px-3 py-2 text-left font-semibold uppercase tracking-wide text-slate-600 dark:text-slate-300"
                   >
                     {k}
                   </th>
                 ))}
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
+            <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
               {preview.map((row, i) => (
-                <tr key={i} className="hover:bg-slate-50">
+                <tr key={i} className="hover:bg-slate-50 dark:hover:bg-slate-800">
                   {Object.keys(preview[0]).map((k) => (
-                    <td key={k} className="px-3 py-1 font-mono text-slate-800">
+                    <td key={k} className="px-3 py-1 font-mono text-slate-800 dark:text-slate-100">
                       {String(row[k] ?? "")}
                     </td>
                   ))}

@@ -70,13 +70,13 @@ export function UrlCodec() {
       <ErrorBanner message={codec.error} />
       {codec.data && (
         <section className="card">
-          <h3 className="mb-2 text-sm font-semibold text-slate-700">Output</h3>
+          <h3 className="mb-2 text-sm font-semibold text-slate-700 dark:text-slate-200">Output</h3>
           <CodeBlock value={codec.data.output} />
         </section>
       )}
 
       <form onSubmit={onParse} className="card space-y-4">
-        <h2 className="text-base font-semibold text-slate-700">Query-string parser</h2>
+        <h2 className="text-base font-semibold text-slate-700 dark:text-slate-200">Query-string parser</h2>
         <div>
           <label className="label" htmlFor="qs">URL or query string</label>
           <input
@@ -95,27 +95,27 @@ export function UrlCodec() {
       {parse.data && (
         <section className="card">
           {parse.data.base && (
-            <p className="mb-2 text-xs text-slate-500">
-              Base: <span className="font-mono text-slate-700">{parse.data.base}</span>
+            <p className="mb-2 text-xs text-slate-500 dark:text-slate-400">
+              Base: <span className="font-mono text-slate-700 dark:text-slate-200">{parse.data.base}</span>
             </p>
           )}
           <table className="w-full text-sm">
             <thead>
-              <tr className="text-left text-slate-500">
+              <tr className="text-left text-slate-500 dark:text-slate-400">
                 <th className="py-1 pr-4 font-medium">Key</th>
                 <th className="py-1 font-medium">Value</th>
               </tr>
             </thead>
             <tbody>
               {parse.data.params.map((p, i) => (
-                <tr key={i} className="border-t border-slate-200">
+                <tr key={i} className="border-t border-slate-200 dark:border-slate-800">
                   <td className="py-1 pr-4 font-mono">{p.key}</td>
                   <td className="py-1 font-mono">{p.value}</td>
                 </tr>
               ))}
               {parse.data.params.length === 0 && (
                 <tr>
-                  <td colSpan={2} className="py-2 text-slate-500">No parameters.</td>
+                  <td colSpan={2} className="py-2 text-slate-500 dark:text-slate-400">No parameters.</td>
                 </tr>
               )}
             </tbody>

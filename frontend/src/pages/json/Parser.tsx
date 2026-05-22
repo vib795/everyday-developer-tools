@@ -43,7 +43,7 @@ export function Parser() {
 
       {data && (
         <section className="card">
-          <h3 className="mb-2 text-sm font-semibold text-slate-700">Parsed JSON</h3>
+          <h3 className="mb-2 text-sm font-semibold text-slate-700 dark:text-slate-200">Parsed JSON</h3>
           <CodeBlock value={data.output} showLineNumbers />
         </section>
       )}

@@ -46,7 +46,7 @@ export function CleanText() {
 
       {data && (
         <section className="card">
-          <h3 className="mb-2 text-sm font-semibold text-slate-700">Cleaned Text</h3>
+          <h3 className="mb-2 text-sm font-semibold text-slate-700 dark:text-slate-200">Cleaned Text</h3>
           <CodeBlock value={data.cleaned} />
         </section>
       )}

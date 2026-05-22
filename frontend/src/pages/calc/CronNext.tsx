@@ -64,13 +64,13 @@ export function CronNext() {
       </form>
       <ErrorBanner message={error} />
       {data && data.error && (
-        <div role="alert" className="rounded-md border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-900">
+        <div role="alert" className="rounded-md border border-rose-200 dark:border-rose-900 bg-rose-50 dark:bg-rose-950/40 px-4 py-3 text-sm text-rose-900 dark:text-rose-200">
           {data.error}
         </div>
       )}
       {data && !data.error && data.runs.length > 0 && (
         <section className="card">
-          <h3 className="mb-2 text-sm font-semibold text-slate-700">
+          <h3 className="mb-2 text-sm font-semibold text-slate-700 dark:text-slate-200">
             Next {data.runs.length} run{data.runs.length === 1 ? "" : "s"}
           </h3>
           <CodeBlock value={data.runs.join("\n")} />
