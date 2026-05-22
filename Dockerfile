@@ -31,4 +31,6 @@ USER appuser
 WORKDIR /app/backend
 EXPOSE 8000
 
-CMD ["uv", "run", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+# Bind to $PORT when the host injects one (Render, Cloud Run, …); fall back to
+# 8000 so local `docker compose up` keeps working.
+CMD exec uv run uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}
