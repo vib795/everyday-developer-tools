@@ -41,7 +41,7 @@ export function MimeTypes() {
       {data && (
         <table className="w-full text-sm">
           <thead>
-            <tr className="text-left text-slate-500">
+            <tr className="text-left text-slate-500 dark:text-slate-400">
               <th className="py-1 pr-4 font-medium">Type</th>
               <th className="py-1 pr-4 font-medium">Extensions</th>
               <th className="py-1 font-medium">Description</th>
@@ -49,17 +49,17 @@ export function MimeTypes() {
           </thead>
           <tbody>
             {filtered.map((m) => (
-              <tr key={m.type} className="border-t border-slate-200">
+              <tr key={m.type} className="border-t border-slate-200 dark:border-slate-800">
                 <td className="py-1 pr-4 font-mono">{m.type}</td>
-                <td className="py-1 pr-4 font-mono text-slate-600">
+                <td className="py-1 pr-4 font-mono text-slate-600 dark:text-slate-300">
                   {m.extensions.map((e) => `.${e}`).join(", ") || "—"}
                 </td>
-                <td className="py-1 text-slate-700">{m.description}</td>
+                <td className="py-1 text-slate-700 dark:text-slate-200">{m.description}</td>
               </tr>
             ))}
             {filtered.length === 0 && (
               <tr>
-                <td colSpan={3} className="py-2 text-slate-500">No matches.</td>
+                <td colSpan={3} className="py-2 text-slate-500 dark:text-slate-400">No matches.</td>
               </tr>
             )}
           </tbody>

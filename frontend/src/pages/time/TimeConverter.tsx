@@ -48,10 +48,10 @@ export function TimeConverter() {
           <dl className="space-y-3">
             {Object.entries(data.output).map(([k, v]) => (
               <div key={k} className="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:gap-3">
-                <dt className="w-56 shrink-0 text-xs uppercase tracking-wide text-slate-500">
+                <dt className="w-56 shrink-0 text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">
                   {k}
                 </dt>
-                <dd className="font-mono text-sm text-slate-800">
+                <dd className="font-mono text-sm text-slate-800 dark:text-slate-100">
                   {Array.isArray(v) ? (
                     <ul className="space-y-1">
                       {v.map((line) => (

@@ -32,7 +32,7 @@ export function Color() {
       <PageHeader title="Color" description="Convert color formats and check WCAG contrast." />
 
       <form onSubmit={onConvert} className="card space-y-4">
-        <h2 className="text-base font-semibold text-slate-700">Convert</h2>
+        <h2 className="text-base font-semibold text-slate-700 dark:text-slate-200">Convert</h2>
         <div className="flex items-end gap-3">
           <div className="flex-1">
             <label className="label" htmlFor="color">Color (hex / rgb / hsl)</label>
@@ -45,7 +45,7 @@ export function Color() {
           </div>
           <div
             aria-hidden
-            className="h-10 w-16 rounded border border-slate-200"
+            className="h-10 w-16 rounded border border-slate-200 dark:border-slate-800"
             style={{ background: color }}
           />
         </div>
@@ -55,23 +55,23 @@ export function Color() {
       </form>
       <ErrorBanner message={conv.error} />
       {conv.data && conv.data.error && (
-        <div role="alert" className="rounded-md border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-900">
+        <div role="alert" className="rounded-md border border-rose-200 dark:border-rose-900 bg-rose-50 dark:bg-rose-950/40 px-4 py-3 text-sm text-rose-900 dark:text-rose-200">
           {conv.data.error}
         </div>
       )}
       {conv.data && !conv.data.error && (
         <section className="card text-sm">
           <dl className="grid grid-cols-[80px_1fr] gap-y-2">
-            <dt className="text-slate-500">HEX</dt><dd className="font-mono">{conv.data.hex}</dd>
-            <dt className="text-slate-500">RGB</dt><dd className="font-mono">{conv.data.rgb}</dd>
-            <dt className="text-slate-500">HSL</dt><dd className="font-mono">{conv.data.hsl}</dd>
-            <dt className="text-slate-500">OKLCH</dt><dd className="font-mono">{conv.data.oklch}</dd>
+            <dt className="text-slate-500 dark:text-slate-400">HEX</dt><dd className="font-mono">{conv.data.hex}</dd>
+            <dt className="text-slate-500 dark:text-slate-400">RGB</dt><dd className="font-mono">{conv.data.rgb}</dd>
+            <dt className="text-slate-500 dark:text-slate-400">HSL</dt><dd className="font-mono">{conv.data.hsl}</dd>
+            <dt className="text-slate-500 dark:text-slate-400">OKLCH</dt><dd className="font-mono">{conv.data.oklch}</dd>
           </dl>
         </section>
       )}
 
       <form onSubmit={onContrast} className="card space-y-4">
-        <h2 className="text-base font-semibold text-slate-700">Contrast (WCAG)</h2>
+        <h2 className="text-base font-semibold text-slate-700 dark:text-slate-200">Contrast (WCAG)</h2>
         <div className="grid gap-4 sm:grid-cols-2">
           <div>
             <label className="label" htmlFor="fg">Foreground</label>
@@ -82,7 +82,7 @@ export function Color() {
                 value={fg}
                 onChange={(e) => setFg(e.target.value)}
               />
-              <div aria-hidden className="h-9 w-9 rounded border border-slate-200" style={{ background: fg }} />
+              <div aria-hidden className="h-9 w-9 rounded border border-slate-200 dark:border-slate-800" style={{ background: fg }} />
             </div>
           </div>
           <div>
@@ -94,11 +94,11 @@ export function Color() {
                 value={bg}
                 onChange={(e) => setBg(e.target.value)}
               />
-              <div aria-hidden className="h-9 w-9 rounded border border-slate-200" style={{ background: bg }} />
+              <div aria-hidden className="h-9 w-9 rounded border border-slate-200 dark:border-slate-800" style={{ background: bg }} />
             </div>
           </div>
         </div>
-        <div className="rounded border border-slate-200 px-4 py-3" style={{ color: fg, background: bg }}>
+        <div className="rounded border border-slate-200 dark:border-slate-800 px-4 py-3" style={{ color: fg, background: bg }}>
           The quick brown fox jumps over the lazy dog.
         </div>
         <button type="submit" className="btn-secondary" disabled={contrast.pending}>
@@ -107,7 +107,7 @@ export function Color() {
       </form>
       <ErrorBanner message={contrast.error} />
       {contrast.data && contrast.data.error && (
-        <div role="alert" className="rounded-md border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-900">
+        <div role="alert" className="rounded-md border border-rose-200 dark:border-rose-900 bg-rose-50 dark:bg-rose-950/40 px-4 py-3 text-sm text-rose-900 dark:text-rose-200">
           {contrast.data.error}
         </div>
       )}
@@ -117,7 +117,7 @@ export function Color() {
             Ratio: <span className="font-mono text-base">{contrast.data.ratio}:1</span>
           </p>
           <table className="w-full">
-            <thead className="text-left text-slate-500">
+            <thead className="text-left text-slate-500 dark:text-slate-400">
               <tr>
                 <th className="py-1 font-medium">Level</th>
                 <th className="py-1 font-medium">Normal text</th>
@@ -125,21 +125,21 @@ export function Color() {
               </tr>
             </thead>
             <tbody>
-              <tr className="border-t border-slate-200">
+              <tr className="border-t border-slate-200 dark:border-slate-800">
                 <td className="py-1">AA (4.5 / 3.0)</td>
-                <td className={contrast.data.aa_normal ? "text-emerald-700" : "text-rose-700"}>
+                <td className={contrast.data.aa_normal ? "text-emerald-700 dark:text-emerald-300" : "text-rose-700 dark:text-rose-300"}>
                   {contrast.data.aa_normal ? "pass" : "fail"}
                 </td>
-                <td className={contrast.data.aa_large ? "text-emerald-700" : "text-rose-700"}>
+                <td className={contrast.data.aa_large ? "text-emerald-700 dark:text-emerald-300" : "text-rose-700 dark:text-rose-300"}>
                   {contrast.data.aa_large ? "pass" : "fail"}
                 </td>
               </tr>
-              <tr className="border-t border-slate-200">
+              <tr className="border-t border-slate-200 dark:border-slate-800">
                 <td className="py-1">AAA (7.0 / 4.5)</td>
-                <td className={contrast.data.aaa_normal ? "text-emerald-700" : "text-rose-700"}>
+                <td className={contrast.data.aaa_normal ? "text-emerald-700 dark:text-emerald-300" : "text-rose-700 dark:text-rose-300"}>
                   {contrast.data.aaa_normal ? "pass" : "fail"}
                 </td>
-                <td className={contrast.data.aaa_large ? "text-emerald-700" : "text-rose-700"}>
+                <td className={contrast.data.aaa_large ? "text-emerald-700 dark:text-emerald-300" : "text-rose-700 dark:text-rose-300"}>
                   {contrast.data.aaa_large ? "pass" : "fail"}
                 </td>
               </tr>

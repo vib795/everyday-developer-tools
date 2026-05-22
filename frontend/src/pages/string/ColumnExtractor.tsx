@@ -74,7 +74,7 @@ export function ColumnExtractor() {
 
       {data && (
         <section className="card">
-          <h3 className="mb-2 text-sm font-semibold text-slate-700">Extracted Columns</h3>
+          <h3 className="mb-2 text-sm font-semibold text-slate-700 dark:text-slate-200">Extracted Columns</h3>
           <CodeBlock value={data.columns.join("\n")} />
         </section>
       )}

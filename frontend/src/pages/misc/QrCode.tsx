@@ -83,13 +83,13 @@ export function QrCode() {
       </form>
       <ErrorBanner message={error} />
       {data && data.error && (
-        <div role="alert" className="rounded-md border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-900">
+        <div role="alert" className="rounded-md border border-rose-200 dark:border-rose-900 bg-rose-50 dark:bg-rose-950/40 px-4 py-3 text-sm text-rose-900 dark:text-rose-200">
           {data.error}
         </div>
       )}
       {data && data.svg && (
         <section className="card flex flex-col items-center gap-4">
-          <div className="bg-white p-4" dangerouslySetInnerHTML={{ __html: data.svg }} />
+          <div className="bg-white dark:bg-slate-900 p-4" dangerouslySetInnerHTML={{ __html: data.svg }} />
           <button type="button" onClick={downloadSvg} className="btn-secondary">
             Download SVG
           </button>

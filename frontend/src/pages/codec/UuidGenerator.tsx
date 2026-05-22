@@ -43,7 +43,7 @@ export function UuidGenerator() {
       <PageHeader title="UUID" description="Generate and inspect UUIDs (v1, v3, v4, v5, v7)." />
 
       <form onSubmit={onGenerate} className="card space-y-4">
-        <h2 className="text-base font-semibold text-slate-700">Generate</h2>
+        <h2 className="text-base font-semibold text-slate-700 dark:text-slate-200">Generate</h2>
         <div className="flex flex-wrap items-end gap-4">
           <div>
             <label className="label" htmlFor="version">Version</label>
@@ -104,13 +104,13 @@ export function UuidGenerator() {
       <ErrorBanner message={gen.error} />
       {gen.data && (
         <section className="card">
-          <h3 className="mb-2 text-sm font-semibold text-slate-700">Generated</h3>
+          <h3 className="mb-2 text-sm font-semibold text-slate-700 dark:text-slate-200">Generated</h3>
           <CodeBlock value={gen.data.values.join("\n")} />
         </section>
       )}
 
       <form onSubmit={onInspect} className="card space-y-4">
-        <h2 className="text-base font-semibold text-slate-700">Inspect</h2>
+        <h2 className="text-base font-semibold text-slate-700 dark:text-slate-200">Inspect</h2>
         <div>
           <label className="label" htmlFor="inspect">UUID</label>
           <input
@@ -130,23 +130,23 @@ export function UuidGenerator() {
         <section className="card text-sm">
           {ins.data.valid ? (
             <dl className="grid grid-cols-[140px_1fr] gap-y-2">
-              <dt className="text-slate-500">Version</dt>
+              <dt className="text-slate-500 dark:text-slate-400">Version</dt>
               <dd>{ins.data.version}</dd>
-              <dt className="text-slate-500">Variant</dt>
+              <dt className="text-slate-500 dark:text-slate-400">Variant</dt>
               <dd>{ins.data.variant}</dd>
-              <dt className="text-slate-500">Hex</dt>
+              <dt className="text-slate-500 dark:text-slate-400">Hex</dt>
               <dd className="font-mono">{ins.data.hex}</dd>
-              <dt className="text-slate-500">URN</dt>
+              <dt className="text-slate-500 dark:text-slate-400">URN</dt>
               <dd className="font-mono">{ins.data.urn}</dd>
               {ins.data.timestamp_iso && (
                 <>
-                  <dt className="text-slate-500">Timestamp</dt>
+                  <dt className="text-slate-500 dark:text-slate-400">Timestamp</dt>
                   <dd className="font-mono">{ins.data.timestamp_iso}</dd>
                 </>
               )}
             </dl>
           ) : (
-            <p className="text-rose-700">Invalid UUID: {ins.data.error}</p>
+            <p className="text-rose-700 dark:text-rose-300">Invalid UUID: {ins.data.error}</p>
           )}
         </section>
       )}

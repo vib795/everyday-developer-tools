@@ -6,11 +6,11 @@ import { ErrorBanner } from "../../components/ErrorBanner";
 import { PageHeader } from "../../components/PageHeader";
 
 function bandColor(code: number): string {
-  if (code < 200) return "bg-slate-100 text-slate-700";
-  if (code < 300) return "bg-emerald-100 text-emerald-800";
-  if (code < 400) return "bg-sky-100 text-sky-800";
-  if (code < 500) return "bg-amber-100 text-amber-800";
-  return "bg-rose-100 text-rose-800";
+  if (code < 200) return "bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200";
+  if (code < 300) return "bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-200";
+  if (code < 400) return "bg-sky-100 dark:bg-sky-950/60 text-sky-800 dark:text-sky-200";
+  if (code < 500) return "bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-200";
+  return "bg-rose-100 dark:bg-rose-950/60 text-rose-800 dark:text-rose-200";
 }
 
 export function HttpStatuses() {
@@ -52,12 +52,12 @@ export function HttpStatuses() {
             <li key={s.code} className="card flex items-start gap-4">
               <span className={`rounded px-2 py-1 text-sm font-mono ${bandColor(s.code)}`}>{s.code}</span>
               <div>
-                <p className="text-sm font-semibold text-slate-900">{s.name}</p>
-                <p className="text-sm text-slate-600">{s.description}</p>
+                <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">{s.name}</p>
+                <p className="text-sm text-slate-600 dark:text-slate-300">{s.description}</p>
               </div>
             </li>
           ))}
-          {filtered.length === 0 && <p className="text-sm text-slate-500">No matches.</p>}
+          {filtered.length === 0 && <p className="text-sm text-slate-500 dark:text-slate-400">No matches.</p>}
         </ul>
       )}
     </div>
