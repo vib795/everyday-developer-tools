@@ -39,6 +39,11 @@ class TextRequest(BaseModel):
     text: str
 
 
+class CleanTextRequest(BaseModel):
+    text: str
+    collapse_spaces: bool = False
+
+
 class CleanTextResponse(BaseModel):
     cleaned: str
 
