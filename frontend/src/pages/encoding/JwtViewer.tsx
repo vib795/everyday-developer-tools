@@ -57,10 +57,10 @@ export function JwtViewer() {
       {data && (
         <section className="card">
           {data.error ? (
-            <p className="rounded bg-rose-50 px-3 py-2 text-sm text-rose-900">{data.error}</p>
+            <p className="rounded bg-rose-50 dark:bg-rose-950/40 px-3 py-2 text-sm text-rose-900 dark:text-rose-200">{data.error}</p>
           ) : (
             <>
-              <h3 className="mb-2 text-sm font-semibold text-slate-700">Decoded JWT</h3>
+              <h3 className="mb-2 text-sm font-semibold text-slate-700 dark:text-slate-200">Decoded JWT</h3>
               <CodeBlock value={JSON.stringify(data.decoded, null, 2)} />
             </>
           )}

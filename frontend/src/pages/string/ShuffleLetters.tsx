@@ -42,7 +42,7 @@ export function ShuffleLetters() {
 
       {data && (
         <section className="card">
-          <h3 className="mb-2 text-sm font-semibold text-slate-700">Shuffled Text</h3>
+          <h3 className="mb-2 text-sm font-semibold text-slate-700 dark:text-slate-200">Shuffled Text</h3>
           <CodeBlock value={data.value} />
         </section>
       )}

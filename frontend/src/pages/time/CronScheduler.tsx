@@ -49,7 +49,7 @@ export function CronScheduler() {
           {FIELDS.map((f) => (
             <div key={f.key}>
               <label className="label" htmlFor={f.key}>
-                {f.label} <span className="text-xs text-slate-500">({f.help})</span>
+                {f.label} <span className="text-xs text-slate-500 dark:text-slate-400">({f.help})</span>
               </label>
               <input
                 id={f.key}
@@ -69,7 +69,7 @@ export function CronScheduler() {
 
       {data && (
         <section className="card">
-          <h3 className="mb-2 text-sm font-semibold text-slate-700">CRON Expression</h3>
+          <h3 className="mb-2 text-sm font-semibold text-slate-700 dark:text-slate-200">CRON Expression</h3>
           <CodeBlock value={data.expression} />
         </section>
       )}

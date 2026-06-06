@@ -58,7 +58,7 @@ export function RandomNumber() {
 
       {data && (
         <section className="card">
-          <p className="text-xs uppercase tracking-wide text-slate-500">Your Random Number</p>
+          <p className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">Your Random Number</p>
           <p className="font-mono text-2xl font-semibold">{data.value}</p>
         </section>
       )}

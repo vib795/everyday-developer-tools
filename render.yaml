@@ -1,0 +1,14 @@
+# Render Blueprint — https://render.com/docs/blueprint-spec
+# Single Docker web service: the multi-stage build bakes the SPA into the
+# FastAPI image, so one container serves both the API and the UI.
+services:
+  - type: web
+    name: everyday-developer-tools
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    plan: free
+    region: oregon
+    branch: develop
+    autoDeploy: true
+    healthCheckPath: /api/health

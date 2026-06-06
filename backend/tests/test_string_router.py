@@ -1,7 +1,5 @@
 def test_diff(client):
-    r = client.post(
-        "/api/string/diff", json={"text1": "hello\nworld", "text2": "hello\nworld!"}
-    )
+    r = client.post("/api/string/diff", json={"text1": "hello\nworld", "text2": "hello\nworld!"})
     assert r.status_code == 200
     hunks = r.json()["hunks"]
     assert any(h["tag"] != "equal" for h in hunks)
@@ -24,9 +22,7 @@ def test_count_word(client):
 
 
 def test_count_line(client):
-    r = client.post(
-        "/api/string/count", json={"text_input": "a\nb\nc", "filter_option": "Line"}
-    )
+    r = client.post("/api/string/count", json={"text_input": "a\nb\nc", "filter_option": "Line"})
     assert r.json()["count"] == 3
 
 
@@ -50,18 +46,32 @@ def test_columns(client):
     assert r.json()["columns"] == ["b", "e"]
 
 
-def test_clean(client):
+def test_clean_preserves_case_and_internal_whitespace(client):
     r = client.post(
-        "/api/string/clean", json={"text": "this is great.this is grand."}
+        "/api/string/clean",
+        json={"text": "  Hello   WORLD\n\nfoo  bar  "},
     )
-    cleaned = r.json()["cleaned"]
-    assert cleaned.startswith("This")
+    assert r.json()["cleaned"] == "Hello   WORLD\n\nfoo  bar"
+
+
+def test_clean_strips_invisible_and_control_chars(client):
+    r = client.post(
+        "/api/string/clean",
+        json={"text": "﻿hi​there\x07\r\nnext"},
+    )
+    assert r.json()["cleaned"] == "hithere\nnext"
+
+
+def test_clean_collapse_spaces_keeps_newlines(client):
+    r = client.post(
+        "/api/string/clean",
+        json={"text": "a    b\n\n  c   d", "collapse_spaces": True},
+    )
+    assert r.json()["cleaned"] == "a b\n\n c d"
 
 
 def test_stats(client):
-    r = client.post(
-        "/api/string/stats", json={"text": "This is a test. This is only a test."}
-    )
+    r = client.post("/api/string/stats", json={"text": "This is a test. This is only a test."})
     assert r.status_code == 200
     body = r.json()
     assert body["num_words"] == 9

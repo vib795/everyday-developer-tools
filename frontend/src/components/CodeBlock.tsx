@@ -21,7 +21,7 @@ export function CodeBlock({ value, showLineNumbers = false, copyable = true }: P
           <div className="flex">
             <div
               aria-hidden
-              className="select-none border-r border-slate-200 pr-3 text-right text-slate-400"
+              className="select-none border-r border-slate-200 pr-3 text-right text-slate-400 dark:border-slate-800 dark:text-slate-500"
             >
               {lines.map((_, i) => (
                 <div key={i}>{i + 1}</div>

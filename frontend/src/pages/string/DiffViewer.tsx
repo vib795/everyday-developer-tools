@@ -8,10 +8,10 @@ import { PageHeader } from "../../components/PageHeader";
 import { useApi } from "../../hooks/useApi";
 
 const TAG_STYLE: Record<string, string> = {
-  equal: "bg-white",
-  insert: "bg-emerald-50",
-  delete: "bg-rose-50",
-  replace: "bg-amber-50",
+  equal: "bg-white dark:bg-slate-900",
+  insert: "bg-emerald-50 dark:bg-emerald-950/40",
+  delete: "bg-rose-50 dark:bg-rose-950/40",
+  replace: "bg-amber-50 dark:bg-amber-950/40",
 };
 
 function renderSide(hunks: DiffHunk[], side: "left" | "right") {
@@ -91,11 +91,11 @@ export function DiffViewer() {
 
       {data && (
         <section className="card overflow-hidden p-0">
-          <div className="grid grid-cols-2 divide-x divide-slate-200 font-mono text-xs">
-            <div className="bg-slate-50 px-3 py-2 text-[11px] font-semibold uppercase text-slate-500">
+          <div className="grid grid-cols-2 divide-x divide-slate-200 dark:divide-slate-800 font-mono text-xs">
+            <div className="bg-slate-50 dark:bg-slate-800 px-3 py-2 text-[11px] font-semibold uppercase text-slate-500 dark:text-slate-400">
               Text 1
             </div>
-            <div className="bg-slate-50 px-3 py-2 text-[11px] font-semibold uppercase text-slate-500">
+            <div className="bg-slate-50 dark:bg-slate-800 px-3 py-2 text-[11px] font-semibold uppercase text-slate-500 dark:text-slate-400">
               Text 2
             </div>
             {Array.from({ length: rowCount }).map((_, i) => {
@@ -121,13 +121,13 @@ function Row({ l, r }: { l: Row; r: Row }) {
   return (
     <>
       <div className={clsx("flex gap-3 px-3 py-1", TAG_STYLE[l.tag])}>
-        <span className="w-8 select-none text-right text-slate-400">
+        <span className="w-8 select-none text-right text-slate-400 dark:text-slate-500">
           {l.lineNumber > 0 ? l.lineNumber : ""}
         </span>
         <span className="whitespace-pre-wrap break-all">{l.text}</span>
       </div>
       <div className={clsx("flex gap-3 px-3 py-1", TAG_STYLE[r.tag])}>
-        <span className="w-8 select-none text-right text-slate-400">
+        <span className="w-8 select-none text-right text-slate-400 dark:text-slate-500">
           {r.lineNumber > 0 ? r.lineNumber : ""}
         </span>
         <span className="whitespace-pre-wrap break-all">{r.text}</span>

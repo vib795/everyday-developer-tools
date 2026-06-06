@@ -105,7 +105,7 @@ export function MarkdownPdf() {
 
       {extracted !== null && (
         <section className="card">
-          <h3 className="mb-2 text-sm font-semibold text-slate-700">Extracted text</h3>
+          <h3 className="mb-2 text-sm font-semibold text-slate-700 dark:text-slate-200">Extracted text</h3>
           <pre className="code whitespace-pre-wrap">{extracted}</pre>
         </section>
       )}

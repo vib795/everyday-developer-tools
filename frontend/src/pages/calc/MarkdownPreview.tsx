@@ -51,7 +51,7 @@ export function MarkdownPreview() {
         />
         <div className="card prose prose-sm max-w-none overflow-auto">
           {error && (
-            <div role="alert" className="rounded-md border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-900">
+            <div role="alert" className="rounded-md border border-rose-200 dark:border-rose-900 bg-rose-50 dark:bg-rose-950/40 px-4 py-3 text-sm text-rose-900 dark:text-rose-200">
               {error}
             </div>
           )}

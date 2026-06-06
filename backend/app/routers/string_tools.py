@@ -5,6 +5,7 @@ import string
 from fastapi import APIRouter
 
 from ..schemas.string_tools import (
+    CleanTextRequest,
     CleanTextResponse,
     ColumnExtractorRequest,
     ColumnExtractorResponse,
@@ -59,13 +60,18 @@ def columns(payload: ColumnExtractorRequest) -> ColumnExtractorResponse:
     return ColumnExtractorResponse(columns=extracted)
 
 
+# Zero-width chars (ZWSP/ZWNJ/ZWJ/word joiner/BOM) and ASCII control codes
+# other than tab (\x09) and newline (\x0A). CR is normalized away above.
+_INVISIBLE_CHARS = re.compile(r"[​‌‍⁠﻿\x00-\x08\x0B\x0C\x0E-\x1F\x7F]")
+
+
 @router.post("/clean", response_model=CleanTextResponse)
-def clean(payload: TextRequest) -> CleanTextResponse:
-    text = re.sub(r"\s+", " ", payload.text).strip()
-    text = re.sub(r"([.!?])\s*", r"\1 ", text)
-    parts = re.split(r"([.!?] )", text)
-    cleaned = "".join(s.capitalize() if i % 2 == 0 else s for i, s in enumerate(parts))
-    return CleanTextResponse(cleaned=cleaned)
+def clean(payload: CleanTextRequest) -> CleanTextResponse:
+    text = payload.text.replace("\r\n", "\n").replace("\r", "\n")
+    text = _INVISIBLE_CHARS.sub("", text)
+    if payload.collapse_spaces:
+        text = re.sub(r"[ \t]+", " ", text)
+    return CleanTextResponse(cleaned=text.strip())
 
 
 @router.post("/stats", response_model=TextStats)
