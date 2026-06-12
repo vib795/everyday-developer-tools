@@ -1,13 +1,42 @@
-import re
-
-_TOKENIZE = re.compile(r"[A-Z][a-z]+|[A-Z]+(?![a-z])|[a-z]+|\d+")
-
-
 def tokens(text: str) -> list[str]:
     """Split mixed-case / delimited identifiers into lowercase word tokens."""
-    cleaned = text.replace("-", " ").replace("_", " ").replace(".", " ").replace("/", " ")
-    parts = _TOKENIZE.findall(cleaned)
-    return [p.lower() for p in parts if p]
+    words: list[str] = []
+    run: list[str] = []
+    kind = ""  # "upper" | "lower" | "digit"
+
+    def flush() -> None:
+        if run:
+            words.append("".join(run).lower())
+            run.clear()
+
+    for ch in text:
+        if not ch.isascii():
+            new = ""
+        elif ch.isupper():
+            new = "upper"
+        elif ch.islower():
+            new = "lower"
+        elif ch.isdigit():
+            new = "digit"
+        else:
+            new = ""
+        if not new:
+            flush()
+            kind = ""
+            continue
+        if new == "lower" and kind == "upper":
+            # a capital starting a word continues the run ("Hello"); an acronym
+            # keeps its last capital for the next word: "HTTPServer" -> "HTTP", "Server"
+            if len(run) > 1:
+                last = run.pop()
+                flush()
+                run.append(last)
+        elif new != kind:
+            flush()
+        run.append(ch)
+        kind = new
+    flush()
+    return words
 
 
 def to_case(text: str, style: str) -> str:
