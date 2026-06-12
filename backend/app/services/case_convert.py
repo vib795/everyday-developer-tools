@@ -1,6 +1,6 @@
 import re
 
-_TOKENIZE = re.compile(r"[A-Z]+(?=[A-Z][a-z])|[A-Z]?[a-z]+|[A-Z]+|\d+")
+_TOKENIZE = re.compile(r"[A-Z][a-z]+|[A-Z]+(?![a-z])|[a-z]+|\d+")
 
 
 def tokens(text: str) -> list[str]:
@@ -27,7 +27,7 @@ def to_case(text: str, style: str) -> str:
     if style == "title":
         return " ".join(w.capitalize() for w in words)
     if style == "sentence":
-        return (words[0].capitalize() + (" " + " ".join(words[1:]) if len(words) > 1 else ""))
+        return words[0].capitalize() + (" " + " ".join(words[1:]) if len(words) > 1 else "")
     if style == "lower":
         return " ".join(words)
     if style == "upper":

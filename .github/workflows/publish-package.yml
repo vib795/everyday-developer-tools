@@ -5,6 +5,9 @@ on:
     branches:
       - master  # or any other branch
 
+permissions:
+  contents: read
+
 jobs:
   publish:
     runs-on: ubuntu-latest

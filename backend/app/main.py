@@ -65,6 +65,7 @@ def create_app() -> FastAPI:
 def _mount_spa(app: FastAPI) -> None:
     dist = Path(settings.spa_dist)
     if not dist.exists():
+
         @app.get("/")
         def missing_spa() -> JSONResponse:
             return JSONResponse(
@@ -75,6 +76,7 @@ def _mount_spa(app: FastAPI) -> None:
                 },
                 status_code=503,
             )
+
         return
 
     assets_dir = dist / "assets"
@@ -82,13 +84,14 @@ def _mount_spa(app: FastAPI) -> None:
         app.mount("/assets", StaticFiles(directory=str(assets_dir)), name="assets")
 
     index_path = dist / "index.html"
+    base = dist.resolve()
 
     @app.get("/{full_path:path}", response_model=None, include_in_schema=False)
     def spa_catchall(full_path: str, request: Request) -> FileResponse | JSONResponse:
         if full_path.startswith("api/"):
             return JSONResponse({"detail": "Not Found"}, status_code=404)
-        candidate = dist / full_path
-        if full_path and candidate.is_file():
+        candidate = (dist / full_path).resolve()
+        if full_path and candidate.is_relative_to(base) and candidate.is_file():
             return FileResponse(str(candidate))
         return FileResponse(str(index_path))
 

@@ -1,12 +1,13 @@
 """Color parsing and conversions for hex / rgb() / hsl() inputs."""
+
 from __future__ import annotations
 
 import math
 import re
 
 _HEX = re.compile(r"^#?([0-9a-f]{3}|[0-9a-f]{6}|[0-9a-f]{8})$", re.IGNORECASE)
-_RGB = re.compile(r"^rgba?\(\s*([^)]+)\)$", re.IGNORECASE)
-_HSL = re.compile(r"^hsla?\(\s*([^)]+)\)$", re.IGNORECASE)
+_RGB = re.compile(r"^rgba?\(([^)]+)\)$", re.IGNORECASE)
+_HSL = re.compile(r"^hsla?\(([^)]+)\)$", re.IGNORECASE)
 
 
 def _parse_components(s: str) -> list[float]:
@@ -85,11 +86,7 @@ def _srgb_to_linear(c: float) -> float:
 
 
 def relative_luminance(r: int, g: int, b: int) -> float:
-    return (
-        0.2126 * _srgb_to_linear(r)
-        + 0.7152 * _srgb_to_linear(g)
-        + 0.0722 * _srgb_to_linear(b)
-    )
+    return 0.2126 * _srgb_to_linear(r) + 0.7152 * _srgb_to_linear(g) + 0.0722 * _srgb_to_linear(b)
 
 
 def contrast_ratio(fg: tuple[int, int, int], bg: tuple[int, int, int]) -> float:
