@@ -1,6 +1,6 @@
 # Developer Tools
 
-A web app that bundles 16+ everyday developer tools — JSON validators and generators, regex helpers, string and time utilities, encoding tools, fake-data generation, and Markdown ⇄ PDF conversion.
+A web app that bundles 35+ everyday developer tools — JSON and format converters, regex helpers, string and time utilities, encoding/hashing tools, color and network calculators, fake-data and QR generation, Markdown ⇄ PDF conversion, and quick HTTP/MIME reference tables.
 
 The application is split into two pieces:
 
@@ -17,6 +17,11 @@ In production both ship in a single Docker image. In development you can run the
 - **Sample Generator** — generate sample data conforming to a schema (handles `enum`, `pattern`, `format`, `allOf`/`anyOf`/`oneOf`, `if`/`then`/`else`).
 - **String ⇄ JSON Converter** — turn JSON into an escaped string and back.
 - **Parser** — pretty-print JSON.
+- **JSONPath** — evaluate a JSONPath expression against a JSON document.
+
+### Convert
+- **Format Converter** — convert between JSON, YAML, TOML, XML, and CSV (CSV round-trips a list-of-objects shape).
+- **cURL Converter** — turn a `curl` command into `fetch`, `axios`, and Python `requests` code.
 
 ### RegEx
 - **Checker** — test a pattern against a string. Each call is bounded to 1 s of CPU and rate-limited (15/min by default) to mitigate ReDoS.
@@ -26,23 +31,41 @@ In production both ship in a single Docker image. In development you can run the
 - **Diff Viewer** — side-by-side diff with line numbers and per-row colouring.
 - **Char/Word Counter** — character/word/line count, with optional custom delimiter.
 - **Column Extractor** — pull a column out of delimited text.
-- **Clean Text** — collapse whitespace and capitalise sentence starts.
+- **Clean Text** — strip leading/trailing whitespace plus hidden/zero-width and control characters; preserves case and internal whitespace, with an optional toggle to collapse runs of spaces (keeping newlines).
 - **Text Statistics** — char/word/sentence counts plus min/max/avg word length.
 - **Random Number / Random String / Shuffle Letters**.
 
 ### Encoding
 - **Base64** — encode/decode UTF-8 text.
+- **URL Codec** — URL-encode/decode text and parse a query string into key/value pairs.
+- **Hash & HMAC** — MD5/SHA-family digests and keyed HMAC digests.
 - **JWT Viewer** — decode HS256 tokens.
+- **JWT Signer** — sign a payload with HS256/384/512.
+- **UUID** — generate (v1/v3/v4/v5/v7) and inspect/validate UUIDs.
+- **Case Converter** — convert between camelCase, snake_case, kebab-case, CONSTANT_CASE, Title Case, and more.
 
 ### Time
 - **Time Converter** — accepts ISO-8601, epoch seconds, epoch milliseconds, and `YYYY-MM-DD HH:MM:SS` Postgres timestamps; emits Eastern, UTC, UNIX, day-of-week/year, leap-year, and several locale formats.
 - **CRON Scheduler** — build a CRON expression from form fields.
+- **CRON Next Runs** — list the next N times a CRON expression will fire, in a chosen timezone.
+
+### Calc
+- **Color** — convert a color between hex, RGB, HSL, and OKLCH, and check WCAG contrast ratios.
+- **chmod Calculator** — convert Unix permissions between numeric and symbolic forms.
+- **CIDR Calculator** — derive network/broadcast addresses, host range, and host count for an IPv4/IPv6 subnet.
 
 ### Document
 - **Markdown ⇄ PDF** — render Markdown to a downloadable PDF (headings, bullets, fenced code) or extract text from a PDF.
+- **Markdown Preview** — render Markdown to HTML (fenced code, tables, lists).
 
 ### Fake Data
 - **Generator** — build a synthetic dataset of up to 1000 records with 25+ field types (names, emails, vehicle make/model pairs, license plates, etc.) and export as JSON or CSV.
+- **Lorem Ipsum** — generate filler words, sentences, or paragraphs.
+- **QR Code** — encode text or a URL as an SVG QR code.
+
+### Reference
+- **HTTP Statuses** — searchable reference of HTTP status codes.
+- **MIME Types** — common Content-Type / file-extension reference.
 
 ## Architecture
 
@@ -52,8 +75,9 @@ In production both ship in a single Docker image. In development you can run the
 │                                                │
 │  uvicorn (FastAPI)                             │
 │     ├─ /api/*  → routers/ → services/          │
-│     │      json, regex, string, encoding,      │
-│     │      time, document, fake_data           │
+│     │      json, convert, regex, string,       │
+│     │      encoding, codec, time, calc,        │
+│     │      document, fake_data, misc           │
 │     └─ /*      → SPA (Vite build)              │
 └────────────────────────────────────────────────┘
                         │
@@ -149,6 +173,9 @@ Every endpoint returns JSON unless noted. All POST bodies are JSON.
 | POST   | `/api/json/sample`            | rate-limited |
 | POST   | `/api/json/convert`           |       |
 | POST   | `/api/json/parse`             |       |
+| POST   | `/api/convert/format`         | JSON/YAML/TOML/XML/CSV |
+| POST   | `/api/convert/jsonpath`       | evaluate a JSONPath expression |
+| POST   | `/api/convert/curl`           | curl → fetch / axios / requests |
 | POST   | `/api/regex/check`            | rate-limited; 1 s timeout |
 | POST   | `/api/regex/generate`         |       |
 | POST   | `/api/string/diff`            | structured hunks |
@@ -160,14 +187,32 @@ Every endpoint returns JSON unless noted. All POST bodies are JSON.
 | POST   | `/api/string/random-string`   |       |
 | POST   | `/api/string/shuffle`         |       |
 | POST   | `/api/encoding/base64`        |       |
-| POST   | `/api/encoding/jwt`           |       |
+| POST   | `/api/encoding/jwt`           | decode |
+| POST   | `/api/codec/url`              | URL encode/decode |
+| POST   | `/api/codec/url/parse`        | parse query string |
+| POST   | `/api/codec/hash`             | MD5/SHA digests |
+| POST   | `/api/codec/hmac`             | keyed HMAC digest |
+| POST   | `/api/codec/case`             | case conversion |
+| POST   | `/api/codec/uuid/generate`    | UUID v1/v3/v4/v5/v7 |
+| POST   | `/api/codec/uuid/inspect`     | parse/validate a UUID |
+| POST   | `/api/codec/jwt/sign`         | sign HS256/384/512 |
 | POST   | `/api/time/convert`           |       |
 | POST   | `/api/time/cron`              |       |
+| POST   | `/api/calc/cron-next`         | next N cron run times |
+| POST   | `/api/calc/color`             | hex/RGB/HSL/OKLCH |
+| POST   | `/api/calc/contrast`          | WCAG contrast ratio |
+| POST   | `/api/calc/chmod`             | numeric ⇄ symbolic |
+| POST   | `/api/calc/cidr`              | subnet calculator |
+| POST   | `/api/calc/markdown`          | Markdown → HTML |
 | POST   | `/api/document/md-to-pdf`     | streams `application/pdf` |
 | POST   | `/api/document/pdf-to-md`     | multipart upload |
 | GET    | `/api/fake-data/types`        | list of supported field types |
 | POST   | `/api/fake-data/preview`      |       |
 | POST   | `/api/fake-data/export`       | streams CSV or JSON |
+| GET    | `/api/misc/http-statuses`     | HTTP status reference |
+| GET    | `/api/misc/mime-types`        | MIME-type reference |
+| POST   | `/api/misc/lorem`             | lorem ipsum generator |
+| POST   | `/api/misc/qr`                | SVG QR code |
 | GET    | `/api/health`                 |       |
 
 ## Contributing
