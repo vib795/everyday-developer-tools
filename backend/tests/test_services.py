@@ -3,6 +3,7 @@ import json
 from app.services.diff import structured_diff
 from app.services.fake_data import generate_fake_data
 from app.services.json_schema import apply_conditions_to_schema, generate_json_schema
+from app.services.markdown_pdf import _inline, markdown_to_pdf, pdf_to_markdown
 from app.services.regex_gen import detect_pattern, generate_basic_pattern
 from app.services.sample_data import generate_sample_data
 
@@ -131,3 +132,34 @@ def test_structured_diff_is_minimum_edit_script():
     changed = sum(len(h["left"]) + len(h["right"]) for h in hunks if h["tag"] != "equal")
     assert kept == 4
     assert changed == 5
+
+
+def test_inline_markdown_converts_emphasis_and_code():
+    assert _inline("**bold**") == "<b>bold</b>"
+    assert _inline("*italic*") == "<i>italic</i>"
+    assert _inline("`code`") == '<font face="Courier">code</font>'
+    # emphasis markers inside a code span are left alone
+    assert _inline("`a*b*c`") == '<font face="Courier">a*b*c</font>'
+    # underscores inside words are not treated as italics
+    assert _inline("snake_case_name") == "snake_case_name"
+    # angle brackets and ampersands are escaped, not passed through as markup
+    assert _inline("a < b & c") == "a &lt; b &amp; c"
+
+
+def test_markdown_to_pdf_does_not_leak_markers():
+    md = (
+        "# Developer Tools\n\n"
+        "### Encoding\n"
+        "- **Base64** — encode UTF-8 text.\n"
+        "- **URL Codec** — encode text.\n\n"
+        "1. First\n2. Second\n\n"
+        "A `code` word and **bold** text.\n"
+    )
+    pdf = markdown_to_pdf(md)
+    assert pdf.startswith(b"%PDF")
+    text = pdf_to_markdown(pdf)
+    # content survives, but raw bold markers and leading bullet dashes do not
+    assert "Developer Tools" in text
+    assert "Base64" in text
+    assert "**" not in text
+    assert "- Base64" not in text

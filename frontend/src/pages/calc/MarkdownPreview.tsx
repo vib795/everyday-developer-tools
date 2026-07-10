@@ -49,7 +49,7 @@ export function MarkdownPreview() {
           value={text}
           onChange={(e) => setText(e.target.value)}
         />
-        <div className="card prose prose-sm max-w-none overflow-auto">
+        <div className="card prose prose-sm dark:prose-invert max-w-none overflow-auto">
           {error && (
             <div role="alert" className="rounded-md border border-rose-200 dark:border-rose-900 bg-rose-50 dark:bg-rose-950/40 px-4 py-3 text-sm text-rose-900 dark:text-rose-200">
               {error}
