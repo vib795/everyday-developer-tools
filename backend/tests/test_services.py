@@ -99,3 +99,35 @@ def test_structured_diff_emits_change_tags():
     tags = {h["tag"] for h in hunks}
     assert "equal" in tags
     assert tags & {"replace", "delete", "insert"}
+
+
+def _side(hunks, key):
+    lines = []
+    for h in hunks:
+        lines.extend(h[key])
+    return lines
+
+
+def test_structured_diff_reconstructs_both_sides():
+    text1 = "the\nquick\nbrown\nfox"
+    text2 = "the\nlazy\nbrown\ndog\nhere"
+    hunks = structured_diff(text1, text2)
+    a, b = text1.splitlines(), text2.splitlines()
+    # Concatenating each side over the hunks rebuilds the original inputs,
+    # and every hunk's start index points at the right offset.
+    assert _side(hunks, "left") == a
+    assert _side(hunks, "right") == b
+    for h in hunks:
+        assert h["left"] == a[h["left_start"] : h["left_start"] + len(h["left"])]
+        assert h["right"] == b[h["right_start"] : h["right_start"] + len(h["right"])]
+
+
+def test_structured_diff_is_minimum_edit_script():
+    # Myers (1986) worked example: "ABCABBA" -> "CBABAC" has edit distance 5
+    # and a longest common subsequence of length 4. A correct O(ND) diff must
+    # reproduce those invariants regardless of the exact path chosen.
+    hunks = structured_diff("\n".join("ABCABBA"), "\n".join("CBABAC"))
+    kept = sum(len(h["left"]) for h in hunks if h["tag"] == "equal")
+    changed = sum(len(h["left"]) + len(h["right"]) for h in hunks if h["tag"] != "equal")
+    assert kept == 4
+    assert changed == 5
