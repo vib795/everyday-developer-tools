@@ -1,4 +1,3 @@
-import difflib
 from typing import Literal
 
 from typing_extensions import TypedDict
@@ -116,9 +115,3 @@ def structured_diff(text1: str, text2: str) -> list[DiffHunk]:
             )
         )
     return hunks
-
-
-def html_diff(text1: str, text2: str) -> str:
-    return difflib.HtmlDiff().make_file(
-        text1.splitlines(), text2.splitlines(), fromdesc="Text 1", todesc="Text 2"
-    )
