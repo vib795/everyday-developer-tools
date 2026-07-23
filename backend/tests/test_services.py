@@ -146,6 +146,16 @@ def test_inline_markdown_converts_emphasis_and_code():
     assert _inline("a < b & c") == "a &lt; b &amp; c"
 
 
+def test_ordered_list_marker_digits_are_bounded():
+    from app.services.markdown_pdf import _ORDERED
+
+    assert _ORDERED.match("1. First").group(1) == "First"
+    assert _ORDERED.match("42. Answer").group(1) == "Answer"
+    # A long run of digits with no trailing "." must not send the engine
+    # backtracking once per digit (CodeQL py/polynomial-redos).
+    assert _ORDERED.match("9" * 50_000) is None
+
+
 def test_markdown_to_pdf_does_not_leak_markers():
     md = (
         "# Developer Tools\n\n"

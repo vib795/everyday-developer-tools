@@ -20,7 +20,10 @@ _CODE_SENTINEL = chr(0xE000)
 _HRULE = re.compile(r"([-*_])\1{2,}$")
 _HEADING = re.compile(r"(#{1,4})\s+(.*)")
 _BULLET = re.compile(r"[-*+]\s+(.*)")
-_ORDERED = re.compile(r"\d+\.\s+(.*)")
+# The digit run is bounded: an unbounded \d+ backtracks once per digit when the
+# trailing "." is absent, so a long run of digits in user-supplied Markdown costs
+# time proportional to its length (CodeQL py/polynomial-redos).
+_ORDERED = re.compile(r"\d{1,9}\.\s+(.*)")
 
 
 def _inline(text: str) -> str:
