@@ -21,7 +21,7 @@ jobs:
       run: docker build . --file Dockerfile.dev --tag utkarshsingh/developer-tools-dev:latest
 
     - name: Log in to Docker Hub
-      uses: docker/login-action@v1
+      uses: docker/login-action@v4
       with:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
