@@ -1,6 +1,25 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+/* Keep the class-based dark mode: the ThemeToggle adds/removes `.dark` on the
+   document element. Without this, v4 would default to prefers-color-scheme and
+   every `dark:` variant across the app would stop responding to the toggle. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* v4 is CSS-first: the brand palette and fonts that used to live in
+   tailwind.config.js move here as theme tokens, which regenerates the
+   bg-brand / text-brand / font-sans utilities the app already uses. */
+@theme {
+  --color-brand: #6225e6;
+  --color-brand-50: #f3eefe;
+  --color-brand-100: #e6dafd;
+  --color-brand-500: #6225e6;
+  --color-brand-600: #511fc1;
+  --color-brand-700: #3f199d;
+
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
 
 @layer base {
   :root {
@@ -10,7 +29,7 @@
     color-scheme: dark;
   }
   body {
-    font-family: theme("fontFamily.sans");
+    font-family: var(--font-sans);
   }
 }
 
@@ -19,13 +38,13 @@
     @apply inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition focus:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 dark:focus-visible:ring-offset-slate-900 disabled:cursor-not-allowed disabled:opacity-60;
   }
   .btn-primary {
-    @apply btn bg-brand text-white hover:bg-brand-600;
+    @apply inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition focus:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 dark:focus-visible:ring-offset-slate-900 disabled:cursor-not-allowed disabled:opacity-60 bg-brand text-white hover:bg-brand-600;
   }
   .btn-secondary {
-    @apply btn border border-slate-300 bg-white text-slate-700 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700;
+    @apply inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition focus:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 dark:focus-visible:ring-offset-slate-900 disabled:cursor-not-allowed disabled:opacity-60 border border-slate-300 bg-white text-slate-700 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700;
   }
   .btn-ghost {
-    @apply btn text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800;
+    @apply inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition focus:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 dark:focus-visible:ring-offset-slate-900 disabled:cursor-not-allowed disabled:opacity-60 text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800;
   }
   .input {
     @apply block w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:placeholder-slate-500;
