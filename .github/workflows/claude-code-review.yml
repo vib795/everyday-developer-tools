@@ -12,11 +12,10 @@ on:
 
 jobs:
   claude-review:
-    # Optional: Filter by PR author
-    # if: |
-    #   github.event.pull_request.user.login == 'external-contributor' ||
-    #   github.event.pull_request.user.login == 'new-developer' ||
-    #   github.event.pull_request.author_association == 'FIRST_TIME_CONTRIBUTOR'
+    # Skip Dependabot PRs: pull_request runs for dependabot[bot] get a read-only
+    # token with no secret access, so this job cannot authenticate. Dependabot PRs
+    # are handled by claude-dependabot.yml (pull_request_target) instead.
+    if: ${{ github.actor != 'dependabot[bot]' }}
 
     runs-on: ubuntu-latest
     permissions:
