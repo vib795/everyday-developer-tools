@@ -1,4 +1,4 @@
-FROM node:22-alpine AS spa
+FROM node:26-alpine AS spa
 WORKDIR /app/frontend
 COPY frontend/package.json frontend/package-lock.json ./
 RUN npm ci --no-audit --no-fund
