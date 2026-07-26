@@ -1,0 +1,33 @@
+name: Dependabot approval digest
+
+# Emails a prioritized list of open Dependabot PRs so they can be approved in a
+# sensible order. Runs weekly (after Dependabot's Monday run) and on demand. The
+# script skips sending when there is nothing open or when the mail secrets are
+# not configured.
+#
+# Required repository secrets: MAIL_USERNAME (Gmail address), MAIL_APP_PASSWORD
+# (a Google app password). Optional: MAIL_TO (defaults to MAIL_USERNAME).
+on:
+  schedule:
+    - cron: "0 13 * * 1" # Mondays 13:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  digest:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out
+        uses: actions/checkout@v5
+
+      - name: Build and send the digest
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          MAIL_USERNAME: ${{ secrets.MAIL_USERNAME }}
+          MAIL_APP_PASSWORD: ${{ secrets.MAIL_APP_PASSWORD }}
+          MAIL_TO: ${{ secrets.MAIL_TO }}
+          REPO: ${{ github.repository }}
+        run: python3 .github/scripts/dependabot_digest.py

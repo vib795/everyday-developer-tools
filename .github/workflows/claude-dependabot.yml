@@ -41,7 +41,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Set up uv
-        uses: astral-sh/setup-uv@v8.2.0
+        uses: astral-sh/setup-uv@v9.0.0
         with:
           enable-cache: true
 
@@ -54,6 +54,14 @@ jobs:
         uses: anthropics/claude-code-action@v1
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          # pull_request_target runs cannot mint a GitHub App token via the OIDC
+          # exchange (it 401s with "Invalid OIDC token"), so pass the workflow's
+          # own token directly for GitHub API/commit operations.
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          # claude-code-action refuses bot-initiated runs by default. This job is
+          # already gated to dependabot[bot] PRs (see the job-level `if`), so allow
+          # that one bot through explicitly.
+          allowed_bots: "dependabot[bot]"
           prompt: |
             A Dependabot pull request updated these dependencies:
               ${{ steps.meta.outputs.dependency-names }}
