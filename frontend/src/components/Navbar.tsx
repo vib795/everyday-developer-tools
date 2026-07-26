@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Link, NavLink, useLocation } from "react-router-dom";
+import { Link, NavLink, useLocation } from "react-router";
 import clsx from "clsx";
 
 import { TOOL_GROUPS, ToolLink } from "../tools";
