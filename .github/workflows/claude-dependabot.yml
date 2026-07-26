@@ -1,0 +1,121 @@
+name: Claude · Dependabot auto-review
+
+# WHY pull_request_target (and not pull_request):
+# Workflows triggered by Dependabot run with a READ-ONLY GITHUB_TOKEN and NO access
+# to repository secrets, so a plain `pull_request` run could never read
+# CLAUDE_CODE_OAUTH_TOKEN. `pull_request_target` runs in the context of the base
+# branch (develop), which has secret access and a writable token. This stays safe
+# because the job (a) is gated on the PR author being dependabot[bot] — an actor you
+# cannot open a PR as — and (b) only ever checks out Dependabot's own in-repo branch,
+# never a fork.
+on:
+  pull_request_target:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: write # Claude pushes fixes; we squash-merge
+  pull-requests: write # comment, approve, label, merge
+  issues: write # PR/issue housekeeping by the action
+  id-token: write # OIDC for anthropics/claude-code-action
+
+concurrency:
+  group: claude-dependabot-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  review:
+    # Only ever run for Dependabot's own PRs.
+    if: ${{ github.event.pull_request.user.login == 'dependabot[bot]' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the Dependabot branch
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          fetch-depth: 0
+
+      - name: Read Dependabot metadata
+        id: meta
+        uses: dependabot/fetch-metadata@v2
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v8.2.0
+        with:
+          enable-cache: true
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Claude reviews the update and fixes any breakage
+        uses: anthropics/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          prompt: |
+            A Dependabot pull request updated these dependencies:
+              ${{ steps.meta.outputs.dependency-names }}
+            Semver update type: ${{ steps.meta.outputs.update-type }}
+
+            Do this, then post ONE PR comment summarising what you found and did:
+            1. Check each dependency's changelog / release notes for BREAKING changes
+               between the previous and new version.
+            2. If the new version breaks this repo (renamed or removed APIs, changed
+               signatures, changed behaviour), fix the affected call sites. Keep the
+               change minimal and scoped to what the upgrade requires — do not refactor
+               unrelated code.
+            3. Verify:
+                 backend deps  ->  cd backend && uv sync && uv run pytest
+                 frontend deps ->  cd frontend && npm ci && npm run lint
+            4. Commit any fixes to this branch with a clear message.
+            5. Finish the comment with exactly one of these lines on its own:
+                 VERDICT: SAFE
+                 VERDICT: NEEDS-REVIEW
+               Use NEEDS-REVIEW if anything is ambiguous or a human should look.
+          claude_args: "--allowedTools Bash,Edit,Read,Write,Grep,Glob --max-turns 30"
+
+      - name: Verify the tree is green (authoritative merge gate)
+        id: verify
+        run: |
+          set -e
+          echo "::group::backend pytest"
+          cd backend && (uv sync --frozen || uv sync) && uv run pytest && cd ..
+          echo "::endgroup::"
+          if [ "${{ steps.meta.outputs.directory }}" = "/frontend" ]; then
+            echo "::group::frontend lint"
+            cd frontend && npm ci && npm run lint && cd ..
+            echo "::endgroup::"
+          fi
+
+      - name: Auto-merge patch/minor, hold majors for review
+        if: ${{ steps.verify.outcome == 'success' }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          UPDATE_TYPE: ${{ steps.meta.outputs.update-type }}
+        run: |
+          case "$UPDATE_TYPE" in
+            version-update:semver-patch|version-update:semver-minor)
+              echo "Patch/minor + green tests -> approve and merge (Render deploys on merge to develop)."
+              gh pr review --approve "$PR_URL" || true
+              gh pr merge --auto --squash --delete-branch "$PR_URL" \
+                || gh pr merge --squash --delete-branch "$PR_URL"
+              ;;
+            *)
+              echo "Major (or unknown) update -> hold for a human."
+              gh label create needs-review --color FBCA04 \
+                --description "Held for human review" 2>/dev/null || true
+              gh pr edit "$PR_URL" --add-label needs-review || true
+              gh pr comment "$PR_URL" --body ":warning: **Major-version bump — held for review.** Tests pass, but per policy majors are not auto-merged. Merge manually to deploy."
+              ;;
+          esac
+
+      - name: Comment when the update cannot be made green
+        if: ${{ failure() && steps.verify.outcome == 'failure' }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+        run: |
+          gh pr comment "$PR_URL" --body ":x: **Tests still fail after Claude's review — not merging.** See the workflow run logs; a human will need to resolve this update."

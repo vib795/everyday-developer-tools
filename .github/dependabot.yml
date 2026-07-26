@@ -1,0 +1,52 @@
+# Dependabot keeps dependencies patched and turns security advisories into PRs.
+# The companion workflow .github/workflows/claude-dependabot.yml then has Claude
+# review each PR, fix any breakage, and auto-merge safe (patch/minor) updates —
+# which deploys, since Render auto-deploys every push to `develop`.
+#
+# Security advisories still open their own dedicated PR regardless of the grouping
+# below, so each Dependabot alert maps to a reviewable, auto-mergeable PR.
+version: 2
+updates:
+  # Python backend — uv resolves backend/uv.lock from backend/pyproject.toml.
+  - package-ecosystem: "uv"
+    directory: "/backend"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 10
+    labels:
+      - "dependencies"
+    groups:
+      backend-minor-patch:
+        update-types:
+          - "minor"
+          - "patch"
+
+  # React/Vite frontend.
+  - package-ecosystem: "npm"
+    directory: "/frontend"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 10
+    labels:
+      - "dependencies"
+    groups:
+      frontend-minor-patch:
+        update-types:
+          - "minor"
+          - "patch"
+
+  # The workflow actions pinned under .github/workflows themselves.
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    labels:
+      - "dependencies"
+
+  # Base images in the root Dockerfile that Render builds from.
+  - package-ecosystem: "docker"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    labels:
+      - "dependencies"
