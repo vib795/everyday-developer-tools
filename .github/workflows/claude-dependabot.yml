@@ -58,6 +58,10 @@ jobs:
           # exchange (it 401s with "Invalid OIDC token"), so pass the workflow's
           # own token directly for GitHub API/commit operations.
           github_token: ${{ secrets.GITHUB_TOKEN }}
+          # claude-code-action refuses bot-initiated runs by default. This job is
+          # already gated to dependabot[bot] PRs (see the job-level `if`), so allow
+          # that one bot through explicitly.
+          allowed_bots: "dependabot[bot]"
           prompt: |
             A Dependabot pull request updated these dependencies:
               ${{ steps.meta.outputs.dependency-names }}
