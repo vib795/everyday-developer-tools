@@ -173,3 +173,5 @@ frontend/.vite/
 # Logs
 logs/
 
+# gstack skill state
+.gstack/
