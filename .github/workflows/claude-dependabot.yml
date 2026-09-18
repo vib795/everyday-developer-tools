@@ -123,9 +123,10 @@ jobs:
               # `|| true` hid the rejection: the job went green while the PR
               # parked at REVIEW_REQUIRED indefinitely. Say it out loud.
               if ! gh pr review --approve "$PR_URL" 2>/dev/null; then
-                echo "::warning title=Approval still needed::Tests are green and \
-auto-merge is armed, but GitHub Actions cannot approve PRs. This PR will not \
-land until a human approves it."
+                # Keep this on ONE line. A backslash continuation whose next
+                # line starts at column 0 ends the YAML block scalar and makes
+                # the whole workflow file invalid.
+                echo "::warning title=Approval still needed::Tests are green and auto-merge is armed, but GitHub Actions cannot approve PRs. This PR will not land until a human approves it."
               fi
               gh pr merge --auto --squash --delete-branch "$PR_URL" \
                 || gh pr merge --squash --delete-branch "$PR_URL"
