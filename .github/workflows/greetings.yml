@@ -9,11 +9,13 @@ jobs:
       issues: write
       pull-requests: write
     steps:
+    # v3 renamed every input to snake_case (repo_token / issue_message /
+    # pr_message). The hyphenated v2 names are silently dropped, so the action
+    # threw "Input required and not supplied: issue_message" on every PR.
     - uses: actions/first-interaction@v3
       with:
-        repo-token: ${{ secrets.GITHUB_TOKEN }}
-        issue-message: "Welcome to the project! 🎉 We're thrilled to have you here and are eager to see your contributions. 
-                        Please make sure to read our [contribution guidelines](LINK_TO_YOUR_GUIDELINES) to get started. 
+        repo_token: ${{ secrets.GITHUB_TOKEN }}
+        issue_message: "Welcome to the project! 🎉 We're thrilled to have you here and are eager to see your contributions.
                         If you have any questions, don't hesitate to ask in the issue comments."
-        pr-message: "Thank you for submitting your first pull request! 🚀 We're excited to review it. 
+        pr_message: "Thank you for submitting your first pull request! 🚀 We're excited to review it.
                     While you wait, if you have any questions about the process, feel free to ask."

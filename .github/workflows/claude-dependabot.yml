@@ -51,6 +51,12 @@ jobs:
           node-version: "22"
 
       - name: Claude reviews the update and fixes any breakage
+        # ADVISORY ONLY — must never decide the merge. The next step is the
+        # authoritative gate. Without continue-on-error, a reviewer that merely
+        # ran long ("reported a successful result after 36 turns, exceeding the
+        # configured maximum of 30") failed the job before pytest ever ran,
+        # leaving the PR blocked with no test evidence either way.
+        continue-on-error: true
         uses: anthropics/claude-code-action@v1
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
@@ -82,7 +88,9 @@ jobs:
                  VERDICT: SAFE
                  VERDICT: NEEDS-REVIEW
                Use NEEDS-REVIEW if anything is ambiguous or a human should look.
-          claude_args: "--allowedTools Bash,Edit,Read,Write,Grep,Glob --max-turns 30"
+          # 30 was too low for grouped bumps: a 4-dependency group needs a
+          # changelog check plus a verify run per dependency and overran at 36.
+          claude_args: "--allowedTools Bash,Edit,Read,Write,Grep,Glob --max-turns 60"
 
       - name: Verify the tree is green (authoritative merge gate)
         id: verify
@@ -107,7 +115,18 @@ jobs:
           case "$UPDATE_TYPE" in
             version-update:semver-patch|version-update:semver-minor)
               echo "Patch/minor + green tests -> approve and merge (Render deploys on merge to develop)."
-              gh pr review --approve "$PR_URL" || true
+              # GITHUB_TOKEN cannot approve a PR — GitHub rejects it with
+              # "GitHub Actions is not permitted to create approving pull
+              # request reviews" — so this can never satisfy the required
+              # review on develop. Arming auto-merge below is still correct
+              # (it lands the instant an approval arrives), but the old
+              # `|| true` hid the rejection: the job went green while the PR
+              # parked at REVIEW_REQUIRED indefinitely. Say it out loud.
+              if ! gh pr review --approve "$PR_URL" 2>/dev/null; then
+                echo "::warning title=Approval still needed::Tests are green and \
+auto-merge is armed, but GitHub Actions cannot approve PRs. This PR will not \
+land until a human approves it."
+              fi
               gh pr merge --auto --squash --delete-branch "$PR_URL" \
                 || gh pr merge --squash --delete-branch "$PR_URL"
               ;;
