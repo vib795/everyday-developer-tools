@@ -3,6 +3,7 @@
 Supports common flags: -X, -H/--header, -d/--data/--data-raw/--data-binary/--data-urlencode,
 -u/--user, --form, --compressed, -G/--get. Newline continuations (\\) and shell quoting are honored.
 """
+
 from __future__ import annotations
 
 import json
@@ -110,7 +111,7 @@ def to_fetch(parsed: dict[str, Any]) -> str:
     if parsed["body"]:
         init["body"] = parsed["body"]
     body_str = json.dumps(init, indent=2)
-    return f'fetch({json.dumps(parsed["url"])}, {body_str})\n  .then((r) => r.json())\n  .then(console.log);'
+    return f"fetch({json.dumps(parsed['url'])}, {body_str})\n  .then((r) => r.json())\n  .then(console.log);"
 
 
 def to_axios(parsed: dict[str, Any]) -> str:

@@ -1,4 +1,5 @@
 """chmod calculator: convert between numeric (e.g. "755") and symbolic ("rwxr-xr-x")."""
+
 from __future__ import annotations
 
 _BIT_NAMES = "rwx"
@@ -48,16 +49,16 @@ def symbolic_to_numeric(value: str) -> str:
         if chunk[0] == "r":
             bits |= 4
         elif chunk[0] != "-":
-            raise ValueError(f"Bad char at pos {i*3}: {chunk[0]!r}")
+            raise ValueError(f"Bad char at pos {i * 3}: {chunk[0]!r}")
         if chunk[1] == "w":
             bits |= 2
         elif chunk[1] != "-":
-            raise ValueError(f"Bad char at pos {i*3 + 1}: {chunk[1]!r}")
+            raise ValueError(f"Bad char at pos {i * 3 + 1}: {chunk[1]!r}")
         c2 = chunk[2]
         if c2 in ("x", "s", "t"):
             bits |= 1
         elif c2 not in ("-", "S", "T"):
-            raise ValueError(f"Bad char at pos {i*3 + 2}: {c2!r}")
+            raise ValueError(f"Bad char at pos {i * 3 + 2}: {c2!r}")
         if i == 0 and c2 in ("s", "S"):
             setuid = True
         elif i == 1 and c2 in ("s", "S"):

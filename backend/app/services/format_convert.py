@@ -3,6 +3,7 @@
 Conversions go through Python objects: source.parse() → target.dump().
 CSV is constrained: round-trips a list-of-dicts shape.
 """
+
 from __future__ import annotations
 
 import csv

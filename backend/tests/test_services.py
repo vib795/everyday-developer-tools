@@ -32,9 +32,7 @@ def test_apply_conditions_nested_path():
         schema,
         [{"path": "address.zip", "condition": {"type": "string"}}],
     )
-    assert (
-        schema["properties"]["address"]["properties"]["zip"]["type"] == "string"
-    )
+    assert schema["properties"]["address"]["properties"]["zip"]["type"] == "string"
 
 
 def test_generate_sample_data_full_shape():
@@ -84,9 +82,7 @@ def test_basic_pattern_includes_classes():
 def test_generate_fake_data_make_model_pairing():
     from app.services.fake_data import CAR_MODELS
 
-    records = generate_fake_data(
-        ["make", "model"], ["car_make", "car_model"], 25
-    )
+    records = generate_fake_data(["make", "model"], ["car_make", "car_model"], 25)
     for rec in records:
         assert rec["model"] in CAR_MODELS[rec["make"]]
 

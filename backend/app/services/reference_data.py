@@ -2,8 +2,16 @@
 
 HTTP_STATUSES: list[dict] = [
     # 1xx
-    {"code": 100, "name": "Continue", "description": "Initial request received; client should continue."},
-    {"code": 101, "name": "Switching Protocols", "description": "Protocol switch requested by client honored."},
+    {
+        "code": 100,
+        "name": "Continue",
+        "description": "Initial request received; client should continue.",
+    },
+    {
+        "code": 101,
+        "name": "Switching Protocols",
+        "description": "Protocol switch requested by client honored.",
+    },
     {"code": 103, "name": "Early Hints", "description": "Preload hints before the final response."},
     # 2xx
     {"code": 200, "name": "OK", "description": "Request succeeded."},
@@ -12,22 +20,46 @@ HTTP_STATUSES: list[dict] = [
     {"code": 204, "name": "No Content", "description": "Successful with no response body."},
     {"code": 206, "name": "Partial Content", "description": "Range request fulfilled."},
     # 3xx
-    {"code": 301, "name": "Moved Permanently", "description": "Resource has moved; clients should update links."},
+    {
+        "code": 301,
+        "name": "Moved Permanently",
+        "description": "Resource has moved; clients should update links.",
+    },
     {"code": 302, "name": "Found", "description": "Temporary redirect."},
     {"code": 303, "name": "See Other", "description": "Redirect using GET to another resource."},
     {"code": 304, "name": "Not Modified", "description": "Cached copy is still valid."},
-    {"code": 307, "name": "Temporary Redirect", "description": "Temporary redirect; method preserved."},
-    {"code": 308, "name": "Permanent Redirect", "description": "Permanent redirect; method preserved."},
+    {
+        "code": 307,
+        "name": "Temporary Redirect",
+        "description": "Temporary redirect; method preserved.",
+    },
+    {
+        "code": 308,
+        "name": "Permanent Redirect",
+        "description": "Permanent redirect; method preserved.",
+    },
     # 4xx
     {"code": 400, "name": "Bad Request", "description": "The request is malformed."},
     {"code": 401, "name": "Unauthorized", "description": "Authentication required or failed."},
     {"code": 403, "name": "Forbidden", "description": "Client lacks permission."},
     {"code": 404, "name": "Not Found", "description": "Resource does not exist."},
-    {"code": 405, "name": "Method Not Allowed", "description": "HTTP method not allowed for this resource."},
-    {"code": 408, "name": "Request Timeout", "description": "Server timed out waiting for the request."},
+    {
+        "code": 405,
+        "name": "Method Not Allowed",
+        "description": "HTTP method not allowed for this resource.",
+    },
+    {
+        "code": 408,
+        "name": "Request Timeout",
+        "description": "Server timed out waiting for the request.",
+    },
     {"code": 409, "name": "Conflict", "description": "Request conflicts with current state."},
     {"code": 410, "name": "Gone", "description": "Resource removed permanently."},
-    {"code": 413, "name": "Payload Too Large", "description": "Request body exceeded server limits."},
+    {
+        "code": 413,
+        "name": "Payload Too Large",
+        "description": "Request body exceeded server limits.",
+    },
     {"code": 415, "name": "Unsupported Media Type", "description": "Media type not supported."},
     {"code": 418, "name": "I'm a teapot", "description": "RFC 2324 joke status code."},
     {"code": 422, "name": "Unprocessable Entity", "description": "Validation failed."},
@@ -37,9 +69,17 @@ HTTP_STATUSES: list[dict] = [
     {"code": 500, "name": "Internal Server Error", "description": "Server-side fault."},
     {"code": 501, "name": "Not Implemented", "description": "Server does not support the request."},
     {"code": 502, "name": "Bad Gateway", "description": "Upstream returned an invalid response."},
-    {"code": 503, "name": "Service Unavailable", "description": "Server temporarily down or overloaded."},
+    {
+        "code": 503,
+        "name": "Service Unavailable",
+        "description": "Server temporarily down or overloaded.",
+    },
     {"code": 504, "name": "Gateway Timeout", "description": "Upstream timed out."},
-    {"code": 507, "name": "Insufficient Storage", "description": "Server cannot store the request."},
+    {
+        "code": 507,
+        "name": "Insufficient Storage",
+        "description": "Server cannot store the request.",
+    },
 ]
 
 
@@ -51,9 +91,21 @@ MIME_TYPES: list[dict] = [
     {"type": "application/pdf", "extensions": ["pdf"], "description": "PDF document."},
     {"type": "application/zip", "extensions": ["zip"], "description": "Zip archive."},
     {"type": "application/gzip", "extensions": ["gz"], "description": "Gzip compressed file."},
-    {"type": "application/octet-stream", "extensions": ["bin"], "description": "Arbitrary binary data."},
-    {"type": "application/x-www-form-urlencoded", "extensions": [], "description": "URL-encoded form body."},
-    {"type": "multipart/form-data", "extensions": [], "description": "Multipart form body (file uploads)."},
+    {
+        "type": "application/octet-stream",
+        "extensions": ["bin"],
+        "description": "Arbitrary binary data.",
+    },
+    {
+        "type": "application/x-www-form-urlencoded",
+        "extensions": [],
+        "description": "URL-encoded form body.",
+    },
+    {
+        "type": "multipart/form-data",
+        "extensions": [],
+        "description": "Multipart form body (file uploads).",
+    },
     {"type": "text/plain", "extensions": ["txt"], "description": "Plain text."},
     {"type": "text/html", "extensions": ["html", "htm"], "description": "HTML document."},
     {"type": "text/css", "extensions": ["css"], "description": "Cascading Style Sheets."},

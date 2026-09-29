@@ -6,8 +6,8 @@ import uuid
 
 import jwt
 
-
 # UUID
+
 
 def test_uuid_v4_generate(client):
     r = client.post("/api/codec/uuid/generate", json={"version": "v4", "count": 3})
@@ -61,6 +61,7 @@ def test_uuid_inspect_v7_returns_timestamp(client):
 
 # Hash & HMAC
 
+
 def test_hash_sha256(client):
     r = client.post("/api/codec/hash", json={"text": "hello", "algorithms": ["sha256"]})
     assert r.json()["digests"]["sha256"] == hashlib.sha256(b"hello").hexdigest()
@@ -87,6 +88,7 @@ def test_hmac_sha256(client):
 
 
 # URL codec
+
 
 def test_url_encode_component(client):
     r = client.post(
@@ -126,6 +128,7 @@ def test_query_string_parse_bare(client):
 
 # Case converter
 
+
 def test_case_camel(client):
     r = client.post("/api/codec/case", json={"text": "hello world FOO_BAR", "style": "camel"})
     assert r.json()["output"] == "helloWorldFooBar"
@@ -153,6 +156,7 @@ def test_case_pascal(client):
 
 # JWT signer
 
+
 def test_jwt_sign_dict_payload(client):
     r = client.post(
         "/api/codec/jwt/sign",
@@ -168,7 +172,11 @@ def test_jwt_sign_json_string_payload(client):
     payload = json.dumps({"x": 42})
     r = client.post(
         "/api/codec/jwt/sign",
-        json={"payload": payload, "secret": "abcdefghijklmnopqrstuvwxyz123456", "algorithm": "HS512"},
+        json={
+            "payload": payload,
+            "secret": "abcdefghijklmnopqrstuvwxyz123456",
+            "algorithm": "HS512",
+        },
     )
     token = r.json()["token"]
     assert token
