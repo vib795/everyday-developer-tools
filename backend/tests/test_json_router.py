@@ -80,17 +80,13 @@ def test_convert_to_string_and_back(client):
     out = r.json()["output"]
     assert out.startswith('"') and out.endswith('"')
 
-    r2 = client.post(
-        "/api/json/convert", json={"input_data": out, "conversion_type": "to_json"}
-    )
+    r2 = client.post("/api/json/convert", json={"input_data": out, "conversion_type": "to_json"})
     assert r2.status_code == 200
     assert json.loads(r2.json()["output"]) == {"a": 1}
 
 
 def test_convert_invalid_type(client):
-    r = client.post(
-        "/api/json/convert", json={"input_data": "{}", "conversion_type": "blah"}
-    )
+    r = client.post("/api/json/convert", json={"input_data": "{}", "conversion_type": "blah"})
     assert r.status_code in (400, 422)
 
 

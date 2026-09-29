@@ -20,9 +20,7 @@ def test_epoch_milliseconds(client):
 
 
 def test_postgres_timestamp(client):
-    r = client.post(
-        "/api/time/convert", json={"time_input": "2024-06-01 09:30:00"}
-    )
+    r = client.post("/api/time/convert", json={"time_input": "2024-06-01 09:30:00"})
     assert r.status_code == 200
     assert "ISO Format" in r.json()["output"]
 

@@ -29,7 +29,9 @@ def test_lorem_paragraphs(client):
 
 
 def test_lorem_sentences(client):
-    r = client.post("/api/misc/lorem", json={"units": "sentences", "count": 2, "start_with_lorem": False})
+    r = client.post(
+        "/api/misc/lorem", json={"units": "sentences", "count": 2, "start_with_lorem": False}
+    )
     text = r.json()["text"]
     assert len(text) > 0
     # Two sentences end with periods
@@ -37,7 +39,9 @@ def test_lorem_sentences(client):
 
 
 def test_lorem_words(client):
-    r = client.post("/api/misc/lorem", json={"units": "words", "count": 5, "start_with_lorem": False})
+    r = client.post(
+        "/api/misc/lorem", json={"units": "words", "count": 5, "start_with_lorem": False}
+    )
     text = r.json()["text"]
     assert len(text.split()) == 5
 

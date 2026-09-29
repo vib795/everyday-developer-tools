@@ -59,6 +59,7 @@ class HmacResponse(BaseModel):
 
 # URL codec
 
+
 class UrlCodecRequest(BaseModel):
     text: str
     operation: Literal["encode", "decode"] = "encode"

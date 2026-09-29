@@ -1,7 +1,7 @@
 import json
 
-
 # Format converters
+
 
 def test_json_to_yaml(client):
     r = client.post(
@@ -99,10 +99,14 @@ def test_format_invalid_source_returns_error(client):
 
 # JSONPath
 
+
 def test_jsonpath_basic(client):
     r = client.post(
         "/api/convert/jsonpath",
-        json={"json_text": '{"users": [{"name": "a"}, {"name": "b"}]}', "expression": "$.users[*].name"},
+        json={
+            "json_text": '{"users": [{"name": "a"}, {"name": "b"}]}',
+            "expression": "$.users[*].name",
+        },
     )
     body = r.json()
     assert body["error"] is None
@@ -138,10 +142,11 @@ def test_jsonpath_invalid_expr(client):
 
 # cURL converter
 
+
 def test_curl_simple_get(client):
     r = client.post(
         "/api/convert/curl",
-        json={"curl": 'curl https://api.example.com/u'},
+        json={"curl": "curl https://api.example.com/u"},
     )
     outs = r.json()["outputs"]
     assert "fetch(" in outs["fetch"]
@@ -152,9 +157,9 @@ def test_curl_simple_get(client):
 
 def test_curl_post_json_body(client):
     cmd = (
-        'curl -X POST https://api.example.com/u '
+        "curl -X POST https://api.example.com/u "
         '-H "Content-Type: application/json" '
-        "-d '{\"name\":\"alice\"}'"
+        '-d \'{"name":"alice"}\''
     )
     r = client.post("/api/convert/curl", json={"curl": cmd})
     outs = r.json()["outputs"]

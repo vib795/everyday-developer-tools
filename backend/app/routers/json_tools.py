@@ -5,6 +5,7 @@ from fastapi import APIRouter, HTTPException, Request
 from jsonschema import validate
 from jsonschema.exceptions import ValidationError
 
+from ..config import settings
 from ..rate_limit import limiter
 from ..schemas.json_tools import (
     JsonConvertRequest,
@@ -20,7 +21,6 @@ from ..schemas.json_tools import (
 )
 from ..services.json_schema import generate_json_schema
 from ..services.sample_data import generate_sample_data
-from ..config import settings
 
 logger = logging.getLogger(__name__)
 

@@ -34,8 +34,7 @@ def regex_check(request: Request, payload: RegexCheckRequest) -> RegexCheckRespo
     matched = result is not None
     return RegexCheckResponse(
         match=matched,
-        message="Pattern matches the string." if matched
-        else "Pattern does not match the string.",
+        message="Pattern matches the string." if matched else "Pattern does not match the string.",
     )
 
 

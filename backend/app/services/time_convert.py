@@ -34,9 +34,9 @@ def convert_time(time_input: str) -> dict[str, Any]:
             parsed = datetime.fromtimestamp(float(time_input), tz=pytz.utc).astimezone(EASTERN)
         except ValueError:
             try:
-                parsed = datetime.fromtimestamp(
-                    float(time_input) / 1000, tz=pytz.utc
-                ).astimezone(EASTERN)
+                parsed = datetime.fromtimestamp(float(time_input) / 1000, tz=pytz.utc).astimezone(
+                    EASTERN
+                )
             except ValueError:
                 parsed = None
 
