@@ -3,7 +3,8 @@ name: Publish Docker image to GitHub Packages
 on:
   push:
     branches:
-      - master  # or any other branch
+      # "master" has never existed in this repo; the default branch is develop.
+      - develop
 
 permissions:
   contents: read
@@ -29,4 +30,7 @@ jobs:
           context: .
           file: ./Dockerfile.dev
           push: true
-          tags: ghcr.io/${{ github.repository_owner }}/utkarshsingh/developer-tools-dev:latest
+          # Was ghcr.io/<owner>/utkarshsingh/developer-tools-dev, which wedged a
+          # second account name into the path. The owner is already supplied by
+          # github.repository_owner.
+          tags: ghcr.io/${{ github.repository_owner }}/developer-tools-dev:latest

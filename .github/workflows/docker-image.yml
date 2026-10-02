@@ -1,10 +1,12 @@
 name: Docker Image CI
 
 on:
+  # This repo's default branch is "develop"; "master" has never existed, so the
+  # old filter meant this workflow could never fire. There is deliberately no
+  # pull_request trigger: every job below pushes the :latest tags, which must
+  # only ever come from the default branch (and fork PRs get no secrets).
   push:
-    branches: [ "master" ]
-  pull_request:
-    branches: [ "master" ]
+    branches: [ "develop" ]
 
 permissions:
   contents: read
