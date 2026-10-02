@@ -20,6 +20,16 @@ Format all modified files using the project's standard tooling:
 
 After formatting, stage any files that were changed by the formatter.
 
+## Step 2b — Stage what the user actually wants committed
+
+Formatting only stages files the formatter rewrote. Ask the user which of the
+remaining unstaged and untracked paths from Step 1 belong in this commit, then
+`git add` exactly those. Without this, Step 4 shows a staged diff that silently
+omits the user's real changes, and Step 5 can only ever remove files.
+
+Never stage with a blind `git add -A` or `git add .` — that is how untracked
+secrets and local scratch files get committed.
+
 ## Step 3 — Security and vulnerability scan
 
 Run the pre-commit security hook directly:
@@ -81,7 +91,19 @@ Wait for confirmation.
 
 ## Step 7 — Commit
 
-Run `git commit -m "<confirmed message>"`. Show the commit hash on success.
+Write the confirmed message to a file and commit with `-F`, never by
+interpolating it into the command line:
+
+```bash
+git commit -F /tmp/commit-msg.txt
+```
+
+The message is derived from repository content. Pasting it inside double quotes
+lets any `$(...)`, backtick or `${...}` in a diff, branch name or file name be
+expanded by the shell before git ever sees it. `-F` passes the bytes through
+untouched. A heredoc quoted as `<<'EOF'` is equally safe.
+
+Show the commit hash on success.
 
 ## Step 8 — Pre-push check
 

@@ -53,7 +53,18 @@ Transform tasks into verifiable goals:
 - "Fix the bug" → reproduce it first in `tests/test_<area>_router.py` (or `tests/test_services.py` for pure logic), then fix.
 - "Refactor X" → `cd backend && uv run pytest` passes before and after.
 - Frontend changes have no automated test layer yet. Verify by running `npm run dev` (proxies `/api` → `:8000`), clicking through the affected page, and confirming `npm run lint` (which is `tsc --noEmit`) is clean.
-- K8s changes → `kubectl apply -f k8s/`, then `kubectl rollout status deploy/<name> -n devtools` and `kubectl get pods -n devtools` show Ready.
+- K8s changes → the manifests use local-only image tags, so build and load them
+  into the cluster's image store *before* applying, or every pod sits in
+  `ImagePullBackOff` and `rollout status` never returns:
+  ```
+  docker build -f backend/Dockerfile  -t devtools-backend:dev  .
+  docker build -f frontend/Dockerfile -t devtools-frontend:dev frontend
+  kind load docker-image devtools-backend:dev devtools-frontend:dev   # or: minikube image load <tag>
+  ```
+  Then `kubectl apply -f k8s/`, and confirm `kubectl rollout status deploy/<name> -n devtools`
+  and `kubectl get pods -n devtools` show Ready. `k8s/15-secret.yaml` is deliberately
+  not in the repo — `backend-secret` is declared `optional: true`, so pods start
+  without it, and `app/config.py` declares no credential settings today.
 
 For multi-step tasks, state a brief plan:
 ```

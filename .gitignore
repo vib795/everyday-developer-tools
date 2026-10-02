@@ -175,3 +175,9 @@ logs/
 
 # gstack skill state
 .gstack/
+
+# Kubernetes Secret manifest — holds real values, never commit it.
+# k8s/30-backend.yaml consumes it as `secretRef: backend-secret` with
+# `optional: true`, so pods start fine without it. Supply it out of band:
+#   kubectl create secret generic backend-secret -n devtools --from-env-file=...
+k8s/15-secret.yaml
