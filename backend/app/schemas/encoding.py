@@ -20,3 +20,7 @@ class JwtRequest(BaseModel):
 class JwtResponse(BaseModel):
     decoded: dict[str, Any] | None = None
     error: str | None = None
+    # False when the token was decoded without checking its signature,
+    # which happens when no secret is supplied. Callers must not treat an
+    # unverified payload as trustworthy.
+    signature_verified: bool = False

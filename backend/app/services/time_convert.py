@@ -21,6 +21,20 @@ def convert_time(time_input: str) -> dict[str, Any]:
             parsed = EASTERN.localize(naive, is_dst=None)
         except ValueError:
             parsed = None
+        except pytz.exceptions.NonExistentTimeError as exc:
+            # Raise rather than fall through. The ISO parser below would happily
+            # accept this same string as a naive datetime and then astimezone()
+            # it from the SERVER's local zone, silently returning a different
+            # instant depending on where the process runs.
+            raise ValueError(
+                f"{time_input} does not exist in {EASTERN}: "
+                "local clocks jump forward over it when DST begins."
+            ) from exc
+        except pytz.exceptions.AmbiguousTimeError as exc:
+            raise ValueError(
+                f"{time_input} is ambiguous in {EASTERN}: "
+                "local clocks repeat it when DST ends, so it matches two instants."
+            ) from exc
 
     if parsed is None:
         try:
