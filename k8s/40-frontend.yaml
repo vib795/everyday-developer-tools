@@ -17,8 +17,21 @@ spec:
     spec:
       containers:
         - name: frontend
+          # LOCAL-ONLY reference, like the backend. Nothing publishes
+          # devtools-frontend:dev, so load it into the cluster's image store
+          # before applying:
+          #   docker build -f frontend/Dockerfile -t devtools-frontend:dev frontend
+          #   kind load docker-image devtools-frontend:dev
           image: devtools-frontend:dev
           imagePullPolicy: IfNotPresent
+          # Deliberately narrower than the backend's context. nginx:alpine
+          # starts as root to bind :80 and then drops its workers to the
+          # nginx user (101:101), so runAsNonRoot would fail to start and
+          # dropping ALL capabilities would remove the CHOWN/SETUID/SETGID
+          # and NET_BIND_SERVICE it needs to do that. Blocking privilege
+          # escalation is the part that applies here.
+          securityContext:
+            allowPrivilegeEscalation: false
           ports:
             - containerPort: 80
               name: http

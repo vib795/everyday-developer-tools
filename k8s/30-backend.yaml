@@ -17,16 +17,39 @@ spec:
     spec:
       containers:
         - name: backend
+          # Unqualified tag with no registry: this is a LOCAL-ONLY reference,
+          # matched by imagePullPolicy: IfNotPresent. Build it into the
+          # cluster's own image store before applying, e.g.
+          #   docker build -f backend/Dockerfile -t devtools-backend:dev .
+          #   kind load docker-image devtools-backend:dev
+          # (or `minikube image load`). A real cluster cannot pull this.
           image: devtools-backend:dev
           imagePullPolicy: IfNotPresent
+          # Backend runs as appuser 1000:1000 (see backend/Dockerfile) and
+          # binds 8000, so it needs no capabilities. runAsUser must be given
+          # numerically: kubelet refuses runAsNonRoot when the image's USER is
+          # a name it cannot resolve to a uid.
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
+            runAsGroup: 1000
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
           ports:
             - containerPort: 8000
               name: http
           envFrom:
             - configMapRef:
                 name: backend-config
+            # Optional on purpose. app/config.py declares no credential
+            # settings, so this Secret currently supplies nothing the app
+            # reads, and k8s/15-secret.yaml is deliberately not in the repo.
+            # Without optional: true the pod would stay stuck in
+            # CreateContainerConfigError on a cluster that lacks it.
             - secretRef:
                 name: backend-secret
+                optional: true
           resources:
             requests:
               cpu: 100m

@@ -80,13 +80,21 @@ If any are found, stop immediately. Do NOT open the PR. Report the exact file an
 ## Step 6 — Open the PR
 
 Run:
+Write the confirmed body to a file and pass it with `--body-file`, never by
+interpolating it into the command line:
+
 ```bash
 gh pr create \
   --base <base> \
-  --title "<confirmed title>" \
-  --body "<confirmed body>" \
+  --title "$(cat /tmp/pr-title.txt)" \
+  --body-file /tmp/pr-body.md \
   --draft
 ```
+
+Both the title and body are derived from repository diffs. Interpolating them
+into double quotes lets `$(...)`, backticks or `${...}` appearing in a diff,
+branch name or file name execute before `gh` receives them. `--body-file`
+passes the body through verbatim; a `<<'EOF'`-quoted heredoc is equally safe.
 
 Open as a **draft** by default (safer — lets the user promote it when ready). If the user explicitly asked for a ready-for-review PR, omit `--draft`.
 

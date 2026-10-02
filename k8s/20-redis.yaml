@@ -18,6 +18,16 @@ spec:
       containers:
         - name: redis
           image: redis:7-alpine
+          # redis:7-alpine ships a redis user at 999:1000 but starts as root.
+          # Redis needs no capabilities and binds an unprivileged port, so it
+          # can drop everything. /data in the image is owned by this user.
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 999
+            runAsGroup: 1000
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
           ports:
             - containerPort: 6379
               name: redis

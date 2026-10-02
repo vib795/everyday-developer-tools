@@ -11,7 +11,11 @@ spec:
     - host: devtools.local
       http:
         paths:
-          - path: /(api/.*)
+          # Matches both /api and /api/... . Under the old /(api/.*) a bare
+          # /api missed this rule, fell through to the catch-all below, and
+          # was served the SPA instead of the API. The inner group is
+          # non-capturing so $1 remains the whole path for rewrite-target.
+          - path: /(api(?:/.*)?)
             pathType: ImplementationSpecific
             backend:
               service:
