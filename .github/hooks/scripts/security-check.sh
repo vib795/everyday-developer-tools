@@ -16,6 +16,9 @@ REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../../" && pwd)"
 INPUT="$(cat)"
 TOOL_NAME=""
 IS_COMMIT_OR_PUSH=false
+# True when the pending commit will stage content beyond the current index
+# (`git commit -a`), which the index-only secret scan would otherwise miss.
+COMMIT_ALL=false
 
 if command -v jq &>/dev/null; then
   TOOL_NAME="$(echo "$INPUT" | jq -r '.tool_name // ""' 2>/dev/null || true)"
@@ -38,13 +41,63 @@ case "$TOOL_NAME" in
     if [[ "$ACTION" == "commit" ]]; then
       IS_COMMIT_OR_PUSH=true
       OP="commit"
+      # This tool does not expose whether it stages everything, so assume the
+      # wider scope rather than scanning less than what gets committed.
+      COMMIT_ALL=true
     fi
     ;;
   run_in_terminal)
-    if echo "$CMD" | grep -qE 'git (commit|push)'; then
-      IS_COMMIT_OR_PUSH=true
-      OP="$(echo "$CMD" | grep -oE 'git (commit|push)' | awk '{print $2}' | head -1)"
+    # Walk the command token by token rather than matching "git (commit|push)".
+    # Git accepts global options before the subcommand, so `git -C . commit`,
+    # `git -c user.name=x push` and `git --git-dir=.git commit` all failed the
+    # old regex and silently skipped every check below.
+    _TOKENS=()
+    if [[ -n "${CMD:-}" ]]; then
+      read -ra _TOKENS <<< "$CMD" || true
     fi
+    _i=0
+    while [[ $_i -lt ${#_TOKENS[@]} ]]; do
+      case "${_TOKENS[$_i]}" in
+        git|*/git)
+          _j=$(( _i + 1 ))
+          while [[ $_j -lt ${#_TOKENS[@]} ]]; do
+            case "${_TOKENS[$_j]}" in
+              # Global options that consume the next token as their value.
+              -C|-c|--git-dir|--work-tree|--namespace|--exec-path|--super-prefix)
+                _j=$(( _j + 2 )) ;;
+              # Any other option belongs to git itself; step over it.
+              -*)
+                _j=$(( _j + 1 )) ;;
+              commit)
+                IS_COMMIT_OR_PUSH=true
+                OP="commit"
+                # -a/--all (and bundles like -am) stage content the index does
+                # not hold yet. Order matters: --all/--include first, then a
+                # catch-all for every other long option so that --amend is not
+                # mistaken for -a, then short bundles containing an "a".
+                for _f in "${_TOKENS[@]:$_j}"; do
+                  case "$_f" in
+                    --all|--include) COMMIT_ALL=true ;;
+                    --*)             : ;;
+                    -*a*)            COMMIT_ALL=true ;;
+                  esac
+                done
+                break ;;
+              push)
+                IS_COMMIT_OR_PUSH=true
+                OP="push"
+                break ;;
+              *)
+                break ;;
+            esac
+          done
+          ;;
+      esac
+      if [[ "$IS_COMMIT_OR_PUSH" == "true" ]]; then
+        break
+      fi
+      _i=$(( _i + 1 ))
+    done
     ;;
 esac
 
@@ -82,15 +135,21 @@ fi
 # 2. Python security scan (bandit)
 if [[ -d "backend" ]]; then
   echo "  [2/4] bandit (Python security scan)..." >&2
+  # Trust bandit's exit status, not its prose. The text formatter prints
+  # "Issue: [" with a colon, so the old 'Issue \[' match never fired and every
+  # finding was reported as a clean scan. bandit exits 1 when it reports
+  # findings and 2 on a usage error; both deserve a block.
   if command -v bandit &>/dev/null; then
-    BANDIT_OUT="$(bandit -r backend/app -ll -q 2>&1 || true)"
-    if echo "$BANDIT_OUT" | grep -qE 'Issue \['; then
-      ERRORS+=("bandit: Security issues found\n${BANDIT_OUT}")
+    BANDIT_RC=0
+    BANDIT_OUT="$(bandit -r backend/app -ll -q 2>&1)" || BANDIT_RC=$?
+    if [[ $BANDIT_RC -ne 0 ]]; then
+      ERRORS+=("bandit: Security issues found (exit ${BANDIT_RC})\n${BANDIT_OUT}")
     fi
   elif command -v uv &>/dev/null && uv run --project backend python -c "import bandit" 2>/dev/null; then
-    BANDIT_OUT="$(uv run --project backend bandit -r backend/app -ll -q 2>&1 || true)"
-    if echo "$BANDIT_OUT" | grep -qE 'Issue \['; then
-      ERRORS+=("bandit: Security issues found\n${BANDIT_OUT}")
+    BANDIT_RC=0
+    BANDIT_OUT="$(uv run --project backend bandit -r backend/app -ll -q 2>&1)" || BANDIT_RC=$?
+    if [[ $BANDIT_RC -ne 0 ]]; then
+      ERRORS+=("bandit: Security issues found (exit ${BANDIT_RC})\n${BANDIT_OUT}")
     fi
   else
     WARNINGS+=("bandit not found — skipping Python security scan (install with: uv add --dev bandit)")
@@ -99,37 +158,61 @@ fi
 
 # 3. Hardcoded secret detection (git grep on staged/tracked changes)
 echo "  [3/4] Secret detection (staged changes)..." >&2
+# Portable ERE only. These previously used \s and \x27, which are PCRE/GNU
+# extensions: BSD grep (the default on macOS) does not understand either, so
+# the five quoted-value patterns matched nothing at all there.
 SECRET_PATTERNS=(
-  'password\s*=\s*["\x27][^"\x27]{4,}'
-  'secret\s*=\s*["\x27][^"\x27]{4,}'
-  'api_key\s*=\s*["\x27][^"\x27]{4,}'
-  'token\s*=\s*["\x27][^"\x27]{4,}'
-  'private_key\s*=\s*["\x27][^"\x27]{4,}'
+  "password[[:space:]]*=[[:space:]]*[\"'][^\"']{4,}"
+  "secret[[:space:]]*=[[:space:]]*[\"'][^\"']{4,}"
+  "api_key[[:space:]]*=[[:space:]]*[\"'][^\"']{4,}"
+  "token[[:space:]]*=[[:space:]]*[\"'][^\"']{4,}"
+  "private_key[[:space:]]*=[[:space:]]*[\"'][^\"']{4,}"
   'BEGIN (RSA|EC|DSA|OPENSSH) PRIVATE KEY'
   'AKIA[0-9A-Z]{16}'
 )
 
 SECRET_HITS=""
+SCOPE_LABEL="staged changes"
 if git rev-parse --is-inside-work-tree &>/dev/null 2>&1; then
-  for pattern in "${SECRET_PATTERNS[@]}"; do
-    HITS="$(git diff --staged -U0 2>/dev/null | grep '^\+' | grep -iE "$pattern" || true)"
-    if [[ -n "$HITS" ]]; then
-      SECRET_HITS+="$HITS\n"
-    fi
-  done
+  # Scan what the commit will actually contain. `git commit -a` stages tracked
+  # modifications *after* this hook runs, so the index alone understates it.
+  if [[ "$COMMIT_ALL" == "true" ]]; then
+    DIFF_SCOPE="HEAD"
+    SCOPE_LABEL="staged changes plus tracked working-tree edits (git commit -a)"
+  else
+    DIFF_SCOPE="--staged"
+  fi
+
+  # Report file names and match counts only. The matching line *is* the
+  # credential, and this hook's stderr is fed back to the agent, so printing
+  # it would disclose the very value the check exists to catch.
+  while IFS= read -r file; do
+    [[ -z "$file" ]] && continue
+    for pattern in "${SECRET_PATTERNS[@]}"; do
+      COUNT="$(git diff "$DIFF_SCOPE" -U0 -- "$file" 2>/dev/null \
+                 | grep '^+' | grep -v '^+++' | grep -icE "$pattern" || true)"
+      if [[ "${COUNT:-0}" -gt 0 ]]; then
+        SECRET_HITS+="   ${file}: ${COUNT} added line(s) match /${pattern}/\n"
+      fi
+    done
+  done < <(git diff "$DIFF_SCOPE" --name-only 2>/dev/null || true)
 fi
 
 if [[ -n "$SECRET_HITS" ]]; then
-  ERRORS+=("secrets: Possible hardcoded credentials in staged changes\n${SECRET_HITS}")
+  ERRORS+=("secrets: Possible hardcoded credentials in ${SCOPE_LABEL} — values redacted, inspect the files yourself\n${SECRET_HITS}")
 fi
 
 # 4. Frontend TypeScript check (npm run lint)
 if [[ -d "frontend" ]]; then
   echo "  [4/4] TypeScript check (npm run lint)..." >&2
   if command -v npm &>/dev/null && [[ -f "frontend/package.json" ]]; then
-    TS_OUT="$(cd frontend && npm run lint --silent 2>&1 || true)"
-    if echo "$TS_OUT" | grep -qE 'error TS|error:'; then
-      ERRORS+=("tsc: TypeScript errors found\n${TS_OUT}")
+    # Use the exit status. `|| true` discarded it, and the grep for
+    # "error TS"/"error:" misses any linter that fails without printing those
+    # exact strings -- so this gate reported success unconditionally.
+    TS_RC=0
+    TS_OUT="$(cd frontend && npm run lint --silent 2>&1)" || TS_RC=$?
+    if [[ $TS_RC -ne 0 ]]; then
+      ERRORS+=("tsc: lint failed (exit ${TS_RC})\n${TS_OUT}")
     fi
   else
     WARNINGS+=("npm not found — skipping TypeScript check")
