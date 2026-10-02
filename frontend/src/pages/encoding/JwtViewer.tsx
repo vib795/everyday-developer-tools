@@ -38,7 +38,7 @@ export function JwtViewer() {
         </div>
         <div>
           <label className="label" htmlFor="secret">
-            Secret Key
+            Secret Key <span className="font-normal text-slate-500">(optional)</span>
           </label>
           <input
             id="secret"
@@ -46,6 +46,9 @@ export function JwtViewer() {
             value={secret_key}
             onChange={(e) => setSecret(e.target.value)}
           />
+          <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+            Leave blank to inspect the payload without verifying the signature.
+          </p>
         </div>
         <button type="submit" disabled={pending} className="btn-primary">
           {pending ? "Decoding…" : "Decode"}
@@ -61,6 +64,16 @@ export function JwtViewer() {
           ) : (
             <>
               <h3 className="mb-2 text-sm font-semibold text-slate-700 dark:text-slate-200">Decoded JWT</h3>
+              {data.signature_verified ? (
+                <p className="mb-2 rounded bg-emerald-50 dark:bg-emerald-950/40 px-3 py-2 text-sm text-emerald-900 dark:text-emerald-200">
+                  Signature verified with the supplied secret.
+                </p>
+              ) : (
+                <p className="mb-2 rounded bg-amber-50 dark:bg-amber-950/40 px-3 py-2 text-sm text-amber-900 dark:text-amber-200">
+                  Signature <strong>not verified</strong> — no secret was supplied. Treat this
+                  payload as untrusted; anyone can craft a token with these contents.
+                </p>
+              )}
               <CodeBlock value={JSON.stringify(data.decoded, null, 2)} />
             </>
           )}

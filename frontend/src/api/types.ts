@@ -85,6 +85,8 @@ export interface Base64Response {
 export interface JwtResponse {
   decoded?: Record<string, unknown> | null;
   error?: string | null;
+  /** False when decoded without a secret — the signature was not checked. */
+  signature_verified?: boolean;
 }
 
 export interface TimeConvertResponse {
