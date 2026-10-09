@@ -5,6 +5,14 @@ on:
     branches:
       # "master" has never existed in this repo; the default branch is develop.
       - develop
+  # Required, not a convenience. GitHub does not start workflow runs for pushes
+  # made with GITHUB_TOKEN, and auto-merge merges as github-actions[bot] -- so
+  # every auto-merged PR lands on develop WITHOUT publishing an image, silently.
+  # #123 (e4495c0) and #124 (bee9a40) both did exactly that, leaving the
+  # published image stranded at ccd8f84, the last commit merged by a real user.
+  # This lets the image be published for a commit that arrived that way:
+  #   gh workflow run publish-package.yml --ref develop
+  workflow_dispatch:
 
 permissions:
   contents: read
