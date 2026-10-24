@@ -1,0 +1,69 @@
+name: CI
+
+# The repo had no test run on pull requests at all. pytest only ever ran inside
+# claude-dependabot.yml, which is gated on `pull_request_target` for
+# dependabot[bot] -- so a hand-written PR could merge with a red tree, and
+# `CodeQL` (the only required check on develop) does not run tests.
+on:
+  pull_request:
+  push:
+    branches:
+      - develop
+
+permissions:
+  contents: read
+
+# A new push to a PR makes the previous run's answer irrelevant.
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  backend-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v10.3.1
+        with:
+          enable-cache: true
+
+      # --locked, not --frozen: it also asserts uv.lock still matches
+      # pyproject.toml, so a dependency edit that forgot to relock fails here
+      # rather than drifting silently.
+      - name: Install (asserting the lock is current)
+        run: cd backend && uv sync --locked
+
+      - name: pytest
+        run: cd backend && uv run pytest -q
+
+      # Ruff's rule selection is pinned in pyproject.toml (#117) precisely so
+      # lint is a property of this repo rather than of whichever ruff version
+      # is installed. Enforcing it here is what makes that pin mean anything.
+      - name: ruff check
+        run: cd backend && uv run ruff check .
+
+      - name: ruff format --check
+        run: cd backend && uv run ruff format --check .
+
+  frontend-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Set up Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      # No --legacy-peer-deps: the peer tree resolves cleanly, and the flag
+      # would re-admit genuinely broken peer ranges on the next bump.
+      - name: npm ci
+        run: cd frontend && npm ci --no-audit --no-fund
+
+      # `npm run lint` is `tsc --noEmit`; the frontend has no test layer yet.
+      - name: tsc --noEmit
+        run: cd frontend && npm run lint
