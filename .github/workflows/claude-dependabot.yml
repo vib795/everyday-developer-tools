@@ -105,7 +105,7 @@ jobs:
             echo "::endgroup::"
           fi
 
-      - name: Auto-merge patch/minor, hold majors for review
+      - name: Mark patch/minor ready to merge, hold majors for review
         if: ${{ steps.verify.outcome == 'success' }}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -114,22 +114,32 @@ jobs:
         run: |
           case "$UPDATE_TYPE" in
             version-update:semver-patch|version-update:semver-minor)
-              echo "Patch/minor + green tests -> approve and merge (Render deploys on merge to develop)."
-              # GITHUB_TOKEN cannot approve a PR — GitHub rejects it with
-              # "GitHub Actions is not permitted to create approving pull
-              # request reviews" — so this can never satisfy the required
-              # review on develop. Arming auto-merge below is still correct
-              # (it lands the instant an approval arrives), but the old
-              # `|| true` hid the rejection: the job went green while the PR
-              # parked at REVIEW_REQUIRED indefinitely. Say it out loud.
-              if ! gh pr review --approve "$PR_URL" 2>/dev/null; then
-                # Keep this on ONE line. A backslash continuation whose next
-                # line starts at column 0 ends the YAML block scalar and makes
-                # the whole workflow file invalid.
-                echo "::warning title=Approval still needed::Tests are green and auto-merge is armed, but GitHub Actions cannot approve PRs. This PR will not land until a human approves it."
-              fi
-              gh pr merge --auto --squash --delete-branch "$PR_URL" \
-                || gh pr merge --squash --delete-branch "$PR_URL"
+              echo "Patch/minor + green tests -> marking ready. NOT merging; see below."
+              # This step deliberately does NOT merge, and that is the whole
+              # point. Every merge performed with GITHUB_TOKEN lands as
+              # github-actions[bot], and GitHub does not start workflow runs
+              # for GITHUB_TOKEN pushes (loop prevention) -- so a bot merge
+              # silently skips publish-package.yml and strands the GHCR image.
+              # That is exactly how the image sat at ccd8f84 for 22 days while
+              # develop moved on through #123, #124, #130 and #126.
+              #
+              # The previous body here read:
+              #   gh pr merge --auto --squash ... || gh pr merge --squash ...
+              # which was worse than it looked. While repo-wide auto-merge was
+              # enabled the first command armed auto-merge and the fallback
+              # never ran. The moment auto-merge was turned off, `--auto`
+              # started failing and the `||` fallback merged outright, with no
+              # approval and no publish.
+              #
+              # Leave it green and labelled instead. A merge by a real user is
+              # a real push, which does trigger the publish.
+              gh label create ready-to-merge --color 0E8A16 \
+                --description "Tests green; merge by a human to publish" 2>/dev/null || true
+              gh pr edit "$PR_URL" --add-label ready-to-merge || true
+              # Keep each --body on ONE line. A backslash continuation whose
+              # next line starts at column 0 ends the YAML block scalar and
+              # makes the whole workflow file invalid.
+              gh pr comment "$PR_URL" --body ":white_check_mark: **Patch/minor update, tests green — ready to merge.** Not merged automatically: a merge performed by GITHUB_TOKEN lands as github-actions[bot], and GitHub suppresses workflow runs for GITHUB_TOKEN pushes, so \`publish-package.yml\` would never fire and the GHCR image would go stale. Merge it yourself and the image publishes."
               ;;
             *)
               echo "Major (or unknown) update -> hold for a human."
