@@ -90,7 +90,7 @@ In production both ship in a single Docker image. In development you can run the
 
 ## Local development
 
-Prerequisites: Python 3.10+, Node 20+, [`uv`](https://docs.astral.sh/uv/).
+Prerequisites: Python 3.11+, Node 20+, [`uv`](https://docs.astral.sh/uv/).
 
 ### Backend
 
