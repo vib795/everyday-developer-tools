@@ -1,4 +1,9 @@
-FROM node:20-alpine AS build
+# Matches the `spa` stage of the root Dockerfile, which is what Render actually
+# builds production from -- so this image and production compile the SPA on the
+# same Node rather than drifting apart. 20 also tripped an npm EBADENGINE
+# warning, since react-router declares node >=22.22.0, and the 20 line stopped
+# getting security updates in April 2026.
+FROM node:26-alpine AS build
 WORKDIR /app
 COPY package.json package-lock.json* ./
 # No --legacy-peer-deps: the peer-dep tree resolves cleanly on its own now
