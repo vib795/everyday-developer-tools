@@ -12,7 +12,6 @@ dependencies = [
     "slowapi>=0.1.10",
     "redis>=8.1.0",
     "python-dotenv>=1.0",
-    "python-dateutil>=2.9",
     "pytz>=2026.3.post1",
     "jsonschema>=4.23",
     "genson>=1.4.0",
