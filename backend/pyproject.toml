@@ -45,7 +45,10 @@ addopts = "-ra -q"
 
 [tool.ruff]
 line-length = 100
-target-version = "py310"
+# No target-version: ruff derives it from project.requires-python above.
+# It was pinned "py310", which #132 made a lie when it raised the floor to
+# 3.11 -- so three years of UP rules sat switched off. Deriving it means the
+# target cannot drift away from the floor again.
 
 [tool.ruff.lint]
 # Pin the rule set explicitly. Ruff's implicit default grew from a small

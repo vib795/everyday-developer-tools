@@ -9,18 +9,12 @@ from __future__ import annotations
 import csv
 import io
 import json
-import sys
+import tomllib
 from typing import Any
 
+import tomli_w
 import xmltodict
 import yaml
-
-if sys.version_info >= (3, 11):
-    import tomllib
-else:  # pragma: no cover
-    import tomli as tomllib
-
-import tomli_w
 
 
 def _from_csv(text: str) -> list[dict[str, str]]:
