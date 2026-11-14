@@ -52,10 +52,13 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
+      # 26, matching the `spa` stage of the root Dockerfile and
+      # frontend/Dockerfile (#150). On 22 this job typechecked the SPA on a
+      # Node that neither image uses, and react-router declares node >=22.22.0.
       - name: Set up Node
         uses: actions/setup-node@v7
         with:
-          node-version: "22"
+          node-version: "26"
           cache: npm
           cache-dependency-path: frontend/package-lock.json
 
@@ -67,3 +70,33 @@ jobs:
       # `npm run lint` is `tsc --noEmit`; the frontend has no test layer yet.
       - name: tsc --noEmit
         run: cd frontend && npm run lint
+
+  # Nothing here built the production image, so a Dockerfile-only PR passed
+  # every required check without the image ever being compiled. That is how
+  # #152 (python 3.14-slim -> 3.15-slim) came up green while being unbuildable:
+  # `watchfiles` publishes no cp315 wheel at any version, and its sdist needs a
+  # pyo3 that caps at 3.14. Render builds production from this same Dockerfile,
+  # so this is the only job that can speak to whether production builds at all.
+  docker-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Build the production image
+        run: docker build -t devtools:ci .
+
+      # Building proves the image compiles; booting proves the app starts
+      # inside it, which a successful build on its own does not.
+      - name: Boot it and check health
+        run: |
+          docker run -d --name devtools-ci -p 8000:8000 devtools:ci
+          for i in $(seq 1 60); do
+            if curl -fsS http://localhost:8000/api/health; then
+              echo " <- healthy"
+              exit 0
+            fi
+            sleep 2
+          done
+          echo "health never came up; container logs follow:"
+          docker logs devtools-ci
+          exit 1
