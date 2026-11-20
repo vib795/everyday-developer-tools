@@ -2,7 +2,7 @@
 # what Render builds production from. This had drifted to 3.12 because the
 # docker ecosystem in dependabot.yml only watched `/`, and no CI job compiled
 # this file -- so nothing could report the gap.
-FROM python:3.14-slim AS runtime
+FROM python:3.15-slim AS runtime
 WORKDIR /app
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
