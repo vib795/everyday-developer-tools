@@ -90,8 +90,12 @@ jobs:
       - name: Boot it and check health
         run: |
           docker run -d --name devtools-ci -p 8000:8000 devtools:ci
+          # --max-time bounds each attempt: a container that accepts the
+          # connection but never answers would hang curl indefinitely, so the
+          # loop would never fall through to `docker logs` and the job would
+          # stall instead of failing.
           for i in $(seq 1 60); do
-            if curl -fsS http://localhost:8000/api/health; then
+            if curl -fsS --max-time 5 http://localhost:8000/api/health; then
               echo " <- healthy"
               exit 0
             fi
