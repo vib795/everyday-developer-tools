@@ -104,3 +104,16 @@ jobs:
           echo "health never came up; container logs follow:"
           docker logs devtools-ci
           exit 1
+
+      # The other three Dockerfiles are not what Render serves -- these are the
+      # dev and split-K8s paths from CLAUDE.md section 4 -- but nothing compiled
+      # them either, which is how backend/Dockerfile drifted two minor Python
+      # versions behind production unnoticed. Compiling is the whole check: the
+      # runtime behaviour that matters is covered by booting the production
+      # image above. Contexts match the documented commands -- repo root for the
+      # backend and dev images, `frontend` for the frontend one.
+      - name: Build the dev and split-K8s images
+        run: |
+          docker build -f Dockerfile.dev      -t devtools-dev:ci      .
+          docker build -f backend/Dockerfile  -t devtools-backend:ci  .
+          docker build -f frontend/Dockerfile -t devtools-frontend:ci frontend
