@@ -3,7 +3,7 @@ import hmac
 import json
 import urllib.parse
 import uuid
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 import jwt
 from fastapi import APIRouter
@@ -44,7 +44,7 @@ def _uuid7() -> uuid.UUID:
     """RFC 9562 UUIDv7: 48-bit unix-ms timestamp + 74 random bits + version/variant."""
     import os
 
-    ts_ms = int(datetime.now(tz=timezone.utc).timestamp() * 1000)
+    ts_ms = int(datetime.now(tz=UTC).timestamp() * 1000)
     rand_a = int.from_bytes(os.urandom(2), "big") & 0x0FFF  # 12 bits
     rand_b = int.from_bytes(os.urandom(8), "big") & 0x3FFFFFFFFFFFFFFF  # 62 bits
     val = (ts_ms & 0xFFFFFFFFFFFF) << 80
@@ -96,10 +96,10 @@ def uuid_inspect(payload: UuidInspectRequest) -> UuidInspectResponse:
     if u.version == 1 and u.variant == uuid.RFC_4122:
         # uuid1 timestamp is 100-ns intervals since 1582-10-15
         secs = (u.time - 0x01B21DD213814000) / 1e7
-        ts_iso = datetime.fromtimestamp(secs, tz=timezone.utc).isoformat()
+        ts_iso = datetime.fromtimestamp(secs, tz=UTC).isoformat()
     elif u.version == 7:
         ts_ms = (u.int >> 80) & 0xFFFFFFFFFFFF
-        ts_iso = datetime.fromtimestamp(ts_ms / 1000, tz=timezone.utc).isoformat()
+        ts_iso = datetime.fromtimestamp(ts_ms / 1000, tz=UTC).isoformat()
 
     return UuidInspectResponse(
         valid=True,
