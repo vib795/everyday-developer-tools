@@ -1,4 +1,8 @@
-FROM python:3.12-slim AS runtime
+# Pinned to the same Python as the root Dockerfile's `runtime` stage, which is
+# what Render builds production from. This had drifted to 3.12 because the
+# docker ecosystem in dependabot.yml only watched `/`, and no CI job compiled
+# this file -- so nothing could report the gap.
+FROM python:3.14-slim AS runtime
 WORKDIR /app
 
 RUN apt-get update && apt-get install -y --no-install-recommends \

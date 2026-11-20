@@ -43,9 +43,16 @@ updates:
     labels:
       - "dependencies"
 
-  # Base images in the root Dockerfile that Render builds from.
+  # Base images in every Dockerfile, not just the root one Render builds from.
+  # `/` alone left backend/Dockerfile and frontend/Dockerfile unwatched, which
+  # is how the former sat on python:3.12-slim while production ran 3.14.
+  # (frontend/Dockerfile's `nginx:alpine` carries no version to track, so it
+  # stays Dependabot-invisible until it is pinned to a release line.)
   - package-ecosystem: "docker"
-    directory: "/"
+    directories:
+      - "/"
+      - "/backend"
+      - "/frontend"
     schedule:
       interval: "weekly"
     labels:
